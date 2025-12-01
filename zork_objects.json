@@ -1,0 +1,2072 @@
+{
+  "mailbox": {
+    "name": "small mailbox",
+    "type": "container",
+    "state": {
+      "is_open": false,
+      "is_locked": false
+    },
+    "interactions": [
+      {
+        "verb": "OPEN",
+        "condition": { "is_open": false },
+        "response_original": "Opening the small mailbox reveals a leaflet.",
+        "state_change": { "is_open": true }
+      },
+      {
+        "verb": "CLOSE",
+        "condition": { "is_open": true },
+        "response_original": "The mailbox is now closed.",
+        "state_change": { "is_open": false }
+      },
+      {
+        "verb": "READ",
+        "response_original": "The small mailbox is closed.",
+        "condition": { "is_open": false }
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "It is securely anchored."
+      }
+    ]
+  },
+  "leaflet": {
+    "name": "leaflet",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_read": false
+    },
+    "interactions": [
+      {
+        "verb": "READ",
+        "response_original": "\"WELCOME TO ZORK! ZORK is a game of adventure, danger, and low cunning. In it you will explore some of the most amazing territory ever seen by mortals. No computer should be without one!\"",
+        "state_change": { "is_read": true }
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "DROP",
+        "condition": { "is_taken": true },
+        "response_original": "Dropped.",
+        "state_change": { "is_taken": false }
+      }
+    ]
+  },
+  "white_house": {
+    "name": "white house",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The house is a beautiful colonial house which is painted white. It is clear that the owners must have been extremely wealthy."
+      },
+      {
+        "verb": "ENTER",
+        "response_original": "I can't see how to get in from here."
+      }
+    ]
+  },
+  "front_door": {
+    "name": "door",
+    "type": "scenery",
+    "state": {
+      "is_open": false,
+      "is_boarded": true
+    },
+    "interactions": [
+      {
+        "verb": "OPEN",
+        "response_original": "The door is boarded and you can't remove the boards."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "The door is boarded shut."
+      }
+    ]
+  },
+  "kitchen_window": {
+    "name": "kitchen window",
+    "type": "scenery",
+    "state": {
+      "is_open": false
+    },
+    "interactions": [
+      {
+        "verb": "OPEN",
+        "condition": { "is_open": false },
+        "response_original": "With great effort, you open the window far enough to allow entry.",
+        "state_change": { "is_open": true }
+      },
+      {
+        "verb": "CLOSE",
+        "condition": { "is_open": true },
+        "response_original": "The window closes (more easily than it opened).",
+        "state_change": { "is_open": false }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "The window is slightly ajar, but not enough to allow entry."
+      }
+    ]
+  },
+  "trophy_case": {
+    "name": "trophy case",
+    "type": "container",
+    "state": {
+      "is_open": true,
+      "is_transparent": true
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The trophy case is empty."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "The trophy case is securely fastened to the wall."
+      },
+      {
+        "verb": "PUT",
+        "response_original": "Done."
+      }
+    ]
+  },
+  "rug": {
+    "name": "large oriental rug",
+    "type": "scenery",
+    "state": {
+      "is_moved": false
+    },
+    "interactions": [
+      {
+        "verb": "MOVE",
+        "condition": { "is_moved": false },
+        "response_original": "With a great effort, the rug is moved to one side of the room, revealing the dusty cover of a closed trap door.",
+        "state_change": { "is_moved": true }
+      },
+      {
+        "verb": "MOVE",
+        "condition": { "is_moved": true },
+        "response_original": "Having moved the carpet previously, you find it impossible to move it again."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "The rug is extremely heavy and cannot be carried."
+      },
+      {
+        "verb": "LOOK",
+        "response_original": "Underneath the rug is a closed trap door. As you drop the corner of the rug, the trap door is once again concealed from view.",
+        "condition": { "is_moved": false }
+      }
+    ]
+  },
+  "trap_door": {
+    "name": "trap door",
+    "type": "scenery",
+    "state": {
+      "is_open": false,
+      "is_visible": false
+    },
+    "interactions": [
+      {
+        "verb": "OPEN",
+        "condition": { "is_open": false, "is_visible": true },
+        "response_original": "The door reluctantly opens to reveal a rickety staircase descending into darkness.",
+        "state_change": { "is_open": true }
+      },
+      {
+        "verb": "CLOSE",
+        "condition": { "is_open": true },
+        "response_original": "The door swings shut and closes.",
+        "state_change": { "is_open": false }
+      }
+    ]
+  },
+  "lamp": {
+    "name": "brass lantern",
+    "type": "item",
+    "state": {
+      "is_on": false,
+      "is_taken": false,
+      "battery_life": 200
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "TURN_ON",
+        "condition": { "is_on": false },
+        "response_original": "The brass lantern is now on.",
+        "state_change": { "is_on": true }
+      },
+      {
+        "verb": "TURN_OFF",
+        "condition": { "is_on": true },
+        "response_original": "The brass lantern is now off.",
+        "state_change": { "is_on": false }
+      }
+    ]
+  },
+  "sword": {
+    "name": "elvish sword",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_glowing": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "The sword is a magnificent weapon, with intricate elvish runes carved into the blade."
+      },
+      {
+        "verb": "WAVE",
+        "response_original": "Whoosh!"
+      }
+    ]
+  }
+,
+  "bottle": {
+    "name": "glass bottle",
+    "type": "container",
+    "state": {
+      "is_open": true,
+      "is_taken": false,
+      "contains_water": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "FILL",
+        "response_original": "The bottle is now full of water.",
+        "state_change": { "contains_water": true }
+      },
+      {
+        "verb": "DRINK",
+        "condition": { "contains_water": true },
+        "response_original": "Thank you very much. I was rather thirsty.",
+        "state_change": { "contains_water": false }
+      }
+    ]
+  },
+  "water": {
+    "name": "quantity of water",
+    "type": "item",
+    "state": {
+      "in_bottle": true
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "It's in the bottle. Perhaps you should take that instead."
+      },
+      {
+        "verb": "DRINK",
+        "response_original": "Thank you very much. I was rather thirsty."
+      },
+      {
+        "verb": "POUR",
+        "response_original": "The water spills to the floor and evaporates immediately."
+      }
+    ]
+  },
+  "sandwich": {
+    "name": "lunch",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_eaten": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EAT",
+        "response_original": "Thank you very much. That was delicious.",
+        "state_change": { "is_eaten": true }
+      }
+    ]
+  },
+  "garlic": {
+    "name": "clove of garlic",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EAT",
+        "response_original": "What a strange concept!"
+      }
+    ]
+  },
+  "knife": {
+    "name": "nasty knife",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "ATTACK",
+        "response_original": "The knife misses."
+      }
+    ]
+  },
+  "rope": {
+    "name": "rope",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_tied": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "TIE",
+        "response_original": "The rope is now tied."
+      }
+    ]
+  },
+  "grate": {
+    "name": "grating",
+    "type": "scenery",
+    "state": {
+      "is_open": false,
+      "is_locked": true,
+      "is_visible": false
+    },
+    "interactions": [
+      {
+        "verb": "OPEN",
+        "condition": { "is_locked": false, "is_open": false },
+        "response_original": "The grating opens.",
+        "state_change": { "is_open": true }
+      },
+      {
+        "verb": "OPEN",
+        "condition": { "is_locked": true },
+        "response_original": "The grating is locked."
+      },
+      {
+        "verb": "UNLOCK",
+        "response_original": "The grate is unlocked.",
+        "state_change": { "is_locked": false }
+      },
+      {
+        "verb": "CLOSE",
+        "condition": { "is_open": true },
+        "response_original": "The grating is closed.",
+        "state_change": { "is_open": false }
+      }
+    ]
+  },
+  "leaves": {
+    "name": "pile of leaves",
+    "type": "item",
+    "state": {
+      "is_moved": false
+    },
+    "interactions": [
+      {
+        "verb": "MOVE",
+        "response_original": "In disturbing the pile of leaves, a grating is revealed.",
+        "state_change": { "is_moved": true }
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "In disturbing the pile of leaves, a grating is revealed.",
+        "state_change": { "is_moved": true }
+      },
+      {
+        "verb": "BURN",
+        "response_original": "The leaves burn."
+      },
+      {
+        "verb": "COUNT",
+        "response_original": "There are 69,105 leaves here."
+      }
+    ]
+  },
+  "troll": {
+    "name": "troll",
+    "type": "scenery",
+    "state": {
+      "is_alive": true,
+      "has_axe": true,
+      "is_blocking": true
+    },
+    "interactions": [
+      {
+        "verb": "ATTACK",
+        "response_original": "The troll swings his axe, but misses."
+      },
+      {
+        "verb": "GIVE",
+        "response_original": "The troll, who is not overly proud, graciously accepts the gift and not having the most discriminating tastes, gleefully eats it."
+      },
+      {
+        "verb": "KILL",
+        "response_original": "The troll is defeated!"
+      }
+    ]
+  },
+  "axe": {
+    "name": "bloody axe",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "held_by_troll": true
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "condition": { "held_by_troll": true },
+        "response_original": "The troll swings it out of your reach."
+      },
+      {
+        "verb": "TAKE",
+        "condition": { "held_by_troll": false },
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "bell": {
+    "name": "brass bell",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_hot": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "RING",
+        "response_original": "Ding, dong."
+      }
+    ]
+  },
+  "candles": {
+    "name": "pair of candles",
+    "type": "item",
+    "state": {
+      "is_lit": true,
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXTINGUISH",
+        "condition": { "is_lit": true },
+        "response_original": "The candles are extinguished.",
+        "state_change": { "is_lit": false }
+      }
+    ]
+  },
+  "book": {
+    "name": "black book",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_open": true
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "READ",
+        "response_original": "Commandment #12592 Oh ye who go about saying unto each: 'Hello sailor': Dost thou know the magnitude of thy sin before the gods? Yea, verily, thou shalt be ground between two stones. Shall the angry gods cast thy body into the whirlpool? Surely, thy eye shall be put out with a sharp stick! Even unto the ends of the earth shalt thou wander and Unto the land of the dead shalt thou be sent at last. Surely thou shalt repent of thy cunning."
+      }
+    ]
+  },
+  "coffin": {
+    "name": "gold coffin",
+    "type": "container",
+    "state": {
+      "is_open": false,
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "OPEN",
+        "response_original": "The gold coffin opens.",
+        "state_change": { "is_open": true }
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "The solid-gold coffin used for the burial of Ramses II is here."
+      }
+    ]
+  },
+  "sceptre": {
+    "name": "sceptre",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "A sceptre, possibly that of ancient Egypt itself, is in the coffin. The sceptre is ornamented with colored enamel, and tapers to a sharp point."
+      }
+    ]
+  }
+,
+  "painting": {
+    "name": "painting",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "A painting by a neglected genius is here."
+      }
+    ]
+  },
+  "nest": {
+    "name": "bird's nest",
+    "type": "container",
+    "state": {
+      "is_taken": false,
+      "is_open": true
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "In the bird's nest is a large egg encrusted with precious jewels."
+      }
+    ]
+  },
+  "egg": {
+    "name": "jewel-encrusted egg",
+    "type": "container",
+    "state": {
+      "is_taken": false,
+      "is_open": false,
+      "is_broken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "OPEN",
+        "condition": { "is_open": false },
+        "response_original": "The egg opens, revealing a golden clockwork canary.",
+        "state_change": { "is_open": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "The egg is covered with fine gold inlay, and ornamented in lapis lazuli and mother-of-pearl. Unlike most eggs, this one is hinged and closed with a delicate looking clasp. The egg appears extremely fragile."
+      }
+    ]
+  },
+  "canary": {
+    "name": "golden clockwork canary",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_wound": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "WIND",
+        "response_original": "The canary chirps merrily.",
+        "state_change": { "is_wound": true }
+      }
+    ]
+  },
+  "trident": {
+    "name": "crystal trident",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "On the shore lies Poseidon's own crystal trident."
+      }
+    ]
+  },
+  "chalice": {
+    "name": "chalice",
+    "type": "container",
+    "state": {
+      "is_taken": false,
+      "is_open": true
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "There is a silver chalice, intricately engraved, here."
+      }
+    ]
+  },
+  "torch": {
+    "name": "torch",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_lit": true
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "The torch is burning."
+      }
+    ]
+  },
+  "diamond": {
+    "name": "huge diamond",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "There is an enormous diamond (perfectly cut) here."
+      }
+    ]
+  },
+  "emerald": {
+    "name": "large emerald",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "jade": {
+    "name": "jade figurine",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "There is an exquisite jade figurine here."
+      }
+    ]
+  },
+  "skull": {
+    "name": "crystal skull",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "Lying in one corner of the room is a beautifully carved crystal skull. It appears to be grinning at you rather nastily."
+      }
+    ]
+  },
+  "scarab": {
+    "name": "jeweled scarab",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_visible": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "coins": {
+    "name": "leather bag of coins",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "An old leather bag, bulging with coins, is here."
+      }
+    ]
+  },
+  "bracelet": {
+    "name": "sapphire-encrusted bracelet",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "bar": {
+    "name": "platinum bar",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "On the ground is a large platinum bar."
+      }
+    ]
+  },
+  "pot_of_gold": {
+    "name": "pot of gold",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_visible": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "At the end of the rainbow is a pot of gold."
+      }
+    ]
+  },
+  "trunk": {
+    "name": "trunk of jewels",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_visible": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "Lying half buried in the mud is an old trunk, bulging with jewels."
+      }
+    ]
+  },
+  "cyclops": {
+    "name": "cyclops",
+    "type": "scenery",
+    "state": {
+      "is_alive": true,
+      "is_hungry": true,
+      "is_blocking": true
+    },
+    "interactions": [
+      {
+        "verb": "GIVE",
+        "response_original": "The cyclops says 'Thank you' and leaves through the north passage."
+      },
+      {
+        "verb": "ATTACK",
+        "response_original": "The cyclops is too strong for you."
+      }
+    ]
+  },
+  "thief": {
+    "name": "thief",
+    "type": "scenery",
+    "state": {
+      "is_alive": true,
+      "has_treasure": false
+    },
+    "interactions": [
+      {
+        "verb": "ATTACK",
+        "response_original": "The thief parries your attack."
+      },
+      {
+        "verb": "GIVE",
+        "response_original": "The thief is not interested."
+      }
+    ]
+  },
+  "bat": {
+    "name": "bat",
+    "type": "scenery",
+    "state": {
+      "is_present": true
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "You can't reach him; he's on the ceiling."
+      },
+      {
+        "verb": "ATTACK",
+        "response_original": "The bat grabs you by the scruff of your neck and lifts you away...."
+      }
+    ]
+  },
+  "inflatable_boat": {
+    "name": "pile of plastic",
+    "type": "item",
+    "state": {
+      "is_inflated": false,
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "INFLATE",
+        "condition": { "is_inflated": false },
+        "response_original": "The boat inflates and appears seaworthy.",
+        "state_change": { "is_inflated": true }
+      }
+    ]
+  },
+  "pump": {
+    "name": "hand-held air pump",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "screwdriver": {
+    "name": "screwdriver",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "wrench": {
+    "name": "wrench",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "shovel": {
+    "name": "shovel",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "DIG",
+        "response_original": "You dig in the sand."
+      }
+    ]
+  },
+  "keys": {
+    "name": "skeleton key",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "match": {
+    "name": "matchbook",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_lit": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "LIGHT",
+        "response_original": "The match flares up briefly.",
+        "state_change": { "is_lit": true }
+      },
+      {
+        "verb": "READ",
+        "response_original": "YOU too can make BIG MONEY in the exciting field of PAPER SHUFFLING!"
+      }
+    ]
+  },
+  "guidebook": {
+    "name": "tour guidebook",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "READ",
+        "response_original": "Flood Control Dam #3 FCD#3 was constructed in year 783 of the Great Underground Empire to harness the mighty Frigid River..."
+      }
+    ]
+  },
+  "dam": {
+    "name": "dam",
+    "type": "scenery",
+    "state": {
+      "is_open": false
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "You are standing on the top of the Flood Control Dam #3."
+      }
+    ]
+  }
+}
+,
+  "sandwich_bag": {
+    "name": "brown sack",
+    "type": "container",
+    "state": {
+      "is_open": true,
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "On the table is an elongated brown sack, smelling of hot peppers."
+      }
+    ]
+  },
+  "altar": {
+    "name": "altar",
+    "type": "container",
+    "state": {
+      "is_open": true
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The altar is made of solid stone."
+      }
+    ]
+  },
+  "prayer": {
+    "name": "prayer",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "READ",
+        "response_original": "The prayer is inscribed in an ancient script, rarely used today. It seems to be a philippic against small insects, absent-mindedness, and the picking up and dropping of small objects. The final verse consigns trespassers to the land of the dead. All evidence indicates that the beliefs of the ancient Zorkers were obscure."
+      }
+    ]
+  },
+  "engravings": {
+    "name": "wall with engravings",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "READ",
+        "response_original": "The engravings were incised in the living rock of the cave wall by an unknown hand. They depict, in symbolic form, the beliefs of the ancient Zorkers. Skillfully interwoven with the bas reliefs are excerpts illustrating the major religious tenets of that time. Unfortunately, a later age seems to have considered them blasphemous and just as skillfully excised them."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "There are old engravings on the walls here."
+      }
+    ]
+  },
+  "mirror_1": {
+    "name": "mirror",
+    "type": "scenery",
+    "state": {
+      "is_broken": false
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "You see yourself in the mirror."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "You can't take that."
+      }
+    ]
+  },
+  "mirror_2": {
+    "name": "mirror",
+    "type": "scenery",
+    "state": {
+      "is_broken": false
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "You see yourself in the mirror."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "You can't take that."
+      }
+    ]
+  },
+  "rainbow": {
+    "name": "rainbow",
+    "type": "scenery",
+    "state": {
+      "is_visible": false
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The rainbow is a beautiful sight."
+      },
+      {
+        "verb": "CLIMB",
+        "response_original": "You climb onto the rainbow."
+      }
+    ]
+  },
+  "river": {
+    "name": "river",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The river is flowing rapidly."
+      },
+      {
+        "verb": "SWIM",
+        "response_original": "You would drown."
+      }
+    ]
+  },
+  "buoy": {
+    "name": "red buoy",
+    "type": "container",
+    "state": {
+      "is_taken": false,
+      "is_open": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "OPEN",
+        "response_original": "The buoy opens, revealing a large emerald.",
+        "state_change": { "is_open": true }
+      }
+    ]
+  }
+,
+  "rusty_knife": {
+    "name": "rusty knife",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "bones": {
+    "name": "skeleton",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "A ghost appears in the room and is appalled at your desecration of the remains of a fellow adventurer. He casts a curse on your valuables and banishes them to the Land of the Living Dead. The ghost leaves, muttering obscenities."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "The skeleton is probably the remains of a luckless adventurer."
+      }
+    ]
+  },
+  "burned_out_lantern": {
+    "name": "burned-out lantern",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "map": {
+    "name": "ancient map",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_visible": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "READ",
+        "response_original": "The map shows a forest with three clearings. The largest clearing contains a house. Three paths leave the large clearing. One of these paths, leading southwest, is marked 'To Stone Barrow'."
+      }
+    ]
+  },
+  "owners_manual": {
+    "name": "ZORK owner's manual",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "READ",
+        "response_original": "Congratulations! You are the privileged owner of ZORK I: The Great Underground Empire, a self-contained and self-maintaining universe. If used and maintained in accordance with normal operating practices for small universes, ZORK will provide many months of trouble-free operation."
+      }
+    ]
+  },
+  "boat_label": {
+    "name": "tan label",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "READ",
+        "response_original": "!!!!FROBOZZ MAGIC BOAT COMPANY!!!! Hello, Sailor! Instructions for use: To get into a body of water, say 'Launch'. To get to shore, say 'Land' or the direction in which you want to maneuver the boat."
+      }
+    ]
+  },
+  "pedestal": {
+    "name": "pedestal",
+    "type": "container",
+    "state": {
+      "is_open": true
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The pedestal is made of white marble."
+      }
+    ]
+  },
+  "tube": {
+    "name": "tube",
+    "type": "container",
+    "state": {
+      "is_taken": false,
+      "is_open": true
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "READ",
+        "response_original": "---> Frobozz Magic Gunk Company <--- All-Purpose Gunk"
+      }
+    ]
+  },
+  "putty": {
+    "name": "viscous material",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "coal": {
+    "name": "small pile of coal",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "timbers": {
+    "name": "broken timber",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "machine": {
+    "name": "machine",
+    "type": "container",
+    "state": {
+      "is_open": true
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "This is a large room full of assorted heavy machinery, whirring noisily."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "You can't take that."
+      }
+    ]
+  },
+  "machine_switch": {
+    "name": "switch",
+    "type": "scenery",
+    "state": {
+      "is_on": false
+    },
+    "interactions": [
+      {
+        "verb": "TURN",
+        "response_original": "The machine starts up.",
+        "state_change": { "is_on": true }
+      }
+    ]
+  },
+  "tool_chest": {
+    "name": "group of tool chests",
+    "type": "container",
+    "state": {
+      "is_open": false
+    },
+    "interactions": [
+      {
+        "verb": "OPEN",
+        "response_original": "The tool chests are opened.",
+        "state_change": { "is_open": true }
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "You can't take that."
+      }
+    ]
+  },
+  "yellow_button": {
+    "name": "yellow button",
+    "type": "scenery",
+    "state": {
+      "is_pressed": false
+    },
+    "interactions": [
+      {
+        "verb": "PUSH",
+        "response_original": "Click.",
+        "state_change": { "is_pressed": true }
+      }
+    ]
+  },
+  "brown_button": {
+    "name": "brown button",
+    "type": "scenery",
+    "state": {
+      "is_pressed": false
+    },
+    "interactions": [
+      {
+        "verb": "PUSH",
+        "response_original": "Click.",
+        "state_change": { "is_pressed": true }
+      }
+    ]
+  },
+  "red_button": {
+    "name": "red button",
+    "type": "scenery",
+    "state": {
+      "is_pressed": false
+    },
+    "interactions": [
+      {
+        "verb": "PUSH",
+        "response_original": "Click.",
+        "state_change": { "is_pressed": true }
+      }
+    ]
+  },
+  "blue_button": {
+    "name": "blue button",
+    "type": "scenery",
+    "state": {
+      "is_pressed": false
+    },
+    "interactions": [
+      {
+        "verb": "PUSH",
+        "response_original": "Click.",
+        "state_change": { "is_pressed": true }
+      }
+    ]
+  },
+  "bolt": {
+    "name": "bolt",
+    "type": "scenery",
+    "state": {
+      "is_turned": false
+    },
+    "interactions": [
+      {
+        "verb": "TURN",
+        "response_original": "The bolt turns.",
+        "state_change": { "is_turned": true }
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "The bolt is stuck."
+      }
+    ]
+  },
+  "bubble": {
+    "name": "green bubble",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "You can't take that."
+      }
+    ]
+  },
+  "leak": {
+    "name": "leak",
+    "type": "scenery",
+    "state": {
+      "is_visible": false
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "There is a small leak in the pipe."
+      }
+    ]
+  },
+  "raised_basket": {
+    "name": "basket",
+    "type": "container",
+    "state": {
+      "is_raised": true,
+      "is_open": true
+    },
+    "interactions": [
+      {
+        "verb": "LOWER",
+        "response_original": "The basket is lowered to the bottom of the shaft.",
+        "state_change": { "is_raised": false }
+      },
+      {
+        "verb": "ENTER",
+        "response_original": "You get into the basket."
+      }
+    ]
+  },
+  "lowered_basket": {
+    "name": "basket",
+    "type": "container",
+    "state": {
+      "is_raised": false,
+      "is_open": true
+    },
+    "interactions": [
+      {
+        "verb": "RAISE",
+        "response_original": "The basket is raised to the top of the shaft.",
+        "state_change": { "is_raised": true }
+      }
+    ]
+  },
+  "sand": {
+    "name": "sand",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "DIG",
+        "response_original": "You dig in the sand."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "The sand runs through your fingers."
+      }
+    ]
+  },
+  "railing": {
+    "name": "wooden railing",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The railing circles the dome."
+      }
+    ]
+  },
+  "ladder": {
+    "name": "wooden ladder",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "CLIMB",
+        "response_original": "You climb the ladder."
+      }
+    ]
+  },
+  "slide": {
+    "name": "chute",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "CLIMB",
+        "response_original": "You can't climb that."
+      },
+      {
+        "verb": "ENTER",
+        "response_original": "You slide down the chute."
+      }
+    ]
+  },
+  "chimney": {
+    "name": "chimney",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "CLIMB",
+        "response_original": "You climb up the chimney."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "The chimney leads upward, and looks climbable."
+      }
+    ]
+  },
+  "crack": {
+    "name": "crack",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "ENTER",
+        "response_original": "You can't fit through the crack."
+      }
+    ]
+  },
+  "boards": {
+    "name": "boards",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "The boards are securely fastened."
+      }
+    ]
+  },
+  "tree": {
+    "name": "tree",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "CLIMB",
+        "response_original": "You climb up the tree."
+      }
+    ]
+  },
+  "forest": {
+    "name": "forest",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The forest is all around you."
+      }
+    ]
+  },
+  "songbird": {
+    "name": "songbird",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "The songbird is not here but is probably nearby."
+      },
+      {
+        "verb": "LISTEN",
+        "response_original": "You can't hear the songbird now."
+      }
+    ]
+  },
+  "ghosts": {
+    "name": "number of ghosts",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "ATTACK",
+        "response_original": "How can you attack a spirit with material objects?"
+      },
+      {
+        "verb": "EXORCISE",
+        "response_original": "Only the ceremony itself has any effect."
+      }
+    ]
+  },
+  "bodies": {
+    "name": "pile of bodies",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The bodies are mangled beyond recognition."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "You don't want to touch those."
+      }
+    ]
+  },
+  "stiletto": {
+    "name": "stiletto",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "held_by_thief": true
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "condition": { "held_by_thief": true },
+        "response_original": "The thief swings it out of your reach."
+      }
+    ]
+  },
+  "large_bag": {
+    "name": "large bag",
+    "type": "container",
+    "state": {
+      "is_open": false,
+      "held_by_thief": true
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "The thief won't let you have it."
+      }
+    ]
+  },
+  "bauble": {
+    "name": "beautiful brass bauble",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "gunk": {
+    "name": "small piece of vitreous slag",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "punctured_boat": {
+    "name": "punctured boat",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "broken_egg": {
+    "name": "broken jewel-encrusted egg",
+    "type": "container",
+    "state": {
+      "is_open": true,
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "broken_canary": {
+    "name": "broken clockwork canary",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "hot_bell": {
+    "name": "red hot brass bell",
+    "type": "item",
+    "state": {
+      "is_hot": true
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "The bell is very hot and cannot be taken."
+      },
+      {
+        "verb": "RING",
+        "response_original": "The bell is too hot to reach."
+      }
+    ]
+  },
+  "broken_lamp": {
+    "name": "broken lantern",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      }
+    ]
+  },
+  "control_panel": {
+    "name": "control panel",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The control panel has various buttons and switches."
+      }
+    ]
+  },
+  "wooden_door": {
+    "name": "wooden door",
+    "type": "scenery",
+    "state": {
+      "is_open": false
+    },
+    "interactions": [
+      {
+        "verb": "READ",
+        "response_original": "The engravings translate to 'This space intentionally left blank.'"
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "The door has strange gothic lettering."
+      }
+    ]
+  },
+  "barrow_door": {
+    "name": "stone door",
+    "type": "scenery",
+    "state": {
+      "is_open": true
+    },
+    "interactions": [
+      {
+        "verb": "OPEN",
+        "response_original": "The door is too heavy."
+      },
+      {
+        "verb": "CLOSE",
+        "response_original": "The door is too heavy."
+      }
+    ]
+  },
+  "barrow": {
+    "name": "stone barrow",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "ENTER",
+        "response_original": "You enter the barrow."
+      }
+    ]
+  },
+  "boarded_window": {
+    "name": "boarded window",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "OPEN",
+        "response_original": "The windows are boarded and can't be opened."
+      },
+      {
+        "verb": "BREAK",
+        "response_original": "You can't break the windows open."
+      }
+    ]
+  },
+  "climbable_cliff": {
+    "name": "cliff",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "CLIMB",
+        "response_original": "You climb the cliff."
+      }
+    ]
+  },
+  "white_cliff": {
+    "name": "white cliffs",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The white cliffs tower above you."
+      }
+    ]
+  },
+  "wall": {
+    "name": "surrounding wall",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The walls surround you."
+      }
+    ]
+  },
+  "granite_wall": {
+    "name": "granite wall",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The wall is solid granite."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "It's solid granite."
+      }
+    ]
+  },
+  "mountain_range": {
+    "name": "mountain range",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "CLIMB",
+        "response_original": "Don't you believe me? The mountains are impassable!"
+      }
+    ]
+  },
+  "teeth": {
+    "name": "set of teeth",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "BRUSH",
+        "response_original": "Dental hygiene is highly recommended, but I'm not sure what you want to brush them with."
+      }
+    ]
+  },
+  "kitchen_table": {
+    "name": "kitchen table",
+    "type": "container",
+    "state": {
+      "is_open": true
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "A table seems to have been used recently for the preparation of food."
+      }
+    ]
+  },
+  "attic_table": {
+    "name": "table",
+    "type": "container",
+    "state": {
+      "is_open": true
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "It's a plain table."
+      }
+    ]
+  },
+  "advertisement": {
+    "name": "advertisement",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": { "is_taken": true }
+      },
+      {
+        "verb": "READ",
+        "response_original": "\"WELCOME TO ZORK! ZORK is a game of adventure, danger, and low cunning. In it you will explore some of the most amazing territory ever seen by mortals. No computer should be without one!\""
+      }
+    ]
+  },
+  "global_water": {
+    "name": "water",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "DRINK",
+        "response_original": "Thank you very much. I was rather thirsty."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "The water slips through your fingers."
+      }
+    ]
+  }
+}
