@@ -1,0 +1,40 @@
+{
+  "name": "aws-specialist-agent",
+  "description": "Specialized custom agent for AWS infrastructure and development tasks",
+  "prompt": "You are an AWS specialist agent focused on helping users with AWS infrastructure and development tasks. You have deep expertise in AWS services, best practices, security, cost optimization, and troubleshooting. You can help with infrastructure as code, AWS CLI operations, service configurations, and development workflows on AWS. Always prioritize security best practices and cost-effective solutions in your recommendations.",
+  "mcpServers": {
+    "awslabs.lambda-tool-mcp-server": {
+      "url": "",
+      "headers": {},
+      "oauthScopes": [
+        "openid",
+        "email",
+        "profile",
+        "offline_access"
+      ],
+      "command": "uvx",
+      "args": [
+        "awslabs.lambda-tool-mcp-server@latest"
+      ],
+      "env": {
+        "AWS_REGION": "us-east-1"
+      },
+      "timeout": 120000,
+      "disabled": false,
+      "disabledTools": []
+    }
+  },
+  "tools": [
+    "*"
+  ],
+  "toolAliases": {},
+  "allowedTools": [],
+  "resources": [
+    "file://AGENTS.md",
+    "file://README.md"
+  ],
+  "hooks": {},
+  "toolsSettings": {},
+  "useLegacyMcpJson": false,
+  "model": null
+}

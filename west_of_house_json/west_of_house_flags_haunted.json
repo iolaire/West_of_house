@@ -25,5 +25,9 @@
   "thief_engrossed": false,
   "score": 0,
   "moves": 0,
-  "lamp_battery": 200
+  "lamp_battery": 200,
+  "sanity": 100,
+  "cursed": false,
+  "blood_moon_active": true,
+  "souls_collected": 0
 }
