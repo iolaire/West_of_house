@@ -24,13 +24,17 @@
   "devDependencies": {
     "@aws-amplify/backend": "^1.18.0",
     "@aws-amplify/backend-cli": "^1.8.0",
-    "aws-cdk-lib": "^2.216.0",
+    "aws-cdk-lib": "^2.170.0",
     "constructs": "^10.4.3",
-    "esbuild": "^0.27.0",
+    "esbuild": "^0.24.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.7.2"
   },
   "dependencies": {
     "aws-amplify": "^6.15.8"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
   }
 }

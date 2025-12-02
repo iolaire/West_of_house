@@ -3,6 +3,10 @@ backend:
   phases:
     preBuild:
       commands:
+        - nvm install 20
+        - nvm use 20
+        - node --version
+        - npm --version
         - npm install
         - cd amplify && npm install && cd ..
     build:
