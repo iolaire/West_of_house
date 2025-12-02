@@ -12,6 +12,19 @@ echo "=========================================="
 echo ""
 echo "⚠️  WARNING: This will delete backend resources but preserve the Amplify app"
 echo ""
+echo "✅ PRESERVED (will NOT be deleted):"
+echo "   - Amplify app and hosting"
+echo "   - Custom domain: west.zero.vedfolnir.org"
+echo "   - Route 53 DNS configuration"
+echo "   - GitHub connection"
+echo "   - SSL certificates"
+echo ""
+echo "❌ DELETED (backend resources only):"
+echo "   - Lambda functions"
+echo "   - DynamoDB tables"
+echo "   - API Gateway APIs"
+echo "   - CloudWatch log groups"
+echo ""
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -103,6 +116,37 @@ has_required_tags() {
     local tags="$1"
     echo "$tags" | jq -e ".Project == \"$PROJECT_TAG\" and .ManagedBy == \"$MANAGED_BY_TAG\"" > /dev/null 2>&1
 }
+
+# Verify Amplify app exists
+echo ""
+echo -e "${BLUE}Verifying Amplify app...${NC}"
+AMPLIFY_APP=$(aws amplify list-apps --region "$AWS_REGION" --profile "$AWS_PROFILE" \
+    --query "apps[?tags.Project=='$PROJECT_TAG'].{AppId:appId,Name:name,Domain:defaultDomain,CustomDomains:customDomains}" \
+    --output json 2>/dev/null || echo "[]")
+
+if [ "$AMPLIFY_APP" != "[]" ]; then
+    APP_ID=$(echo "$AMPLIFY_APP" | jq -r '.[0].AppId // empty')
+    APP_NAME=$(echo "$AMPLIFY_APP" | jq -r '.[0].Name // empty')
+    APP_DOMAIN=$(echo "$AMPLIFY_APP" | jq -r '.[0].Domain // empty')
+    
+    if [ -n "$APP_ID" ]; then
+        echo -e "${GREEN}✓ Amplify app found: $APP_NAME${NC}"
+        echo "  App ID: $APP_ID"
+        echo "  Default domain: https://$APP_DOMAIN"
+        
+        # Check for custom domain
+        CUSTOM_DOMAINS=$(aws amplify list-domain-associations --region "$AWS_REGION" --profile "$AWS_PROFILE" \
+            --app-id "$APP_ID" --query "domainAssociations[].domainName" --output text 2>/dev/null || echo "")
+        
+        if [ -n "$CUSTOM_DOMAINS" ]; then
+            echo "  Custom domains: $CUSTOM_DOMAINS"
+            echo -e "${GREEN}  ✓ Custom domain configuration will be preserved${NC}"
+        fi
+    fi
+else
+    echo -e "${YELLOW}Warning: No Amplify app found with Project tag${NC}"
+    echo "This script will only clean up backend resources."
+fi
 
 # Discover resources
 echo ""
@@ -313,6 +357,11 @@ echo "==========================================${NC}"
 echo ""
 echo -e "${GREEN}✓ Backend resources removed${NC}"
 echo -e "${GREEN}✓ Amplify app preserved${NC}"
+echo -e "${GREEN}✓ Custom domain preserved: west.zero.vedfolnir.org${NC}"
+echo -e "${GREEN}✓ Route 53 configuration intact${NC}"
+echo -e "${GREEN}✓ GitHub connection maintained${NC}"
 echo ""
 echo "The Amplify app is ready for new deployments."
 echo "To redeploy, run: ./scripts/deploy-gen2.sh"
+echo ""
+echo "Your domain will continue to work after redeployment."

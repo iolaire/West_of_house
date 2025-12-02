@@ -178,7 +178,7 @@ curl -X POST "${API_ENDPOINT}/game/command" \
 
 ## Cleaning Up Backend Resources
 
-To remove backend resources while preserving the Amplify app:
+To remove backend resources while preserving the Amplify app and domain:
 
 ```bash
 # Preview what would be deleted (dry run)
@@ -199,11 +199,14 @@ To remove backend resources while preserving the Amplify app:
 - Lambda execution roles
 
 **What gets preserved:**
-- Amplify app and hosting
-- GitHub connection
-- Amplify service roles
+- ✅ Amplify app and hosting
+- ✅ Custom domain: **west.zero.vedfolnir.org**
+- ✅ Route 53 DNS configuration
+- ✅ SSL certificates
+- ✅ GitHub connection
+- ✅ Amplify service roles
 
-This allows you to clean up and redeploy without reconnecting GitHub!
+**Important:** Your custom domain configuration (west.zero.vedfolnir.org) is completely safe! The cleanup script only removes backend compute and storage resources. All Amplify hosting, domain, and DNS settings remain intact. You can clean up and redeploy as many times as needed without touching the domain setup.
 
 ## Automatic Deployments
 

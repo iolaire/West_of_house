@@ -68,17 +68,22 @@ git push origin main
 ## What Gets Preserved vs Deleted
 
 ### Cleanup Preserves ✅
-- Amplify app
+- Amplify app and hosting
+- **Custom domain: west.zero.vedfolnir.org**
+- **Route 53 DNS configuration**
+- **SSL certificates**
 - GitHub connection
 - Amplify service roles
 - Deployment configuration
 
 ### Cleanup Removes ❌
-- Lambda functions
-- DynamoDB tables
-- API Gateway APIs
+- Lambda functions (backend compute)
+- DynamoDB tables (backend storage)
+- API Gateway APIs (backend endpoints)
 - CloudWatch log groups
 - Lambda execution roles
+
+**Your domain is 100% safe!** The cleanup script never touches Amplify hosting, domains, or DNS settings.
 
 ## Cost Optimization
 

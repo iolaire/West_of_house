@@ -178,7 +178,15 @@ if [ "$AMPLIFY_APP" != "[]" ]; then
     if [ -n "$APP_ID" ]; then
         echo -e "${GREEN}✓ Amplify App: $APP_NAME${NC}"
         echo "  App ID: $APP_ID"
-        echo "  Domain: https://$APP_DOMAIN"
+        echo "  Default domain: https://$APP_DOMAIN"
+        
+        # Check for custom domain
+        CUSTOM_DOMAINS=$(aws amplify list-domain-associations --region "$AWS_REGION" --profile "$AWS_PROFILE" \
+            --app-id "$APP_ID" --query "domainAssociations[].domainName" --output text 2>/dev/null || echo "")
+        
+        if [ -n "$CUSTOM_DOMAINS" ]; then
+            echo -e "${GREEN}  ✓ Custom domain: $CUSTOM_DOMAINS${NC}"
+        fi
     fi
 fi
 
