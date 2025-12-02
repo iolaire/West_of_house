@@ -271,15 +271,17 @@ This document defines the MVP requirements for the backend API system of "West o
 
 ### Requirement 22
 
-**User Story:** As a developer, I want the backend deployed on AWS Lambda with Amplify, so that costs are minimized and deployment is simple.
+**User Story:** As a developer, I want the backend deployed on AWS Lambda with Amplify Gen 2, so that costs are minimized and deployment is simple.
 
 #### Acceptance Criteria
 
 1. WHEN the backend is deployed THEN the Game Engine SHALL run as AWS Lambda functions
 2. WHEN Lambda functions are invoked THEN the Game Engine SHALL respond within Lambda timeout limits (30 seconds)
 3. WHEN session data is stored THEN the Game Engine SHALL use DynamoDB with on-demand billing
-4. WHEN the application is deployed THEN the Game Engine SHALL use Amplify CLI for deployment automation
+4. WHEN the application is deployed THEN the Game Engine SHALL use Amplify Gen 2 with TypeScript-based infrastructure definitions
 5. WHEN estimating costs THEN the Game Engine SHALL target under $5/month for typical usage (1000 games/month)
+6. WHEN infrastructure is defined THEN the Game Engine SHALL use TypeScript code-first approach with defineFunction and defineData
+7. WHEN environment variables are needed THEN the Game Engine SHALL automatically resolve them from resource outputs without manual configuration
 
 ### Requirement 23
 

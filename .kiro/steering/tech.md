@@ -7,7 +7,8 @@
 - **Architecture**: ARM64 (Graviton2 processors for better price-performance)
 - **Database**: AWS DynamoDB (on-demand billing, session storage)
 - **API**: AWS Amplify API Gateway (REST endpoints)
-- **Deployment**: AWS CLI + Amplify CLI with ZIP file deployment
+- **Deployment**: AWS Amplify Gen 2 (TypeScript-based, code-first infrastructure)
+- **Infrastructure as Code**: TypeScript with AWS CDK (via Amplify Gen 2)
 - **Security**: IAM roles with least-privilege policies (no hardcoded credentials)
 
 ## Frontend
@@ -21,6 +22,13 @@
 - **Game Data**: JSON files (rooms, objects, flags)
 - **Naming Convention**: Haunted theme variants (e.g., `description_spooky`, `response_spooky`)
 - **Data Files**: Bundled with Lambda deployment package
+
+## Development Environment
+
+- **Virtual Environment**: Python venv for dependency isolation
+- **Location**: `venv/` directory (gitignored)
+- **Python Version**: 3.12
+- **Activation**: `source venv/bin/activate` (macOS/Linux) or `venv\Scripts\activate` (Windows)
 
 ## Testing
 
@@ -64,9 +72,59 @@
 - **DynamoDB**: TTL-based session cleanup, on-demand billing
 - **Estimated Cost**: ~$0.50/month for 1000 games (with ARM64 savings)
 
+## Amplify Gen 2 Requirements
+
+**Why Gen 2:**
+- Resolves Gen 1 CLI environment variable resolution issues
+- TypeScript-based infrastructure (code-first, type-safe)
+- Better DynamoDB integration with automatic environment variables
+- Modern developer experience with sandbox environments
+- Future-proof approach (recommended for all new projects)
+
+**Gen 2 Project Structure:**
+```
+amplify/
+├── backend.ts              # Backend definition entry point
+├── data/
+│   └── resource.ts         # DynamoDB table definitions
+├── functions/
+│   └── game-handler/
+│       ├── resource.ts     # Lambda function definition (TypeScript)
+│       ├── handler.py      # Python Lambda handler
+│       └── requirements.txt
+└── storage/
+    └── resource.ts         # Additional storage if needed
+```
+
+**Gen 2 Key Concepts:**
+- **Code-First**: Define infrastructure in TypeScript, not CLI commands
+- **defineFunction**: TypeScript function to define Lambda functions
+- **defineData**: TypeScript function to define DynamoDB tables
+- **Sandbox**: Per-developer cloud environments for testing
+- **Custom Functions**: Support for Python, Go, Java, and other runtimes
+
 ## Common Commands
 
-### Amplify Deployment
+### Amplify Gen 2 Deployment
+
+```bash
+# Create new Gen 2 project
+npm create amplify@latest
+
+# Install dependencies
+npm install
+
+# Start local sandbox (per-developer cloud environment)
+npx ampx sandbox
+
+# Deploy to cloud
+npx ampx pipeline-deploy --branch main --app-id <app-id>
+
+# Or deploy via Git push (recommended)
+git push origin main
+```
+
+### Amplify Gen 1 (Legacy - for reference only)
 
 ```bash
 # Initialize Amplify project
@@ -78,11 +136,8 @@ amplify add api
 # Add DynamoDB storage
 amplify add storage
 
-# Deploy to AWS (ensure tags are configured first)
+# Deploy to AWS
 amplify push
-
-# Add hosting
-amplify add hosting
 ```
 
 ### AWS Resource Management
@@ -126,14 +181,23 @@ pytest --cov=src tests/
 ### Local Development
 
 ```bash
+# Create virtual environment (first time only)
+python3.12 -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate
+
 # Install dependencies
 pip install -r requirements.txt
 
 # Run tests
 pytest tests/
 
-# Estimate AWS costs
-python scripts/estimate_costs.py
+# Run with coverage
+pytest --cov=src tests/
+
+# Deactivate when done
+deactivate
 ```
 
 ## Key Libraries

@@ -86,8 +86,34 @@ tests/
 - `tech.md`: Technology stack and commands
 - `structure.md`: This file
 
-## AWS Amplify (Generated)
+## AWS Amplify Gen 2 (TypeScript-based)
 
+```
+amplify/
+├── backend.ts                    # Backend definition entry point
+├── data/
+│   └── resource.ts               # DynamoDB table definitions
+├── functions/
+│   └── game-handler/
+│       ├── resource.ts           # Lambda function definition (TypeScript)
+│       ├── handler.py            # Python Lambda handler
+│       ├── requirements.txt      # Python dependencies
+│       └── data/                 # Game data bundled with function
+│           ├── rooms_haunted.json
+│           ├── objects_haunted.json
+│           └── flags_haunted.json
+├── auth/                         # Auth configuration (if needed)
+│   └── resource.ts
+└── package.json                  # Node.js dependencies for infrastructure
+```
+
+**Gen 2 Key Files:**
+- `backend.ts`: Main entry point that imports and configures all resources
+- `data/resource.ts`: DynamoDB table schema and configuration
+- `functions/*/resource.ts`: Lambda function definitions with CDK
+- `functions/*/handler.py`: Actual Python Lambda code
+
+**Gen 1 (Legacy - for reference):**
 ```
 amplify/
 ├── backend/

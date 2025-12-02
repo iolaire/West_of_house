@@ -145,6 +145,26 @@ Complete deployment script that orchestrates the entire process.
 ./scripts/deploy.sh --skip-bundle
 ```
 
+## Verifying Resource Tags
+
+After deployment, verify that all AWS resources have the required tags:
+
+```bash
+./scripts/verify-resource-tags.sh
+```
+
+**Required Tags:**
+- **Project**: `west-of-haunted-house`
+- **ManagedBy**: `vedfolnir`
+- **Environment**: `dev` (or your environment name)
+
+These tags enable:
+- Cost tracking and allocation
+- Resource discovery and management
+- Automated cleanup scripts
+
+See [AWS_RESOURCE_TAGGING.md](documents/AWS_RESOURCE_TAGGING.md) for details.
+
 ## Monitoring After Deployment
 
 ### View Lambda Logs

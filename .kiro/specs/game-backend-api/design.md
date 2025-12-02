@@ -961,72 +961,174 @@ def test_spooky_descriptions_always_used(room_id):
 
 ## Deployment Considerations
 
-### AWS Amplify Deployment
+### AWS Amplify Gen 2 Deployment
+
+**Why Gen 2:**
+- Resolves Gen 1 CLI environment variable resolution issues
+- TypeScript-based infrastructure (code-first, type-safe)
+- Better DynamoDB integration with automatic environment variables
+- Modern developer experience with sandbox environments
+- Future-proof approach (recommended for all new projects)
 
 **Prerequisites:**
+- Node.js v18.16.0 or later
+- npm v6.14.4 or later
 - AWS CLI installed and configured
-- Amplify CLI installed (`npm install -g @aws-amplify/cli`)
 - AWS account with appropriate permissions
+- Python 3.12 for Lambda function development
+
+**Gen 2 Project Structure:**
+```
+amplify/
+├── backend.ts              # Backend definition entry point
+├── data/
+│   └── resource.ts         # DynamoDB table definitions
+├── functions/
+│   └── game-handler/
+│       ├── resource.ts     # Lambda function definition (TypeScript)
+│       ├── handler.py      # Python Lambda handler
+│       └── requirements.txt
+└── auth/
+    └── resource.ts         # Auth configuration (if needed)
+```
 
 **Deployment Steps:**
 
-1. **Initialize Amplify Project**
+1. **Create New Gen 2 Project**
 ```bash
-amplify init
+npm create amplify@latest
 # Project name: west-of-haunted-house
-# Environment: dev
-# Default editor: Visual Studio Code
-# App type: javascript
-# Framework: react
-# Source directory: src
-# Distribution directory: build
-# Build command: npm run build
-# Start command: npm start
+# Follow prompts to set up project structure
 ```
 
-2. **Add API (Lambda + API Gateway)**
-```bash
-amplify add api
-# Select REST
-# Provide friendly name: gameAPI
-# Provide path: /api
-# Lambda source: Create new Lambda function
-# Function name: gameHandler
-# Runtime: Python 3.12
-# Template: Serverless ExpressJS function
+2. **Define DynamoDB Table** (`amplify/data/resource.ts`)
+```typescript
+import { defineData } from '@aws-amplify/backend';
+
+export const data = defineData({
+  name: 'GameSessions',
+  schema: {
+    GameSession: {
+      sessionId: 'string',
+      currentRoom: 'string',
+      inventory: 'string[]',
+      flags: 'json',
+      sanity: 'number',
+      score: 'number',
+      moves: 'number',
+      lampBattery: 'number',
+      ttl: 'number'
+    }
+  }
+});
 ```
 
-3. **Add Database (DynamoDB)**
-```bash
-amplify add storage
-# Select NoSQL Database
-# Table name: GameSessions
-# Partition key: sessionId (String)
-# Sort key: (none)
-# Add indexes: No
-# Enable TTL: Yes (expires field)
+3. **Define Lambda Function** (`amplify/functions/game-handler/resource.ts`)
+```typescript
+import { defineFunction } from '@aws-amplify/backend';
+import { Code, Function, Runtime, Architecture } from 'aws-cdk-lib/aws-lambda';
+import { Duration } from 'aws-cdk-lib';
+import * as path from 'path';
+import { execSync } from 'child_process';
+
+const functionDir = path.dirname(fileURLToPath(import.meta.url));
+
+export const gameHandler = defineFunction(
+  (scope) =>
+    new Function(scope, 'game-handler', {
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_12,
+      architecture: Architecture.ARM_64,
+      timeout: Duration.seconds(30),
+      memorySize: 128,
+      code: Code.fromAsset(functionDir, {
+        bundling: {
+          image: DockerImage.fromRegistry('dummy'),
+          local: {
+            tryBundle(outputDir: string) {
+              // Install Python dependencies
+              execSync(
+                `pip install -r ${path.join(functionDir, 'requirements.txt')} -t ${outputDir} --platform manylinux2014_aarch64 --only-binary=:all:`
+              );
+              // Copy function code and data files
+              execSync(`cp -r ${functionDir}/*.py ${outputDir}/`);
+              execSync(`cp -r ${functionDir}/data ${outputDir}/`);
+              return true;
+            }
+          }
+        }
+      }),
+      environment: {
+        TABLE_NAME: data.resources.tables.GameSessions.tableName
+      }
+    }),
+  {
+    resourceGroupName: 'api'
+  }
+);
 ```
 
-4. **Package Lambda Function**
-```bash
-cd amplify/backend/function/gameHandler/src
-pip install -r requirements.txt -t .
-zip -r ../function.zip .
-cd ../../../../..
+4. **Define Backend** (`amplify/backend.ts`)
+```typescript
+import { defineBackend } from '@aws-amplify/backend';
+import { gameHandler } from './functions/game-handler/resource';
+import { data } from './data/resource';
+
+const backend = defineBackend({
+  gameHandler,
+  data
+});
+
+// Grant Lambda function access to DynamoDB
+backend.data.resources.tables.GameSessions.grantReadWriteData(
+  backend.gameHandler.resources.lambda
+);
+
+// Add API Gateway integration
+const api = backend.createRestApi('GameAPI', {
+  defaultCorsPreflightOptions: {
+    allowOrigins: ['*'],
+    allowMethods: ['GET', 'POST'],
+    allowHeaders: ['Content-Type']
+  }
+});
+
+api.root.addResource('game').addResource('new').addMethod('POST', 
+  new LambdaIntegration(backend.gameHandler.resources.lambda)
+);
+
+api.root.addResource('game').addResource('command').addMethod('POST',
+  new LambdaIntegration(backend.gameHandler.resources.lambda)
+);
+
+api.root.addResource('game').addResource('state').addResource('{session_id}').addMethod('GET',
+  new LambdaIntegration(backend.gameHandler.resources.lambda)
+);
 ```
 
-5. **Deploy to AWS**
+5. **Start Local Sandbox**
 ```bash
-amplify push
-# Review changes
-# Confirm deployment
+npx ampx sandbox
+# Creates per-developer cloud environment for testing
 ```
 
-6. **Add Hosting**
+6. **Deploy to Cloud**
 ```bash
-amplify add hosting
-# Select Amplify Console
-# Manual deployment
+# Option 1: Deploy via Git push (recommended)
+git add .
+git commit -m "Deploy game backend"
+git push origin main
+
+# Option 2: Manual deployment
+npx ampx pipeline-deploy --branch main --app-id <app-id>
+```
+
+7. **Add Resource Tags**
+All resources are automatically tagged via CDK:
+```typescript
+Tags.of(backend).add('Project', 'west-of-haunted-house');
+Tags.of(backend).add('ManagedBy', 'vedfolnir');
+Tags.of(backend).add('Environment', process.env.AMPLIFY_ENV || 'dev');
 ```
 
 ### IAM Roles and Permissions

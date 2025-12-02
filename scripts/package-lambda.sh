@@ -10,7 +10,7 @@ echo "Packaging Lambda Function"
 echo "=========================================="
 
 # Configuration
-LAMBDA_SRC_DIR="amplify/backend/function/gameHandler/src"
+LAMBDA_SRC_DIR="src/lambda/game_handler"
 BUILD_DIR="build/lambda"
 PACKAGE_NAME="lambda-deployment-package.zip"
 

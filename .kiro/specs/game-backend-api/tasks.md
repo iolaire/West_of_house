@@ -386,34 +386,95 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - _Requirements: 18.1, 18.2, 18.3_
 
 - [ ] 17. Deployment and AWS setup
-  - [ ] 17.1 Configure AWS resource tagging
+  - [x] 17.1 Configure AWS resource tagging
     - Update Amplify configuration to include required tags
     - Add tags to amplify/backend configuration files: Project=west-of-haunted-house, ManagedBy=vedfolnir, Environment=<user-defined>
     - Ensure Lambda, DynamoDB, API Gateway, and all other resources receive tags
     - _Requirements: 24.1, 24.2, 24.3, 24.4_
 
-  - [ ] 17.2 Package Lambda function
+  - [x] 17.2 Package Lambda function
     - Create deployment script to bundle code and dependencies
     - Include game data JSON files in package
     - Create ZIP file for Lambda deployment
     - _Requirements: 21.1, 21.4_
 
-  - [ ] 17.3 Deploy to AWS
-    - Run `amplify push` to deploy infrastructure
+  - [ ] 17.3 Migrate to Amplify Gen 2
+    - [ ] 17.3.1 Create new Gen 2 project structure
+      - Run `npm create amplify@latest` to initialize Gen 2 project
+      - Set up TypeScript configuration for infrastructure
+      - Create amplify/ directory with backend.ts entry point
+      - Install dependencies with `npm install`
+      - _Requirements: 22.4, 22.6_
+    
+    - [ ] 17.3.2 Define DynamoDB table with Gen 2
+      - Create amplify/data/resource.ts
+      - Define GameSessions table schema with TTL
+      - Configure on-demand billing mode
+      - Add required tags (Project, ManagedBy, Environment)
+      - _Requirements: 22.3, 24.1, 24.2, 24.3_
+    
+    - [ ] 17.3.3 Define Lambda function with Gen 2
+      - Create amplify/functions/game-handler/resource.ts
+      - Configure Python 3.12 runtime with ARM64 architecture
+      - Set up bundling for Python dependencies and game data
+      - Configure environment variables (TABLE_NAME auto-resolved)
+      - Set memory to 128MB and timeout to 30 seconds
+      - Add required tags
+      - _Requirements: 21.1, 21.2, 22.1, 22.6, 22.7, 24.1, 24.2, 24.3_
+    
+    - [ ] 17.3.4 Migrate Python Lambda code
+      - Copy existing Python code to amplify/functions/game-handler/
+      - Copy game data JSON files to function directory
+      - Update imports if needed for Gen 2 structure
+      - Verify requirements.txt is complete
+      - _Requirements: 20.4, 22.1_
+    
+    - [ ] 17.3.5 Define API Gateway with Gen 2
+      - Create REST API in backend.ts
+      - Add /game/new POST endpoint
+      - Add /game/command POST endpoint
+      - Add /game/state/{session_id} GET endpoint
+      - Configure CORS for all endpoints
+      - Integrate Lambda function with API Gateway
+      - _Requirements: 11.1, 11.2_
+    
+    - [ ] 17.3.6 Grant IAM permissions
+      - Grant Lambda read/write access to DynamoDB table
+      - Verify least-privilege IAM policies
+      - Ensure no wildcard permissions
+      - Verify CloudWatch Logs permissions
+      - _Requirements: 21.1, 21.2, 21.3, 21.4_
+    
+    - [ ] 17.3.7 Test with local sandbox
+      - Run `npx ampx sandbox` to start local environment
+      - Test new game endpoint
+      - Test command endpoint
+      - Test state query endpoint
+      - Verify DynamoDB integration
+      - _Requirements: 11.1, 11.2, 22.1, 22.3_
+    
+    - [ ] 17.3.8 Deploy to AWS with Gen 2
+      - Commit Gen 2 configuration to Git
+      - Push to main branch for automatic deployment
+      - Monitor deployment progress in Amplify Console
+      - Verify all resources are created successfully
+      - _Requirements: 22.4_
+
+  - [ ] 17.4 Verify Gen 2 deployment
     - Verify Lambda function is created with ARM64 architecture
     - Verify DynamoDB table is created with TTL
     - Verify API Gateway endpoints are accessible
     - Verify all resources have required tags
     - _Requirements: 21.1, 21.2, 21.3, 21.4, 24.1, 24.2, 24.3, 24.4_
 
-  - [ ] 17.4 Test deployed API
+  - [ ] 17.5 Test deployed API
     - Test new game endpoint
     - Test command endpoint with various commands
     - Test state query endpoint
     - Verify DynamoDB session storage
     - _Requirements: 11.1, 11.2, 21.1_
 
-  - [ ] 17.5 Create AWS resource cleanup script
+  - [ ] 17.6 Create AWS resource cleanup script
     - Create `scripts/cleanup-aws-resources.sh` script
     - Implement resource discovery using AWS CLI with tag filters
     - Delete resources in correct order: API Gateway → Lambda → DynamoDB → IAM roles → CloudFormation stacks
@@ -421,7 +482,7 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Verify only resources with all three required tags are deleted
     - _Requirements: 25.1, 25.2, 25.3, 25.4_
 
-  - [ ] 17.6 Test cleanup script
+  - [ ] 17.7 Test cleanup script
     - Run cleanup script in test environment
     - Verify all tagged resources are identified
     - Verify resources are deleted in correct order
