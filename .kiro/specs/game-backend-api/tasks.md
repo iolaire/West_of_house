@@ -106,8 +106,8 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Test invalid command handling
     - _Requirements: 2.2, 2.5_
 
-- [ ] 5. Core game engine - movement
-  - [ ] 5.1 Implement room navigation
+- [x] 5. Core game engine - movement
+  - [x] 5.1 Implement room navigation
     - Create `game_engine.py` with movement handler
     - Validate exits against room data
     - Update current_room in state
@@ -115,13 +115,13 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Return appropriate room descriptions
     - _Requirements: 3.1, 3.2, 3.4, 3.5_
 
-  - [ ] 5.2 Write property test for movement validation
+  - [x] 5.2 Write property test for movement validation
     - **Property 6: Movement validation**
     - **Validates: Requirements 3.1, 3.4, 3.5**
     - Test that movement succeeds only for valid exits
     - _Requirements: 3.1, 3.4, 3.5_
 
-  - [ ] 5.3 Write unit tests for navigation
+  - [x] 5.3 Write unit tests for navigation
     - Test valid movement between rooms
     - Test blocked directions
     - Test flag-gated exits
