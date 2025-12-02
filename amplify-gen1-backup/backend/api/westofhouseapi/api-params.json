@@ -1,0 +1,25 @@
+{
+  "paths": [
+    {
+      "name": "/game/new",
+      "lambdaFunction": "gameHandler",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    {
+      "name": "/game/command",
+      "lambdaFunction": "gameHandler",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    {
+      "name": "/game/state/{session_id}",
+      "lambdaFunction": "gameHandler",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  ]
+}

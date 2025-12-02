@@ -399,21 +399,21 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - _Requirements: 21.1, 21.4_
 
   - [ ] 17.3 Migrate to Amplify Gen 2
-    - [ ] 17.3.1 Create new Gen 2 project structure
+    - [x] 17.3.1 Create new Gen 2 project structure
       - Run `npm create amplify@latest` to initialize Gen 2 project
       - Set up TypeScript configuration for infrastructure
       - Create amplify/ directory with backend.ts entry point
       - Install dependencies with `npm install`
       - _Requirements: 22.4, 22.6_
     
-    - [ ] 17.3.2 Define DynamoDB table with Gen 2
+    - [x] 17.3.2 Define DynamoDB table with Gen 2
       - Create amplify/data/resource.ts
       - Define GameSessions table schema with TTL
       - Configure on-demand billing mode
       - Add required tags (Project, ManagedBy, Environment)
       - _Requirements: 22.3, 24.1, 24.2, 24.3_
     
-    - [ ] 17.3.3 Define Lambda function with Gen 2
+    - [x] 17.3.3 Define Lambda function with Gen 2
       - Create amplify/functions/game-handler/resource.ts
       - Configure Python 3.12 runtime with ARM64 architecture
       - Set up bundling for Python dependencies and game data
@@ -422,7 +422,7 @@ This implementation plan breaks down the MVP backend development into discrete, 
       - Add required tags
       - _Requirements: 21.1, 21.2, 22.1, 22.6, 22.7, 24.1, 24.2, 24.3_
     
-    - [ ] 17.3.4 Migrate Python Lambda code
+    - [x] 17.3.4 Migrate Python Lambda code
       - Copy existing Python code to amplify/functions/game-handler/
       - Copy game data JSON files to function directory
       - Update imports if needed for Gen 2 structure

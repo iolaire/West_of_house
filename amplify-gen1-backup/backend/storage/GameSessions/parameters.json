@@ -1,0 +1,5 @@
+{
+  "tableName": "GameSessions",
+  "partitionKeyName": "session_id",
+  "partitionKeyType": "S"
+}

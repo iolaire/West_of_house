@@ -1,0 +1,13 @@
+{
+  "lambdaLayers": [],
+  "permissions": {
+    "storage": {
+      "GameSessions": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    }
+  }
+}
