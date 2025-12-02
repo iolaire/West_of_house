@@ -460,7 +460,7 @@ This implementation plan breaks down the MVP backend development into discrete, 
       - Verify all resources are created successfully
       - _Requirements: 22.4_
 
-  - [ ] 17.4 Verify Gen 2 deployment
+  - [x] 17.4 Verify Gen 2 deployment
     - Verify Lambda function is created with ARM64 architecture
     - Verify DynamoDB table is created with TTL
     - Verify API Gateway endpoints are accessible
