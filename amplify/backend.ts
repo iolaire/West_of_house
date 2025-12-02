@@ -1,15 +1,15 @@
 import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource';
 import { data } from './data/resource';
+import { gameHandler } from './functions/game-handler/resource';
 
 /**
  * West of Haunted House Backend Definition
  * 
- * This defines the AWS Amplify Gen 2 backend infrastructure for task 17.3.2:
+ * This defines the AWS Amplify Gen 2 backend infrastructure:
  * - Authentication (Cognito Identity Pool for guest access)
  * - Data (DynamoDB GameSessions table via Amplify Data)
- * 
- * Note: Lambda function and API Gateway will be added in subsequent tasks (17.3.3+)
+ * - Lambda Function (Game handler for command processing)
  * 
  * All resources are automatically tagged with:
  * - Project: west-of-haunted-house
@@ -23,6 +23,7 @@ import { data } from './data/resource';
 const backend = defineBackend({
   auth,
   data,
+  gameHandler,
 });
 
 /**
@@ -46,3 +47,24 @@ const stack = Stack.of(backend.data);
 Tags.of(stack).add('Project', 'west-of-haunted-house');
 Tags.of(stack).add('ManagedBy', 'vedfolnir');
 Tags.of(stack).add('Environment', process.env.AMPLIFY_ENV || 'dev');
+
+/**
+ * Grant Lambda function access to DynamoDB table
+ * 
+ * This grants the game handler Lambda function read/write permissions
+ * to the GameSessions DynamoDB table using least-privilege IAM policies.
+ * 
+ * Requirements: 21.1, 21.2, 21.3, 21.4
+ */
+const { Table } = await import('aws-cdk-lib/aws-dynamodb');
+const gameSessionsTable = Table.fromTableName(
+  stack,
+  'GameSessionsTable',
+  'WestOfHauntedHouse-GameSessions'
+);
+
+// Grant read/write access to the Lambda function
+gameSessionsTable.grantReadWriteData(backend.gameHandler.resources.lambda);
+
+// Set the table name as an environment variable
+backend.gameHandler.addEnvironment('GAME_SESSIONS_TABLE_NAME', gameSessionsTable.tableName);
