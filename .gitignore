@@ -41,10 +41,15 @@ htmlcov/
 
 # AWS
 .aws-sam/
-amplify/
 .amplifyrc
 amplify-backup/
 aws-exports.js
+
+# Amplify Gen 2 - exclude generated files but include source
+amplify/node_modules/
+amplify/.amplify/
+amplify/amplify_outputs.json
+amplify/.amplify-*
 
 # Sensitive files
 *.pem
@@ -91,7 +96,7 @@ amplifytools.xcconfig
 **.sample
 #amplify-do-not-edit-end
 
-# amplify
-.amplify
+# amplify generated files
+.amplify/
 amplify_outputs*
 amplifyconfiguration*
