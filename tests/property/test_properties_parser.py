@@ -112,7 +112,7 @@ def test_direction_recognition(direction):
         ("take lamp", "grab lamp"),
         ("examine sword", "look at sword"),
         ("examine sword", "inspect sword"),
-        ("drop keys", "put keys"),
+        ("drop keys", "release keys"),
         ("inventory", "i"),
         ("quit", "exit"),
     ])

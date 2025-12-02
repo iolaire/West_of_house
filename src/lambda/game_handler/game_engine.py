@@ -108,8 +108,14 @@ class GameEngine:
             # Move player to new room
             state.move_to_room(target_room_id)
             
-            # Get room description based on sanity level
-            description = self.world.get_room_description(target_room_id, state.sanity)
+            # Check if room is lit (for dark rooms)
+            is_lit = self.is_room_lit(target_room_id, state)
+            
+            # Get room description based on lighting and sanity level
+            if not is_lit:
+                description = self.get_darkness_description(target_room_id)
+            else:
+                description = self.world.get_room_description(target_room_id, state.sanity)
             
             # Apply room effects (sanity changes)
             sanity_change = 0
@@ -126,6 +132,10 @@ class GameEngine:
             
             # Increment turn counter
             state.increment_turn()
+            
+            # Apply lamp battery drain
+            lamp_notifications = self.apply_lamp_battery_drain(state)
+            notifications.extend(lamp_notifications)
             
             return ActionResult(
                 success=True,
@@ -948,6 +958,212 @@ class GameEngine:
                 message="Something went wrong while examining that."
             )
     
+    def handle_lamp_on(
+        self,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle turning the lamp on.
+        
+        Checks if lamp is in inventory and has battery remaining.
+        
+        Args:
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 14.1
+        """
+        try:
+            # Check if lamp is in inventory
+            if "lamp" not in state.inventory:
+                return ActionResult(
+                    success=False,
+                    message="You don't have the lamp."
+                )
+            
+            # Check if lamp is already on
+            lamp_on = state.get_flag("lamp_on", False)
+            if lamp_on:
+                return ActionResult(
+                    success=False,
+                    message="The lamp is already on."
+                )
+            
+            # Check if lamp has battery
+            if state.lamp_battery <= 0:
+                return ActionResult(
+                    success=False,
+                    message="The lamp has no power left. It won't turn on."
+                )
+            
+            # Turn lamp on
+            state.set_flag("lamp_on", True)
+            
+            return ActionResult(
+                success=True,
+                message="The lamp is now on, casting eerie shadows around you.",
+                state_changes={
+                    'flags': state.flags
+                }
+            )
+            
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong with the lamp."
+            )
+    
+    def handle_lamp_off(
+        self,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle turning the lamp off.
+        
+        Args:
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 14.1
+        """
+        try:
+            # Check if lamp is in inventory
+            if "lamp" not in state.inventory:
+                return ActionResult(
+                    success=False,
+                    message="You don't have the lamp."
+                )
+            
+            # Check if lamp is already off
+            lamp_on = state.get_flag("lamp_on", False)
+            if not lamp_on:
+                return ActionResult(
+                    success=False,
+                    message="The lamp is already off."
+                )
+            
+            # Turn lamp off
+            state.set_flag("lamp_on", False)
+            
+            return ActionResult(
+                success=True,
+                message="The lamp is now off. Darkness surrounds you.",
+                state_changes={
+                    'flags': state.flags
+                }
+            )
+            
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong with the lamp."
+            )
+    
+    def apply_lamp_battery_drain(
+        self,
+        state: GameState
+    ) -> List[str]:
+        """
+        Apply lamp battery drain for the current turn.
+        
+        Drains battery by 1 per turn when lamp is on (2 if cursed).
+        Automatically turns off lamp when battery reaches 0.
+        
+        Args:
+            state: Current game state
+            
+        Returns:
+            List of notification messages
+            
+        Requirements: 14.2, 14.3
+        """
+        notifications = []
+        
+        # Check if lamp is on
+        lamp_on = state.get_flag("lamp_on", False)
+        if not lamp_on:
+            return notifications
+        
+        # Check if lamp is in inventory
+        if "lamp" not in state.inventory:
+            return notifications
+        
+        # Calculate drain amount (2x if cursed)
+        drain_amount = 2 if state.cursed else 1
+        
+        # Drain battery
+        state.lamp_battery = max(0, state.lamp_battery - drain_amount)
+        
+        # Check for low battery warnings
+        if state.lamp_battery == 10:
+            notifications.append("The lamp is growing dim. It won't last much longer.")
+        elif state.lamp_battery == 5:
+            notifications.append("The lamp flickers ominously. It's nearly dead.")
+        
+        # Auto-shutoff at 0 battery
+        if state.lamp_battery == 0:
+            state.set_flag("lamp_on", False)
+            notifications.append("The lamp has gone out. You are in darkness.")
+        
+        return notifications
+    
+    def get_darkness_description(
+        self,
+        room_id: str
+    ) -> str:
+        """
+        Get darkness description for a dark room without light.
+        
+        Args:
+            room_id: The room identifier
+            
+        Returns:
+            Darkness description string
+            
+        Requirements: 14.1
+        """
+        return ("It is pitch black. You are likely to be eaten by a grue. "
+                "The darkness presses in around you, and you can hear strange "
+                "sounds echoing from unseen corners.")
+    
+    def is_room_lit(
+        self,
+        room_id: str,
+        state: GameState
+    ) -> bool:
+        """
+        Check if a room is lit (either not dark, or player has light source).
+        
+        Args:
+            room_id: The room identifier
+            state: Current game state
+            
+        Returns:
+            True if room is lit, False if in darkness
+            
+        Requirements: 14.1
+        """
+        try:
+            room = self.world.get_room(room_id)
+            
+            # If room is not dark, it's always lit
+            if not room.is_dark:
+                return True
+            
+            # Check if player has lamp and it's on
+            lamp_on = state.get_flag("lamp_on", False)
+            has_lamp = "lamp" in state.inventory
+            
+            return has_lamp and lamp_on
+            
+        except ValueError:
+            # Room not found, assume lit
+            return True
+    
     def execute_command(
         self,
         command: ParsedCommand,
@@ -998,6 +1214,14 @@ class GameEngine:
         # Handle object interaction commands (OPEN, CLOSE, READ, MOVE)
         if command.verb in ["OPEN", "CLOSE", "READ", "MOVE"] and command.object:
             return self.handle_object_interaction(command.verb, command.object, state)
+        
+        # Handle lamp commands (LIGHT, TURN ON)
+        if command.verb in ["LIGHT", "TURN_ON"] and command.object == "lamp":
+            return self.handle_lamp_on(state)
+        
+        # Handle lamp off commands (EXTINGUISH, TURN OFF)
+        if command.verb in ["EXTINGUISH", "TURN_OFF"] and command.object == "lamp":
+            return self.handle_lamp_off(state)
         
         # Handle unknown commands
         if command.verb == "UNKNOWN":

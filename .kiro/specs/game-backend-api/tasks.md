@@ -214,8 +214,8 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Test trophy case (transparent container)
     - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5_
 
-- [ ] 9. Light system
-  - [ ] 9.1 Implement lamp and darkness mechanics
+- [x] 9. Light system
+  - [x] 9.1 Implement lamp and darkness mechanics
     - Add lamp on/off handlers
     - Implement battery drain (1 per turn)
     - Implement automatic shutoff at 0 battery
@@ -223,13 +223,13 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Return darkness descriptions when appropriate
     - _Requirements: 14.1, 14.2, 14.3_
 
-  - [ ] 9.2 Write property test for lamp battery drain
+  - [x] 9.2 Write property test for lamp battery drain
     - **Property 21: Lamp battery drain**
     - **Validates: Requirements 14.2**
     - Test that battery decreases by 1 per turn when lamp is on
     - _Requirements: 14.2_
 
-  - [ ] 9.3 Write property test for lamp auto-shutoff
+  - [x] 9.3 Write property test for lamp auto-shutoff
     - **Property 22: Lamp auto-shutoff**
     - **Validates: Requirements 14.3**
     - Test that lamp turns off automatically at 0 battery

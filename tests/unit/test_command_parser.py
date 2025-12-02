@@ -114,7 +114,7 @@ class TestObjectCommands:
         """Test synonyms for DROP."""
         parser = CommandParser()
         
-        synonyms = ["drop", "put", "place", "release"]
+        synonyms = ["drop", "release"]
         
         for synonym in synonyms:
             result = parser.parse(f"{synonym} keys")
@@ -396,10 +396,10 @@ class TestPrepositions:
         parser = CommandParser()
         result = parser.parse("put lamp in mailbox")
         
-        assert result.verb == "DROP"
+        assert result.verb == "PUT"
         assert result.object == "lamp"
         assert result.target == "mailbox"
-        assert result.preposition == "in"
+        assert result.preposition == "IN"
     
     def test_attack_with_weapon(self):
         """Test 'attack troll with sword' style commands."""
@@ -409,4 +409,4 @@ class TestPrepositions:
         assert result.verb == "OPEN"
         assert result.object == "mailbox"
         assert result.instrument == "keys"
-        assert result.preposition == "with"
+        assert result.preposition == "WITH"

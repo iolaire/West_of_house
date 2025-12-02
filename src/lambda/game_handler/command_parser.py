@@ -78,9 +78,9 @@ class CommandParser:
             'pick': 'TAKE',
             'pickup': 'TAKE',
             'drop': 'DROP',
-            'place': 'DROP',
             'release': 'DROP',
             'put': 'PUT',
+            'place': 'PUT',
             'insert': 'PUT',
             'examine': 'EXAMINE',
             'look': 'EXAMINE',
@@ -94,6 +94,10 @@ class CommandParser:
             'move': 'MOVE',
             'push': 'MOVE',
             'pull': 'MOVE',
+            'light': 'LIGHT',
+            'ignite': 'LIGHT',
+            'extinguish': 'EXTINGUISH',
+            'douse': 'EXTINGUISH',
         }
         
         # Utility verbs
@@ -150,6 +154,22 @@ class CommandParser:
         
         if not words:
             return ParsedCommand(verb="UNKNOWN")
+        
+        # Handle multi-word verbs like "turn on" and "turn off"
+        if len(words) >= 2:
+            two_word = f"{words[0]} {words[1]}"
+            if two_word == "turn on":
+                obj = " ".join(words[2:]) if len(words) > 2 else None
+                return ParsedCommand(verb="TURN_ON", object=obj)
+            elif two_word == "turn off":
+                obj = " ".join(words[2:]) if len(words) > 2 else None
+                return ParsedCommand(verb="TURN_OFF", object=obj)
+            elif two_word == "switch on":
+                obj = " ".join(words[2:]) if len(words) > 2 else None
+                return ParsedCommand(verb="TURN_ON", object=obj)
+            elif two_word == "switch off":
+                obj = " ".join(words[2:]) if len(words) > 2 else None
+                return ParsedCommand(verb="TURN_OFF", object=obj)
         
         first_word = words[0]
         
