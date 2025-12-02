@@ -288,3 +288,177 @@ def test_movement_increments_counters(data):
             # Counters should increment
             assert state.moves == initial_moves + 1
             assert state.turn_count == initial_turns + 1
+
+
+@st.composite
+def takeable_object_in_room(draw, world_data):
+    """
+    Generate a room ID and a takeable object that exists in that room.
+    
+    Returns tuple of (room_id, object_id) where object is takeable and in room.
+    """
+    # Find all takeable objects (either marked is_takeable or has TAKE interaction with state_change)
+    takeable_objects = []
+    for obj_id, obj in world_data.objects.items():
+        if obj.is_takeable:
+            takeable_objects.append(obj_id)
+        else:
+            # Check if object has a TAKE interaction that changes state (indicating it can be taken)
+            for interaction in obj.interactions:
+                if interaction.verb == "TAKE" and interaction.state_change:
+                    takeable_objects.append(obj_id)
+                    break
+    
+    if not takeable_objects:
+        assume(False)  # Skip if no takeable objects
+    
+    # Pick a takeable object
+    object_id = draw(st.sampled_from(takeable_objects))
+    
+    # Pick a random room to place the object in
+    room_ids = list(world_data.rooms.keys())
+    room_id = draw(st.sampled_from(room_ids))
+    
+    return (room_id, object_id)
+
+
+# Feature: game-backend-api, Property 7: Object conservation (take/drop)
+@settings(max_examples=100)
+@given(st.data())
+def test_take_then_drop_returns_object_to_room(data):
+    """
+    For any game state, taking an object from a room and then dropping it
+    should result in the object being back in the room and not in inventory.
+    
+    **Validates: Requirements 4.2, 4.3**
+    
+    This property ensures that:
+    1. Take operation removes object from room and adds to inventory
+    2. Drop operation removes object from inventory and adds to room
+    3. The round-trip preserves object location
+    """
+    # Load world data (fresh instance for each test)
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    # Get a takeable object in a room
+    room_id, object_id = data.draw(takeable_object_in_room(world))
+    
+    # Create game state in that room
+    state = GameState.create_new_game()
+    state.current_room = room_id
+    
+    # Get current room and object
+    current_room = world.get_room(room_id)
+    game_object = world.get_object(object_id)
+    
+    # Mark object as takeable for this test
+    game_object.is_takeable = True
+    
+    # Ensure object is in room initially
+    if object_id not in current_room.items:
+        current_room.items.append(object_id)
+    
+    # Verify initial state
+    assert object_id in current_room.items, "Object should be in room initially"
+    assert object_id not in state.inventory, "Object should not be in inventory initially"
+    
+    # Take the object
+    take_result = engine.handle_take(object_id, state)
+    
+    # Take should succeed
+    assert take_result.success is True, f"Taking {object_id} should succeed"
+    
+    # Object should now be in inventory and not in room
+    assert object_id in state.inventory, "Object should be in inventory after taking"
+    assert object_id not in current_room.items, "Object should not be in room after taking"
+    
+    # Drop the object
+    drop_result = engine.handle_drop(object_id, state)
+    
+    # Drop should succeed
+    assert drop_result.success is True, f"Dropping {object_id} should succeed"
+    
+    # Object should be back in room and not in inventory (round trip complete)
+    assert object_id not in state.inventory, "Object should not be in inventory after dropping"
+    assert object_id in current_room.items, "Object should be back in room after dropping"
+
+
+# Feature: game-backend-api, Property 8: Inventory tracking
+@settings(max_examples=100)
+@given(st.data())
+def test_inventory_reflects_take_drop_operations(data):
+    """
+    For any sequence of take and drop operations, the inventory should contain
+    exactly the objects that were taken minus the objects that were dropped.
+    
+    **Validates: Requirements 5.1, 5.5**
+    
+    This property ensures that:
+    1. Inventory accurately tracks all take operations
+    2. Inventory accurately reflects all drop operations
+    3. Inventory state is consistent after any sequence of operations
+    """
+    # Load world data (fresh instance for each test)
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    # Create game state
+    state = GameState.create_new_game()
+    
+    # Get list of all objects
+    all_objects = list(world.objects.keys())
+    
+    # Generate a sequence of take/drop operations (3-10 operations)
+    num_operations = data.draw(st.integers(min_value=3, max_value=10))
+    
+    # Track what should be in inventory
+    expected_inventory = set()
+    
+    # Get current room
+    current_room = world.get_room(state.current_room)
+    
+    for _ in range(num_operations):
+        # Decide whether to take or drop
+        operation = data.draw(st.sampled_from(['take', 'drop']))
+        
+        if operation == 'take':
+            # Pick an object to take
+            object_id = data.draw(st.sampled_from(all_objects))
+            game_object = world.get_object(object_id)
+            
+            # Mark as takeable and place in room
+            game_object.is_takeable = True
+            if object_id not in current_room.items:
+                current_room.items.append(object_id)
+            
+            # Take the object
+            result = engine.handle_take(object_id, state)
+            
+            if result.success:
+                # Update expected inventory
+                expected_inventory.add(object_id)
+        
+        elif operation == 'drop':
+            # Can only drop if we have something in inventory
+            if state.inventory:
+                # Pick an object from inventory to drop
+                object_id = data.draw(st.sampled_from(state.inventory))
+                
+                # Drop the object
+                result = engine.handle_drop(object_id, state)
+                
+                if result.success:
+                    # Update expected inventory
+                    expected_inventory.discard(object_id)
+    
+    # Verify final inventory matches expected
+    actual_inventory = set(state.inventory)
+    assert actual_inventory == expected_inventory, \
+        f"Inventory mismatch: expected {expected_inventory}, got {actual_inventory}"

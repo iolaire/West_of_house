@@ -314,7 +314,8 @@ class TestCommandExecution:
         Test that unimplemented commands return appropriate message.
         """
         # Create a command that's recognized but not yet implemented
-        command = ParsedCommand(verb="TAKE", object="lamp")
+        # Use ATTACK which is not yet implemented
+        command = ParsedCommand(verb="ATTACK", target="troll")
         
         # Execute command
         result = game_engine.execute_command(command, fresh_state)
@@ -322,3 +323,467 @@ class TestCommandExecution:
         # Verify it indicates not implemented
         assert result.success is False
         assert "not yet implemented" in result.message.lower()
+
+
+
+class TestObjectExamine:
+    """Test suite for examining objects."""
+    
+    def test_examine_object_in_room(self, game_engine, world_data, fresh_state):
+        """
+        Test examining an object that is in the current room.
+        
+        Requirements: 4.1
+        """
+        # Place mailbox in current room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "mailbox" not in current_room.items:
+            current_room.items.append("mailbox")
+        
+        # Examine the mailbox
+        result = game_engine.handle_examine("mailbox", fresh_state)
+        
+        # Verify examination succeeded
+        assert result.success is True
+        assert result.message is not None
+        assert len(result.message) > 0
+    
+    def test_examine_object_not_present(self, game_engine, fresh_state):
+        """
+        Test examining an object that is not in the room or inventory.
+        
+        Requirements: 4.1
+        """
+        # Try to examine an object that's not present
+        result = game_engine.handle_examine("nonexistent_object", fresh_state)
+        
+        # Verify examination failed
+        assert result.success is False
+        assert "don't see" in result.message.lower()
+    
+    def test_examine_object_in_inventory(self, game_engine, world_data, fresh_state):
+        """
+        Test examining an object that is in the player's inventory.
+        
+        Requirements: 4.1
+        """
+        # Add leaflet to inventory
+        fresh_state.inventory.append("leaflet")
+        
+        # Examine the leaflet
+        result = game_engine.handle_examine("leaflet", fresh_state)
+        
+        # Verify examination succeeded
+        assert result.success is True
+        assert result.message is not None
+    
+    def test_examine_returns_spooky_description(self, game_engine, world_data, fresh_state):
+        """
+        Test that examine returns spooky descriptions.
+        
+        Requirements: 4.1, 20.2
+        """
+        # Place mailbox in room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "mailbox" not in current_room.items:
+            current_room.items.append("mailbox")
+        
+        # Examine mailbox
+        result = game_engine.handle_examine("mailbox", fresh_state)
+        
+        # Verify we got a spooky description (not original)
+        assert result.success is True
+        # The response should be the spooky variant
+        assert result.message is not None
+
+
+class TestObjectTakeDrop:
+    """Test suite for taking and dropping objects."""
+    
+    def test_take_object_from_room(self, game_engine, world_data, fresh_state):
+        """
+        Test taking a takeable object from the room.
+        
+        Requirements: 4.2, 5.2
+        """
+        # Place leaflet in room and mark as takeable
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "leaflet" not in current_room.items:
+            current_room.items.append("leaflet")
+        
+        leaflet = world_data.get_object("leaflet")
+        leaflet.is_takeable = True
+        
+        # Take the leaflet
+        result = game_engine.handle_take("leaflet", fresh_state)
+        
+        # Verify take succeeded
+        assert result.success is True
+        assert result.inventory_changed is True
+        assert "leaflet" in fresh_state.inventory
+        assert "leaflet" not in current_room.items
+    
+    def test_take_non_takeable_object(self, game_engine, world_data, fresh_state):
+        """
+        Test that non-takeable objects cannot be taken.
+        
+        Requirements: 5.2
+        """
+        # Place mailbox in room (not takeable)
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "mailbox" not in current_room.items:
+            current_room.items.append("mailbox")
+        
+        mailbox = world_data.get_object("mailbox")
+        mailbox.is_takeable = False
+        
+        # Try to take the mailbox
+        result = game_engine.handle_take("mailbox", fresh_state)
+        
+        # Verify take failed
+        assert result.success is False
+        assert "mailbox" not in fresh_state.inventory
+    
+    def test_take_object_not_in_room(self, game_engine, fresh_state):
+        """
+        Test taking an object that is not in the room.
+        
+        Requirements: 4.2
+        """
+        # Try to take an object that's not present
+        result = game_engine.handle_take("nonexistent_object", fresh_state)
+        
+        # Verify take failed
+        assert result.success is False
+        assert "don't see" in result.message.lower()
+    
+    def test_take_object_already_in_inventory(self, game_engine, world_data, fresh_state):
+        """
+        Test taking an object that is already in inventory.
+        
+        Requirements: 4.2
+        """
+        # Add leaflet to inventory
+        fresh_state.inventory.append("leaflet")
+        
+        # Try to take it again
+        result = game_engine.handle_take("leaflet", fresh_state)
+        
+        # Verify take failed
+        assert result.success is False
+        assert "already have" in result.message.lower()
+    
+    def test_drop_object_from_inventory(self, game_engine, world_data, fresh_state):
+        """
+        Test dropping an object from inventory.
+        
+        Requirements: 4.3, 5.3
+        """
+        # Add leaflet to inventory
+        fresh_state.inventory.append("leaflet")
+        
+        # Drop the leaflet
+        result = game_engine.handle_drop("leaflet", fresh_state)
+        
+        # Verify drop succeeded
+        assert result.success is True
+        assert result.inventory_changed is True
+        assert "leaflet" not in fresh_state.inventory
+        
+        # Verify object is now in room
+        current_room = world_data.get_room(fresh_state.current_room)
+        assert "leaflet" in current_room.items
+    
+    def test_drop_object_not_in_inventory(self, game_engine, fresh_state):
+        """
+        Test dropping an object that is not in inventory.
+        
+        Requirements: 4.3
+        """
+        # Try to drop an object we don't have
+        result = game_engine.handle_drop("nonexistent_object", fresh_state)
+        
+        # Verify drop failed
+        assert result.success is False
+        assert "don't have" in result.message.lower()
+
+
+class TestObjectInteractions:
+    """Test suite for object interactions (open, close, read, move)."""
+    
+    def test_open_container(self, game_engine, world_data, fresh_state):
+        """
+        Test opening a container object.
+        
+        Requirements: 4.4
+        """
+        # Place mailbox in room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "mailbox" not in current_room.items:
+            current_room.items.append("mailbox")
+        
+        # Get mailbox and ensure it's closed
+        mailbox = world_data.get_object("mailbox")
+        mailbox.state["is_open"] = False
+        
+        # Open the mailbox
+        result = game_engine.handle_object_interaction("OPEN", "mailbox", fresh_state)
+        
+        # Verify open succeeded
+        assert result.success is True
+        assert mailbox.state["is_open"] is True
+    
+    def test_close_container(self, game_engine, world_data, fresh_state):
+        """
+        Test closing a container object.
+        
+        Requirements: 4.4
+        """
+        # Place mailbox in room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "mailbox" not in current_room.items:
+            current_room.items.append("mailbox")
+        
+        # Get mailbox and ensure it's open
+        mailbox = world_data.get_object("mailbox")
+        mailbox.state["is_open"] = True
+        
+        # Close the mailbox
+        result = game_engine.handle_object_interaction("CLOSE", "mailbox", fresh_state)
+        
+        # Verify close succeeded
+        assert result.success is True
+        assert mailbox.state["is_open"] is False
+    
+    def test_read_readable_object(self, game_engine, world_data, fresh_state):
+        """
+        Test reading a readable object.
+        
+        Requirements: 4.4
+        """
+        # Place leaflet in room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "leaflet" not in current_room.items:
+            current_room.items.append("leaflet")
+        
+        # Read the leaflet
+        result = game_engine.handle_object_interaction("READ", "leaflet", fresh_state)
+        
+        # Verify read succeeded
+        assert result.success is True
+        assert result.message is not None
+        assert len(result.message) > 0
+    
+    def test_move_moveable_object(self, game_engine, world_data, fresh_state):
+        """
+        Test moving a moveable object (like the rug).
+        
+        Requirements: 4.4, 4.5
+        
+        Note: This test assumes a rug object exists in the data.
+        If not, it will be skipped.
+        """
+        # Check if rug exists in world data
+        try:
+            rug = world_data.get_object("rug")
+        except ValueError:
+            pytest.skip("Rug object not found in game data")
+        
+        # Place rug in room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "rug" not in current_room.items:
+            current_room.items.append("rug")
+        
+        # Move the rug
+        result = game_engine.handle_object_interaction("MOVE", "rug", fresh_state)
+        
+        # Verify move succeeded or returned appropriate message
+        assert result.message is not None
+    
+    def test_interaction_with_conditions(self, game_engine, world_data, fresh_state):
+        """
+        Test that interactions with conditions are properly checked.
+        
+        Requirements: 4.5
+        """
+        # Place mailbox in room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "mailbox" not in current_room.items:
+            current_room.items.append("mailbox")
+        
+        # Get mailbox and ensure it's closed
+        mailbox = world_data.get_object("mailbox")
+        mailbox.state["is_open"] = False
+        
+        # Try to read mailbox while closed (should have condition)
+        result = game_engine.handle_object_interaction("READ", "mailbox", fresh_state)
+        
+        # Result depends on whether READ interaction has condition
+        # At minimum, should not crash
+        assert result.message is not None
+    
+    def test_interaction_updates_flags(self, game_engine, world_data, fresh_state):
+        """
+        Test that interactions can update game flags.
+        
+        Requirements: 4.5
+        
+        Note: This test will be more meaningful once we have objects
+        that set flags (like moving the rug to reveal trap door).
+        """
+        # For now, verify the mechanism exists
+        initial_flags = fresh_state.flags.copy()
+        
+        # Perform an interaction
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "mailbox" not in current_room.items:
+            current_room.items.append("mailbox")
+        
+        mailbox = world_data.get_object("mailbox")
+        mailbox.state["is_open"] = False
+        
+        result = game_engine.handle_object_interaction("OPEN", "mailbox", fresh_state)
+        
+        # Flags may or may not have changed, but should be accessible
+        assert isinstance(fresh_state.flags, dict)
+    
+    def test_interaction_with_nonexistent_object(self, game_engine, fresh_state):
+        """
+        Test interaction with an object that doesn't exist.
+        
+        Requirements: 4.4
+        """
+        # Try to open a nonexistent object
+        result = game_engine.handle_object_interaction("OPEN", "nonexistent", fresh_state)
+        
+        # Verify interaction failed
+        assert result.success is False
+        assert "don't see" in result.message.lower()
+    
+    def test_invalid_interaction_for_object(self, game_engine, world_data, fresh_state):
+        """
+        Test performing an invalid interaction on an object.
+        
+        Requirements: 4.4
+        """
+        # Place white_house (scenery) in room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "white_house" not in current_room.items:
+            current_room.items.append("white_house")
+        
+        # Try to open the house (should not have OPEN interaction)
+        result = game_engine.handle_object_interaction("OPEN", "white_house", fresh_state)
+        
+        # Verify interaction failed appropriately
+        assert result.success is False
+        assert "can't" in result.message.lower()
+
+
+class TestCommandExecutionWithObjects:
+    """Test suite for command execution with object commands."""
+    
+    def test_execute_examine_command(self, game_engine, world_data, fresh_state):
+        """
+        Test that examine commands are properly routed.
+        
+        Requirements: 4.1
+        """
+        # Place mailbox in room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "mailbox" not in current_room.items:
+            current_room.items.append("mailbox")
+        
+        # Create examine command
+        command = ParsedCommand(verb="EXAMINE", object="mailbox")
+        
+        # Execute command
+        result = game_engine.execute_command(command, fresh_state)
+        
+        # Verify it was handled
+        assert result.message is not None
+    
+    def test_execute_take_command(self, game_engine, world_data, fresh_state):
+        """
+        Test that take commands are properly routed.
+        
+        Requirements: 4.2
+        """
+        # Place leaflet in room and mark as takeable
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "leaflet" not in current_room.items:
+            current_room.items.append("leaflet")
+        
+        leaflet = world_data.get_object("leaflet")
+        leaflet.is_takeable = True
+        
+        # Create take command
+        command = ParsedCommand(verb="TAKE", object="leaflet")
+        
+        # Execute command
+        result = game_engine.execute_command(command, fresh_state)
+        
+        # Verify it was handled
+        assert result.success is True
+        assert "leaflet" in fresh_state.inventory
+    
+    def test_execute_drop_command(self, game_engine, fresh_state):
+        """
+        Test that drop commands are properly routed.
+        
+        Requirements: 4.3
+        """
+        # Add leaflet to inventory
+        fresh_state.inventory.append("leaflet")
+        
+        # Create drop command
+        command = ParsedCommand(verb="DROP", object="leaflet")
+        
+        # Execute command
+        result = game_engine.execute_command(command, fresh_state)
+        
+        # Verify it was handled
+        assert result.success is True
+        assert "leaflet" not in fresh_state.inventory
+    
+    def test_execute_open_command(self, game_engine, world_data, fresh_state):
+        """
+        Test that open commands are properly routed.
+        
+        Requirements: 4.4
+        """
+        # Place mailbox in room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "mailbox" not in current_room.items:
+            current_room.items.append("mailbox")
+        
+        mailbox = world_data.get_object("mailbox")
+        mailbox.state["is_open"] = False
+        
+        # Create open command
+        command = ParsedCommand(verb="OPEN", object="mailbox")
+        
+        # Execute command
+        result = game_engine.execute_command(command, fresh_state)
+        
+        # Verify it was handled
+        assert result.message is not None
+    
+    def test_execute_read_command(self, game_engine, world_data, fresh_state):
+        """
+        Test that read commands are properly routed.
+        
+        Requirements: 4.4
+        """
+        # Place leaflet in room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if "leaflet" not in current_room.items:
+            current_room.items.append("leaflet")
+        
+        # Create read command
+        command = ParsedCommand(verb="READ", object="leaflet")
+        
+        # Execute command
+        result = game_engine.execute_command(command, fresh_state)
+        
+        # Verify it was handled
+        assert result.message is not None

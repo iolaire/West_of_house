@@ -127,39 +127,39 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Test flag-gated exits
     - _Requirements: 3.1, 3.2, 3.4, 3.5_
 
-- [ ] 6. Core game engine - object interaction
-  - [ ] 6.1 Implement object examination
+- [x] 6. Core game engine - object interaction
+  - [x] 6.1 Implement object examination
     - Add examine handler to game engine
     - Return spooky descriptions based on sanity level
     - Handle scenery vs takeable objects
     - _Requirements: 4.1_
 
-  - [ ] 6.2 Implement take/drop mechanics
+  - [x] 6.2 Implement take/drop mechanics
     - Add take handler (validate takeable, add to inventory, remove from room)
     - Add drop handler (remove from inventory, add to room)
     - Validate object existence and state
     - _Requirements: 4.2, 4.3, 5.2, 5.3_
 
-  - [ ] 6.3 Write property test for object conservation
+  - [x] 6.3 Write property test for object conservation
     - **Property 7: Object conservation (take/drop)**
     - **Validates: Requirements 4.2, 4.3**
     - Test that take then drop returns object to room
     - _Requirements: 4.2, 4.3_
 
-  - [ ] 6.4 Write property test for inventory tracking
+  - [x] 6.4 Write property test for inventory tracking
     - **Property 8: Inventory tracking**
     - **Validates: Requirements 5.1, 5.5**
     - Test that inventory reflects take/drop operations
     - _Requirements: 5.1, 5.5_
 
-  - [ ] 6.5 Implement object interactions (open, close, read, move)
+  - [x] 6.5 Implement object interactions (open, close, read, move)
     - Add interaction handlers for each verb
     - Check prerequisites and conditions
     - Update object state
     - Update game flags when appropriate
     - _Requirements: 4.4, 4.5_
 
-  - [ ] 6.6 Write unit tests for object interactions
+  - [x] 6.6 Write unit tests for object interactions
     - Test examine, take, drop for various objects
     - Test open/close for containers
     - Test read for readable objects

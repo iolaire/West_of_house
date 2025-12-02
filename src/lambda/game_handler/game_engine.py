@@ -157,6 +157,430 @@ class GameEngine:
                 room_changed=False
             )
     
+    def handle_take(
+        self,
+        object_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle taking an object from the current room.
+        
+        Validates that object is takeable, adds to inventory, removes from room.
+        
+        Args:
+            object_id: The object identifier to take
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 4.2, 4.3, 5.2, 5.3
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if object is in current room
+            if object_id not in current_room.items:
+                # Check if already in inventory
+                if object_id in state.inventory:
+                    return ActionResult(
+                        success=False,
+                        message="You already have that."
+                    )
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Get object data
+            game_object = self.world.get_object(object_id)
+            
+            # Check if object is takeable
+            if not game_object.is_takeable:
+                # Look for TAKE interaction with custom message
+                for interaction in game_object.interactions:
+                    if interaction.verb == "TAKE":
+                        return ActionResult(
+                            success=False,
+                            message=interaction.response_spooky
+                        )
+                # Default message for non-takeable objects
+                return ActionResult(
+                    success=False,
+                    message="You can't take that."
+                )
+            
+            # Find TAKE interaction for response message
+            take_message = "Taken."
+            sanity_change = 0
+            notifications = []
+            
+            for interaction in game_object.interactions:
+                if interaction.verb == "TAKE":
+                    # Check conditions if any
+                    if interaction.condition:
+                        conditions_met = True
+                        for key, required_value in interaction.condition.items():
+                            if game_object.state.get(key) != required_value:
+                                conditions_met = False
+                                break
+                        if not conditions_met:
+                            continue
+                    
+                    take_message = interaction.response_spooky
+                    sanity_change = interaction.sanity_effect
+                    
+                    # Apply state changes to object
+                    if interaction.state_change:
+                        for key, value in interaction.state_change.items():
+                            game_object.state[key] = value
+                    
+                    # Apply flag changes to game state
+                    if interaction.flag_change:
+                        for flag_name, flag_value in interaction.flag_change.items():
+                            state.set_flag(flag_name, flag_value)
+                    
+                    break
+            
+            # Add to inventory
+            state.add_to_inventory(object_id)
+            
+            # Remove from room
+            current_room.items.remove(object_id)
+            
+            # Apply sanity effects
+            if sanity_change != 0:
+                state.sanity = max(0, min(100, state.sanity + sanity_change))
+                if sanity_change < 0:
+                    notifications.append("Touching it fills you with dread...")
+            
+            return ActionResult(
+                success=True,
+                message=take_message,
+                inventory_changed=True,
+                state_changes={
+                    'inventory': state.inventory,
+                    'sanity': state.sanity
+                },
+                notifications=notifications,
+                sanity_change=sanity_change
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while taking that."
+            )
+    
+    def handle_drop(
+        self,
+        object_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle dropping an object from inventory into the current room.
+        
+        Removes from inventory and adds to current room.
+        
+        Args:
+            object_id: The object identifier to drop
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 4.2, 4.3, 5.2, 5.3
+        """
+        try:
+            # Check if object is in inventory
+            if object_id not in state.inventory:
+                return ActionResult(
+                    success=False,
+                    message="You don't have that."
+                )
+            
+            # Get object data
+            game_object = self.world.get_object(object_id)
+            
+            # Find DROP interaction for response message
+            drop_message = "Dropped."
+            sanity_change = 0
+            notifications = []
+            
+            for interaction in game_object.interactions:
+                if interaction.verb == "DROP":
+                    # Check conditions if any
+                    if interaction.condition:
+                        conditions_met = True
+                        for key, required_value in interaction.condition.items():
+                            if game_object.state.get(key) != required_value:
+                                conditions_met = False
+                                break
+                        if not conditions_met:
+                            continue
+                    
+                    drop_message = interaction.response_spooky
+                    sanity_change = interaction.sanity_effect
+                    
+                    # Apply state changes to object
+                    if interaction.state_change:
+                        for key, value in interaction.state_change.items():
+                            game_object.state[key] = value
+                    
+                    # Apply flag changes to game state
+                    if interaction.flag_change:
+                        for flag_name, flag_value in interaction.flag_change.items():
+                            state.set_flag(flag_name, flag_value)
+                    
+                    break
+            
+            # Remove from inventory
+            state.remove_from_inventory(object_id)
+            
+            # Add to current room
+            current_room = self.world.get_room(state.current_room)
+            current_room.items.append(object_id)
+            
+            # Apply sanity effects
+            if sanity_change != 0:
+                state.sanity = max(0, min(100, state.sanity + sanity_change))
+            
+            return ActionResult(
+                success=True,
+                message=drop_message,
+                inventory_changed=True,
+                state_changes={
+                    'inventory': state.inventory,
+                    'sanity': state.sanity
+                },
+                notifications=notifications,
+                sanity_change=sanity_change
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message="You don't have that."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while dropping that."
+            )
+    
+    def handle_object_interaction(
+        self,
+        verb: str,
+        object_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle generic object interactions (OPEN, CLOSE, READ, MOVE).
+        
+        Checks prerequisites and conditions, updates object state,
+        and updates game flags when appropriate.
+        
+        Args:
+            verb: The interaction verb (OPEN, CLOSE, READ, MOVE)
+            object_id: The object identifier to interact with
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 4.4, 4.5
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if object is in current room or inventory
+            object_in_room = object_id in current_room.items
+            object_in_inventory = object_id in state.inventory
+            
+            if not object_in_room and not object_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Get object data
+            game_object = self.world.get_object(object_id)
+            
+            # Find matching interaction
+            matching_interaction = None
+            for interaction in game_object.interactions:
+                if interaction.verb == verb:
+                    # Check if interaction has conditions
+                    if interaction.condition:
+                        # Check if all conditions are met
+                        conditions_met = True
+                        for key, required_value in interaction.condition.items():
+                            current_value = game_object.state.get(key, None)
+                            if current_value != required_value:
+                                conditions_met = False
+                                break
+                        if not conditions_met:
+                            continue
+                    matching_interaction = interaction
+                    break
+            
+            if not matching_interaction:
+                # No matching interaction found
+                return ActionResult(
+                    success=False,
+                    message=f"You can't {verb.lower()} that."
+                )
+            
+            # Get response message (always use spooky)
+            message = matching_interaction.response_spooky
+            
+            # Apply state changes to object
+            if matching_interaction.state_change:
+                for key, value in matching_interaction.state_change.items():
+                    game_object.state[key] = value
+            
+            # Apply flag changes to game state
+            if matching_interaction.flag_change:
+                for flag_name, flag_value in matching_interaction.flag_change.items():
+                    state.set_flag(flag_name, flag_value)
+            
+            # Apply sanity effects
+            sanity_change = matching_interaction.sanity_effect
+            notifications = []
+            
+            if sanity_change != 0:
+                state.sanity = max(0, min(100, state.sanity + sanity_change))
+                if sanity_change < 0:
+                    notifications.append("The experience disturbs you...")
+            
+            # Check for curse trigger
+            if matching_interaction.curse_trigger:
+                state.cursed = True
+                notifications.append("You feel a dark curse take hold...")
+            
+            return ActionResult(
+                success=True,
+                message=message,
+                state_changes={
+                    'sanity': state.sanity,
+                    'cursed': state.cursed,
+                    'flags': state.flags
+                },
+                notifications=notifications,
+                sanity_change=sanity_change
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong with that action."
+            )
+    
+    def handle_examine(
+        self,
+        object_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle examining an object in the current room or inventory.
+        
+        Returns spooky descriptions based on sanity level.
+        Handles both scenery and takeable objects.
+        
+        Args:
+            object_id: The object identifier to examine
+            state: Current game state
+            
+        Returns:
+            ActionResult with examination description
+            
+        Requirements: 4.1
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if object is in current room or inventory
+            object_in_room = object_id in current_room.items
+            object_in_inventory = object_id in state.inventory
+            
+            if not object_in_room and not object_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Get object data
+            game_object = self.world.get_object(object_id)
+            
+            # Find EXAMINE interaction
+            examine_interaction = None
+            for interaction in game_object.interactions:
+                if interaction.verb == "EXAMINE":
+                    # Check if interaction has conditions
+                    if interaction.condition:
+                        # Check if all conditions are met
+                        conditions_met = True
+                        for key, required_value in interaction.condition.items():
+                            if game_object.state.get(key) != required_value:
+                                conditions_met = False
+                                break
+                        if not conditions_met:
+                            continue
+                    examine_interaction = interaction
+                    break
+            
+            if not examine_interaction:
+                # No examine interaction defined, provide default description
+                display_name = game_object.name_spooky if game_object.name_spooky else game_object.name
+                return ActionResult(
+                    success=True,
+                    message=f"You see {display_name}. Nothing particularly interesting."
+                )
+            
+            # Return spooky description (always use spooky per requirements 19.5, 20.1, 20.2)
+            description = examine_interaction.response_spooky
+            
+            # Apply sanity effects if any
+            sanity_change = examine_interaction.sanity_effect
+            notifications = []
+            
+            if sanity_change != 0:
+                state.sanity = max(0, min(100, state.sanity + sanity_change))
+                if sanity_change < 0:
+                    notifications.append("The sight disturbs you deeply...")
+            
+            return ActionResult(
+                success=True,
+                message=description,
+                state_changes={'sanity': state.sanity} if sanity_change != 0 else {},
+                notifications=notifications,
+                sanity_change=sanity_change
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while examining that."
+            )
+    
     def execute_command(
         self,
         command: ParsedCommand,
@@ -177,6 +601,22 @@ class GameEngine:
         # Handle movement commands
         if command.verb == "GO" and command.direction:
             return self.handle_movement(command.direction, state)
+        
+        # Handle examine commands
+        if command.verb == "EXAMINE" and command.object:
+            return self.handle_examine(command.object, state)
+        
+        # Handle take commands
+        if command.verb == "TAKE" and command.object:
+            return self.handle_take(command.object, state)
+        
+        # Handle drop commands
+        if command.verb == "DROP" and command.object:
+            return self.handle_drop(command.object, state)
+        
+        # Handle object interaction commands (OPEN, CLOSE, READ, MOVE)
+        if command.verb in ["OPEN", "CLOSE", "READ", "MOVE"] and command.object:
+            return self.handle_object_interaction(command.verb, command.object, state)
         
         # Handle unknown commands
         if command.verb == "UNKNOWN":
