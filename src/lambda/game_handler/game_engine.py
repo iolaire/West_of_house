@@ -1164,6 +1164,117 @@ class GameEngine:
             # Room not found, assume lit
             return True
     
+    def handle_place_treasure(
+        self,
+        object_id: str,
+        container_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle placing a treasure in the trophy case for scoring.
+        
+        Updates score based on treasure value, tracks which treasures have been scored,
+        and prevents double-scoring the same treasure.
+        
+        Args:
+            object_id: The treasure object to place
+            container_id: The container (should be trophy case)
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status, message, and score update
+            
+        Requirements: 13.1, 13.2
+        """
+        try:
+            # First, use the standard put handler to place the object
+            put_result = self.handle_put(object_id, container_id, state)
+            
+            if not put_result.success:
+                return put_result
+            
+            # Get the object to check if it's a treasure
+            game_object = self.world.get_object(object_id)
+            
+            # Check if this is a treasure
+            if not game_object.is_treasure:
+                # Not a treasure, just return the put result
+                return put_result
+            
+            # Check if this treasure has already been scored
+            scored_treasures = state.get_flag("scored_treasures", [])
+            if not isinstance(scored_treasures, list):
+                scored_treasures = []
+            
+            if object_id in scored_treasures:
+                # Already scored, don't add points again
+                return ActionResult(
+                    success=True,
+                    message=f"{put_result.message} (Already scored)",
+                    inventory_changed=True,
+                    state_changes=put_result.state_changes,
+                    notifications=put_result.notifications
+                )
+            
+            # Add treasure value to score
+            treasure_value = game_object.treasure_value
+            state.score += treasure_value
+            
+            # Mark treasure as scored
+            scored_treasures.append(object_id)
+            state.set_flag("scored_treasures", scored_treasures)
+            
+            # Create notifications
+            notifications = list(put_result.notifications)
+            notifications.append(f"You have scored {treasure_value} points!")
+            
+            # Check for win condition
+            if state.score >= 350:
+                state.set_flag("won_flag", True)
+                notifications.append("Congratulations! You have achieved victory!")
+            
+            return ActionResult(
+                success=True,
+                message=put_result.message,
+                inventory_changed=True,
+                state_changes={
+                    **put_result.state_changes,
+                    'score': state.score,
+                    'flags': state.flags
+                },
+                notifications=notifications
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {container_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while placing that treasure."
+            )
+    
+    def check_win_condition(
+        self,
+        state: GameState
+    ) -> bool:
+        """
+        Check if the win condition has been met.
+        
+        Win condition: score reaches 350 points.
+        
+        Args:
+            state: Current game state
+            
+        Returns:
+            True if win condition met, False otherwise
+            
+        Requirements: 13.4, 13.5
+        """
+        return state.score >= 350
+    
     def execute_command(
         self,
         command: ParsedCommand,
@@ -1209,6 +1320,9 @@ class GameEngine:
         
         # Handle put commands (format: "put object in container")
         if command.verb == "PUT" and command.object and command.target:
+            # Check if target is trophy case for treasure scoring
+            if command.target == "trophy_case":
+                return self.handle_place_treasure(command.object, command.target, state)
             return self.handle_put(command.object, command.target, state)
         
         # Handle object interaction commands (OPEN, CLOSE, READ, MOVE)

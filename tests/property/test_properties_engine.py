@@ -669,3 +669,624 @@ def test_container_open_state_enforced(data):
     if result.success:
         assert object_id in container.state.get('contents', [])
         assert object_id not in state.inventory
+
+
+@st.composite
+def treasure_objects(draw, world_data):
+    """
+    Generate a list of treasure objects with their values.
+    
+    Returns list of (object_id, treasure_value) tuples for treasures.
+    """
+    # Find all treasure objects
+    treasures = []
+    for obj_id, obj in world_data.objects.items():
+        if obj.is_treasure and obj.treasure_value > 0:
+            treasures.append((obj_id, obj.treasure_value))
+    
+    if not treasures:
+        # If no treasures in data, create mock treasures for testing
+        treasures = [
+            ("treasure1", 10),
+            ("treasure2", 20),
+            ("treasure3", 30),
+            ("treasure4", 50),
+            ("treasure5", 100)
+        ]
+    
+    # Generate a subset of treasures (1 to min(5, len(treasures)))
+    num_treasures = draw(st.integers(min_value=1, max_value=min(5, len(treasures))))
+    selected_treasures = draw(st.lists(
+        st.sampled_from(treasures),
+        min_size=num_treasures,
+        max_size=num_treasures,
+        unique=True
+    ))
+    
+    return selected_treasures
+
+
+# Feature: game-backend-api, Property 19: Score accumulation
+@settings(max_examples=100)
+@given(st.data())
+def test_score_equals_sum_of_treasure_values(data):
+    """
+    For any sequence of treasure placements, the score should equal
+    the sum of all treasure values placed in the trophy case.
+    
+    **Validates: Requirements 13.1, 13.2**
+    
+    This property ensures that:
+    1. Each treasure adds its value to the score
+    2. Score accumulates correctly across multiple treasures
+    3. Treasures are not double-scored
+    """
+    # Load world data (fresh instance for each test)
+    WorldData.clear_cache()  # Clear cache to ensure fresh data
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    # Get a list of treasures to place
+    treasures = data.draw(treasure_objects(world))
+    
+    # Create game state
+    state = GameState.create_new_game()
+    state.current_room = "living_room"  # Assume trophy case is here
+    
+    # Get current room
+    current_room = world.get_room(state.current_room)
+    
+    # Create or get trophy case
+    trophy_case_id = "trophy_case"
+    
+    # Check if trophy case exists in world data
+    try:
+        trophy_case = world.get_object(trophy_case_id)
+    except ValueError:
+        # Trophy case doesn't exist, create a mock one
+        from world_loader import GameObject, Interaction
+        trophy_case = GameObject(
+            id=trophy_case_id,
+            name="trophy case",
+            name_spooky="cursed trophy case",
+            type="container",
+            state={'is_open': True, 'is_transparent': True, 'contents': []},
+            interactions=[
+                Interaction(
+                    verb="PUT",
+                    condition=None,
+                    response_original="You place it in the trophy case.",
+                    response_spooky="You place it in the cursed trophy case.",
+                    state_change=None,
+                    flag_change=None,
+                    sanity_effect=0,
+                    curse_trigger=False
+                )
+            ],
+            is_takeable=False,
+            is_treasure=False,
+            treasure_value=0,
+            size=10,
+            capacity=100,
+            soul_value=0
+        )
+        world.objects[trophy_case_id] = trophy_case
+    
+    # Ensure trophy case is in room and open
+    if trophy_case_id not in current_room.items:
+        current_room.items.append(trophy_case_id)
+    trophy_case.state['is_open'] = True
+    trophy_case.state['is_transparent'] = True
+    trophy_case.state['contents'] = []
+    
+    # Track expected score
+    expected_score = 0
+    scored_treasures = set()
+    
+    # Place each treasure in the trophy case
+    for treasure_id, treasure_value in treasures:
+        # Check if treasure exists in world data
+        try:
+            treasure_obj = world.get_object(treasure_id)
+        except ValueError:
+            # Treasure doesn't exist, create a mock one
+            from world_loader import GameObject, Interaction
+            treasure_obj = GameObject(
+                id=treasure_id,
+                name=treasure_id,
+                name_spooky=f"cursed {treasure_id}",
+                type="item",
+                state={},
+                interactions=[
+                    Interaction(
+                        verb="TAKE",
+                        condition=None,
+                        response_original=f"You take the {treasure_id}.",
+                        response_spooky=f"You take the cursed {treasure_id}.",
+                        state_change=None,
+                        flag_change=None,
+                        sanity_effect=0,
+                        curse_trigger=False
+                    )
+                ],
+                is_takeable=True,
+                is_treasure=True,
+                treasure_value=treasure_value,
+                size=1,
+                capacity=0,
+                soul_value=0
+            )
+            world.objects[treasure_id] = treasure_obj
+        
+        # Ensure treasure is marked as treasure with correct value
+        treasure_obj.is_treasure = True
+        treasure_obj.treasure_value = treasure_value
+        treasure_obj.is_takeable = True
+        
+        # Add treasure to inventory
+        if treasure_id not in state.inventory:
+            state.inventory.append(treasure_id)
+        
+        # Place treasure in trophy case
+        result = engine.handle_place_treasure(treasure_id, trophy_case_id, state)
+        
+        # Placement should succeed
+        assert result.success is True, f"Placing {treasure_id} should succeed"
+        
+        # Update expected score (only if not already scored)
+        if treasure_id not in scored_treasures:
+            expected_score += treasure_value
+            scored_treasures.add(treasure_id)
+        
+        # Verify score matches expected
+        assert state.score == expected_score, \
+            f"Score mismatch: expected {expected_score}, got {state.score}"
+    
+    # Final verification: score should equal sum of all unique treasure values
+    assert state.score == expected_score, \
+        f"Final score {state.score} should equal sum of treasure values {expected_score}"
+
+
+@settings(max_examples=100)
+@given(st.data())
+def test_treasures_not_double_scored(data):
+    """
+    For any treasure, placing it in the trophy case multiple times should
+    only add its value to the score once.
+    
+    **Validates: Requirements 13.1, 13.2**
+    
+    This property ensures that:
+    1. Treasures can only be scored once
+    2. Attempting to score the same treasure again doesn't increase score
+    3. The scored_treasures flag correctly tracks which treasures have been scored
+    """
+    # Load world data (fresh instance for each test)
+    WorldData.clear_cache()  # Clear cache to ensure fresh data
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    # Get a treasure to place
+    treasures = data.draw(treasure_objects(world))
+    
+    if not treasures:
+        assume(False)
+    
+    treasure_id, treasure_value = treasures[0]
+    
+    # Create game state
+    state = GameState.create_new_game()
+    state.current_room = "living_room"
+    
+    # Get current room
+    current_room = world.get_room(state.current_room)
+    
+    # Create or get trophy case
+    trophy_case_id = "trophy_case"
+    
+    try:
+        trophy_case = world.get_object(trophy_case_id)
+    except ValueError:
+        from world_loader import GameObject, Interaction
+        trophy_case = GameObject(
+            id=trophy_case_id,
+            name="trophy case",
+            name_spooky="cursed trophy case",
+            type="container",
+            state={'is_open': True, 'is_transparent': True, 'contents': []},
+            interactions=[
+                Interaction(
+                    verb="PUT",
+                    condition=None,
+                    response_original="You place it in the trophy case.",
+                    response_spooky="You place it in the cursed trophy case.",
+                    state_change=None,
+                    flag_change=None,
+                    sanity_effect=0,
+                    curse_trigger=False
+                )
+            ],
+            is_takeable=False,
+            is_treasure=False,
+            treasure_value=0,
+            size=10,
+            capacity=100,
+            soul_value=0
+        )
+        world.objects[trophy_case_id] = trophy_case
+    
+    # Ensure trophy case is in room
+    if trophy_case_id not in current_room.items:
+        current_room.items.append(trophy_case_id)
+    trophy_case.state['is_open'] = True
+    trophy_case.state['is_transparent'] = True
+    trophy_case.state['contents'] = []
+    
+    # Create or get treasure
+    try:
+        treasure_obj = world.get_object(treasure_id)
+    except ValueError:
+        from world_loader import GameObject, Interaction
+        treasure_obj = GameObject(
+            id=treasure_id,
+            name=treasure_id,
+            name_spooky=f"cursed {treasure_id}",
+            type="item",
+            state={},
+            interactions=[
+                Interaction(
+                    verb="TAKE",
+                    condition=None,
+                    response_original=f"You take the {treasure_id}.",
+                    response_spooky=f"You take the cursed {treasure_id}.",
+                    state_change=None,
+                    flag_change=None,
+                    sanity_effect=0,
+                    curse_trigger=False
+                )
+            ],
+            is_takeable=True,
+            is_treasure=True,
+            treasure_value=treasure_value,
+            size=1,
+            capacity=0,
+            soul_value=0
+        )
+        world.objects[treasure_id] = treasure_obj
+    
+    treasure_obj.is_treasure = True
+    treasure_obj.treasure_value = treasure_value
+    treasure_obj.is_takeable = True
+    
+    # Add treasure to inventory
+    state.inventory.append(treasure_id)
+    
+    # Place treasure in trophy case (first time)
+    result1 = engine.handle_place_treasure(treasure_id, trophy_case_id, state)
+    
+    assert result1.success is True
+    score_after_first = state.score
+    assert score_after_first == treasure_value, \
+        f"Score after first placement should be {treasure_value}, got {score_after_first}"
+    
+    # Try to place the same treasure again (simulate taking it out and putting it back)
+    # First, take it from the trophy case
+    trophy_case.state['contents'].remove(treasure_id)
+    state.inventory.append(treasure_id)
+    
+    # Place it again (second time)
+    result2 = engine.handle_place_treasure(treasure_id, trophy_case_id, state)
+    
+    # Placement should succeed but score should not increase
+    assert result2.success is True
+    score_after_second = state.score
+    assert score_after_second == treasure_value, \
+        f"Score after second placement should still be {treasure_value}, got {score_after_second}"
+    
+    # Verify treasure is marked as scored
+    scored_treasures = state.get_flag("scored_treasures", [])
+    assert treasure_id in scored_treasures, \
+        f"Treasure {treasure_id} should be in scored_treasures list"
+
+
+# Feature: game-backend-api, Property 20: Win condition trigger
+@settings(max_examples=100)
+@given(st.data())
+def test_won_flag_set_when_score_reaches_350(data):
+    """
+    For any game state where score reaches 350, the won_flag should be set to true.
+    
+    **Validates: Requirements 13.4**
+    
+    This property ensures that:
+    1. The win condition is triggered at exactly 350 points
+    2. The won_flag is set correctly
+    3. Victory is properly detected
+    """
+    # Load world data (fresh instance for each test)
+    WorldData.clear_cache()  # Clear cache to ensure fresh data
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    # Create game state
+    state = GameState.create_new_game()
+    state.current_room = "living_room"
+    
+    # Get current room
+    current_room = world.get_room(state.current_room)
+    
+    # Create or get trophy case
+    trophy_case_id = "trophy_case"
+    
+    try:
+        trophy_case = world.get_object(trophy_case_id)
+    except ValueError:
+        from world_loader import GameObject, Interaction
+        trophy_case = GameObject(
+            id=trophy_case_id,
+            name="trophy case",
+            name_spooky="cursed trophy case",
+            type="container",
+            state={'is_open': True, 'is_transparent': True, 'contents': []},
+            interactions=[
+                Interaction(
+                    verb="PUT",
+                    condition=None,
+                    response_original="You place it in the trophy case.",
+                    response_spooky="You place it in the cursed trophy case.",
+                    state_change=None,
+                    flag_change=None,
+                    sanity_effect=0,
+                    curse_trigger=False
+                )
+            ],
+            is_takeable=False,
+            is_treasure=False,
+            treasure_value=0,
+            size=10,
+            capacity=100,
+            soul_value=0
+        )
+        world.objects[trophy_case_id] = trophy_case
+    
+    # Ensure trophy case is in room
+    if trophy_case_id not in current_room.items:
+        current_room.items.append(trophy_case_id)
+    trophy_case.state['is_open'] = True
+    trophy_case.state['is_transparent'] = True
+    trophy_case.state['contents'] = []
+    
+    # Generate a target score that will trigger the win condition
+    # We'll use a score between 350 and 400 to test the boundary
+    target_score = data.draw(st.integers(min_value=350, max_value=400))
+    
+    # Create a treasure with exactly the right value to reach target_score
+    treasure_id = "winning_treasure"
+    treasure_value = target_score
+    
+    from world_loader import GameObject, Interaction
+    treasure_obj = GameObject(
+        id=treasure_id,
+        name=treasure_id,
+        name_spooky=f"cursed {treasure_id}",
+        type="item",
+        state={},
+        interactions=[
+            Interaction(
+                verb="TAKE",
+                condition=None,
+                response_original=f"You take the {treasure_id}.",
+                response_spooky=f"You take the cursed {treasure_id}.",
+                state_change=None,
+                flag_change=None,
+                sanity_effect=0,
+                curse_trigger=False
+            )
+        ],
+        is_takeable=True,
+        is_treasure=True,
+        treasure_value=treasure_value,
+        size=1,
+        capacity=0,
+        soul_value=0
+    )
+    world.objects[treasure_id] = treasure_obj
+    
+    # Add treasure to inventory
+    state.inventory.append(treasure_id)
+    
+    # Verify won_flag is not set initially
+    assert state.get_flag("won_flag", False) is False, \
+        "won_flag should not be set initially"
+    
+    # Place treasure in trophy case
+    result = engine.handle_place_treasure(treasure_id, trophy_case_id, state)
+    
+    # Placement should succeed
+    assert result.success is True, f"Placing {treasure_id} should succeed"
+    
+    # Verify score reached target
+    assert state.score == target_score, \
+        f"Score should be {target_score}, got {state.score}"
+    
+    # Verify won_flag is set when score >= 350
+    if target_score >= 350:
+        assert state.get_flag("won_flag", False) is True, \
+            f"won_flag should be set when score {target_score} >= 350"
+        
+        # Verify victory message is in notifications
+        assert any("victory" in notif.lower() or "congratulations" in notif.lower() 
+                   for notif in result.notifications), \
+            "Victory notification should be present"
+    else:
+        # This shouldn't happen given our test setup, but check anyway
+        assert state.get_flag("won_flag", False) is False, \
+            f"won_flag should not be set when score {target_score} < 350"
+
+
+@settings(max_examples=100)
+@given(st.data())
+def test_won_flag_not_set_below_350(data):
+    """
+    For any game state where score is below 350, the won_flag should not be set.
+    
+    **Validates: Requirements 13.4**
+    
+    This property ensures that:
+    1. The win condition is not triggered prematurely
+    2. Scores below 350 don't set the won_flag
+    """
+    # Load world data (fresh instance for each test)
+    WorldData.clear_cache()  # Clear cache to ensure fresh data
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    # Create game state
+    state = GameState.create_new_game()
+    state.current_room = "living_room"
+    
+    # Get current room
+    current_room = world.get_room(state.current_room)
+    
+    # Create or get trophy case
+    trophy_case_id = "trophy_case"
+    
+    try:
+        trophy_case = world.get_object(trophy_case_id)
+    except ValueError:
+        from world_loader import GameObject, Interaction
+        trophy_case = GameObject(
+            id=trophy_case_id,
+            name="trophy case",
+            name_spooky="cursed trophy case",
+            type="container",
+            state={'is_open': True, 'is_transparent': True, 'contents': []},
+            interactions=[
+                Interaction(
+                    verb="PUT",
+                    condition=None,
+                    response_original="You place it in the trophy case.",
+                    response_spooky="You place it in the cursed trophy case.",
+                    state_change=None,
+                    flag_change=None,
+                    sanity_effect=0,
+                    curse_trigger=False
+                )
+            ],
+            is_takeable=False,
+            is_treasure=False,
+            treasure_value=0,
+            size=10,
+            capacity=100,
+            soul_value=0
+        )
+        world.objects[trophy_case_id] = trophy_case
+    
+    # Ensure trophy case is in room
+    if trophy_case_id not in current_room.items:
+        current_room.items.append(trophy_case_id)
+    trophy_case.state['is_open'] = True
+    trophy_case.state['is_transparent'] = True
+    trophy_case.state['contents'] = []
+    
+    # Generate a score below 350
+    target_score = data.draw(st.integers(min_value=1, max_value=349))
+    
+    # Create a treasure with value below 350
+    treasure_id = "small_treasure"
+    treasure_value = target_score
+    
+    from world_loader import GameObject, Interaction
+    treasure_obj = GameObject(
+        id=treasure_id,
+        name=treasure_id,
+        name_spooky=f"cursed {treasure_id}",
+        type="item",
+        state={},
+        interactions=[
+            Interaction(
+                verb="TAKE",
+                condition=None,
+                response_original=f"You take the {treasure_id}.",
+                response_spooky=f"You take the cursed {treasure_id}.",
+                state_change=None,
+                flag_change=None,
+                sanity_effect=0,
+                curse_trigger=False
+            )
+        ],
+        is_takeable=True,
+        is_treasure=True,
+        treasure_value=treasure_value,
+        size=1,
+        capacity=0,
+        soul_value=0
+    )
+    world.objects[treasure_id] = treasure_obj
+    
+    # Add treasure to inventory
+    state.inventory.append(treasure_id)
+    
+    # Place treasure in trophy case
+    result = engine.handle_place_treasure(treasure_id, trophy_case_id, state)
+    
+    # Placement should succeed
+    assert result.success is True, f"Placing {treasure_id} should succeed"
+    
+    # Verify score is below 350
+    assert state.score < 350, \
+        f"Score should be below 350, got {state.score}"
+    
+    # Verify won_flag is NOT set
+    assert state.get_flag("won_flag", False) is False, \
+        f"won_flag should not be set when score {state.score} < 350"
+    
+    # Verify no victory message in notifications
+    assert not any("victory" in notif.lower() or "congratulations" in notif.lower() 
+                   for notif in result.notifications), \
+        "Victory notification should not be present when score < 350"
+
+
+@settings(max_examples=100)
+@given(st.data())
+def test_check_win_condition_method(data):
+    """
+    For any game state, check_win_condition should return True if and only if score >= 350.
+    
+    **Validates: Requirements 13.4**
+    
+    This property ensures the check_win_condition method works correctly.
+    """
+    # Load world data
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    # Generate a random score
+    score = data.draw(st.integers(min_value=0, max_value=500))
+    
+    # Create game state with that score
+    state = GameState.create_new_game()
+    state.score = score
+    
+    # Check win condition
+    result = engine.check_win_condition(state)
+    
+    # Verify result matches expected
+    expected = (score >= 350)
+    assert result == expected, \
+        f"check_win_condition should return {expected} for score {score}, got {result}"

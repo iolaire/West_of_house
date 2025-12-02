@@ -235,27 +235,27 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Test that lamp turns off automatically at 0 battery
     - _Requirements: 14.3_
 
-- [ ] 10. Scoring and treasure system
-  - [ ] 10.1 Implement treasure placement and scoring
+- [x] 10. Scoring and treasure system
+  - [x] 10.1 Implement treasure placement and scoring
     - Add handler for placing treasures in trophy case
     - Update score based on treasure value
     - Track which treasures have been scored
     - Prevent double-scoring same treasure
     - _Requirements: 13.1, 13.2_
 
-  - [ ] 10.2 Write property test for score accumulation
+  - [x] 10.2 Write property test for score accumulation
     - **Property 19: Score accumulation**
     - **Validates: Requirements 13.1, 13.2**
     - Test that score equals sum of treasure values
     - _Requirements: 13.1, 13.2_
 
-  - [ ] 10.3 Implement win condition
+  - [x] 10.3 Implement win condition
     - Check if score reaches 350
     - Set won_flag when win condition met
     - Return victory message
     - _Requirements: 13.4, 13.5_
 
-  - [ ] 10.4 Write property test for win condition
+  - [x] 10.4 Write property test for win condition
     - **Property 20: Win condition trigger**
     - **Validates: Requirements 13.4**
     - Test that won_flag is set when score reaches 350
