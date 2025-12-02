@@ -103,7 +103,92 @@ amplify/
 - **Sandbox**: Per-developer cloud environments for testing
 - **Custom Functions**: Support for Python, Go, Java, and other runtimes
 
+## Git Workflow
+
+**Branch Strategy:**
+- **`main` branch**: Active development and testing
+  - All development work happens here
+  - Commit and push changes frequently
+  - Test locally before merging to production
+  - Safe to experiment and iterate
+
+- **`production` branch**: Production deployments only
+  - Triggers automatic AWS Amplify deployment on push
+  - Only merge from `main` when ready to deploy
+  - Keep clean and deployment-ready
+  - Represents live production state
+
+**Development Workflow:**
+
+1. **Work on `main` branch** (default)
+   ```bash
+   git checkout main
+   # Make changes, test locally
+   git add .
+   git commit -m "Description of changes"
+   git push origin main
+   ```
+
+2. **When ready to deploy to AWS**
+   ```bash
+   # Switch to production branch
+   git checkout production
+   
+   # Merge changes from main
+   git merge main
+   
+   # Push to trigger Amplify deployment
+   git push origin production
+   ```
+
+3. **After deployment, sync main with production**
+   ```bash
+   git checkout main
+   git merge production
+   git push origin main
+   ```
+
+**Benefits:**
+- 🔒 Production branch stays clean and deployment-ready
+- 🚀 Deployments only happen when explicitly merged to production
+- 🧪 Can test and iterate on main without triggering deployments
+- 📊 Clear separation between development and production code
+- 🔄 Easy rollback by reverting production branch commits
+
+**Important Notes:**
+- Never commit directly to `production` - always merge from `main`
+- Always test on `main` before merging to `production`
+- Keep `main` and `production` in sync after deployments
+- Use descriptive commit messages for deployment tracking
+
 ## Common Commands
+
+### Git Workflow Commands
+
+```bash
+# Start new feature on main
+git checkout main
+git pull origin main
+
+# Make changes and commit
+git add .
+git commit -m "Feature: description"
+git push origin main
+
+# Deploy to production
+git checkout production
+git merge main --no-edit
+git push origin production
+
+# Sync main after deployment
+git checkout main
+git merge production
+git push origin main
+
+# Check branch status
+git status
+git log --oneline --graph --all --decorate -10
+```
 
 ### Amplify Gen 2 Deployment
 
