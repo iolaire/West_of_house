@@ -429,7 +429,7 @@ This implementation plan breaks down the MVP backend development into discrete, 
       - Verify requirements.txt is complete
       - _Requirements: 20.4, 22.1_
     
-    - [ ] 17.3.5 Define API Gateway with Gen 2
+    - [x] 17.3.5 Define API Gateway with Gen 2
       - Create REST API in backend.ts
       - Add /game/new POST endpoint
       - Add /game/command POST endpoint
@@ -438,14 +438,14 @@ This implementation plan breaks down the MVP backend development into discrete, 
       - Integrate Lambda function with API Gateway
       - _Requirements: 11.1, 11.2_
     
-    - [ ] 17.3.6 Grant IAM permissions
+    - [x] 17.3.6 Grant IAM permissions
       - Grant Lambda read/write access to DynamoDB table
       - Verify least-privilege IAM policies
       - Ensure no wildcard permissions
       - Verify CloudWatch Logs permissions
       - _Requirements: 21.1, 21.2, 21.3, 21.4_
     
-    - [ ] 17.3.7 Test with local sandbox
+    - [x] 17.3.7 Test with local sandbox
       - Run `npx ampx sandbox` to start local environment
       - Test new game endpoint
       - Test command endpoint
