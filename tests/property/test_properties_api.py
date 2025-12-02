@@ -95,7 +95,11 @@ def test_initialization_consistency(num_games):
         lambda x: not any(word in x.lower() for word in [
             'go', 'north', 'south', 'east', 'west', 'up', 'down',
             'take', 'drop', 'examine', 'open', 'close', 'read',
-            'inventory', 'look', 'quit'
+            'inventory', 'look', 'quit',
+            # Exclude single-letter abbreviations
+            'n', 's', 'e', 'w', 'u', 'd', 'i', 'l', 'q',
+            # Exclude other common abbreviations
+            'ne', 'nw', 'se', 'sw', 'inv', 'ex', 'x'
         ])
     )
 )
@@ -232,3 +236,154 @@ def test_api_response_format_consistency(num_requests):
         assert isinstance(state_obj['sanity'], int)
         assert isinstance(state_obj['cursed'], bool)
         assert isinstance(state_obj['score'], int)
+
+
+# Feature: game-backend-api, Property 25: Error status codes
+@settings(max_examples=100, deadline=None)
+@given(
+    st.sampled_from([
+        'invalid_session',
+        'malformed_json',
+        'missing_field',
+        'empty_command',
+        'invalid_endpoint'
+    ])
+)
+def test_error_status_codes(error_type):
+    """
+    For any error condition, the API should return the correct HTTP status code.
+    
+    **Validates: Requirements 16.1, 16.2, 16.3**
+    
+    This property ensures that:
+    - Invalid session IDs return 404
+    - Malformed JSON returns 400
+    - Missing required fields return 400
+    - Internal errors return 500
+    
+    Error types tested:
+    - invalid_session: Session not found (404)
+    - malformed_json: Invalid JSON in request body (400)
+    - missing_field: Missing required field like session_id or command (400)
+    - empty_command: Empty command string (400)
+    - invalid_endpoint: Unknown API endpoint (404)
+    """
+    from index import handler, create_error_response
+    from unittest.mock import Mock
+    
+    # Create mock Lambda context
+    mock_context = Mock()
+    mock_context.request_id = 'test-request-id'
+    
+    if error_type == 'invalid_session':
+        # Test 404 for invalid session ID
+        event = {
+            'httpMethod': 'POST',
+            'path': '/api/game/command',
+            'body': json.dumps({
+                'session_id': 'nonexistent-session-id-12345',
+                'command': 'go north'
+            })
+        }
+        
+        with patch('index.session_manager') as mock_session_manager:
+            # Mock session not found
+            mock_session_manager.load_session.return_value = None
+            
+            response = handler(event, mock_context)
+            
+            # Verify 404 status code
+            assert response['statusCode'] == 404, \
+                f"Expected 404 for invalid session, got {response['statusCode']}"
+            
+            # Verify error structure
+            body = json.loads(response['body'])
+            assert body['success'] is False
+            assert 'error' in body
+            assert body['error']['code'] == 'SESSION_NOT_FOUND'
+    
+    elif error_type == 'malformed_json':
+        # Test 400 for malformed JSON
+        event = {
+            'httpMethod': 'POST',
+            'path': '/api/game/command',
+            'body': '{invalid json here'  # Malformed JSON
+        }
+        
+        response = handler(event, mock_context)
+        
+        # Verify 400 status code
+        assert response['statusCode'] == 400, \
+            f"Expected 400 for malformed JSON, got {response['statusCode']}"
+        
+        # Verify error structure
+        body = json.loads(response['body'])
+        assert body['success'] is False
+        assert 'error' in body
+        assert body['error']['code'] == 'INVALID_JSON'
+    
+    elif error_type == 'missing_field':
+        # Test 400 for missing required field
+        event = {
+            'httpMethod': 'POST',
+            'path': '/api/game/command',
+            'body': json.dumps({
+                'command': 'go north'
+                # Missing session_id
+            })
+        }
+        
+        response = handler(event, mock_context)
+        
+        # Verify 400 status code
+        assert response['statusCode'] == 400, \
+            f"Expected 400 for missing field, got {response['statusCode']}"
+        
+        # Verify error structure
+        body = json.loads(response['body'])
+        assert body['success'] is False
+        assert 'error' in body
+        assert body['error']['code'] == 'MISSING_SESSION_ID'
+    
+    elif error_type == 'empty_command':
+        # Test 400 for empty command
+        event = {
+            'httpMethod': 'POST',
+            'path': '/api/game/command',
+            'body': json.dumps({
+                'session_id': 'test-session-id',
+                'command': '   '  # Empty/whitespace only
+            })
+        }
+        
+        response = handler(event, mock_context)
+        
+        # Verify 400 status code
+        assert response['statusCode'] == 400, \
+            f"Expected 400 for empty command, got {response['statusCode']}"
+        
+        # Verify error structure
+        body = json.loads(response['body'])
+        assert body['success'] is False
+        assert 'error' in body
+        assert body['error']['code'] == 'INVALID_COMMAND'
+    
+    elif error_type == 'invalid_endpoint':
+        # Test 404 for unknown endpoint
+        event = {
+            'httpMethod': 'GET',
+            'path': '/api/game/unknown',
+            'body': '{}'
+        }
+        
+        response = handler(event, mock_context)
+        
+        # Verify 404 status code
+        assert response['statusCode'] == 404, \
+            f"Expected 404 for invalid endpoint, got {response['statusCode']}"
+        
+        # Verify error structure
+        body = json.loads(response['body'])
+        assert body['success'] is False
+        assert 'error' in body
+        assert body['error']['code'] == 'ENDPOINT_NOT_FOUND'

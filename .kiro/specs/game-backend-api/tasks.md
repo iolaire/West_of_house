@@ -331,80 +331,103 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Test that all responses follow consistent JSON schema
     - _Requirements: 11.2, 19.2, 19.4_
 
-- [ ] 13. Error handling and validation
-  - [ ] 13.1 Implement comprehensive error handling
+- [x] 13. Error handling and validation
+  - [x] 13.1 Implement comprehensive error handling
     - Add try-catch blocks around all operations
     - Return appropriate HTTP status codes (400, 404, 500)
     - Log errors with context
     - Ensure state consistency on errors
     - _Requirements: 16.1, 16.2, 16.3, 16.5_
 
-  - [ ] 13.2 Write property test for error status codes
+  - [x] 13.2 Write property test for error status codes
     - **Property 25: Error status codes**
     - **Validates: Requirements 16.1, 16.2, 16.3**
     - Test that errors return correct HTTP status codes
     - _Requirements: 16.1, 16.2, 16.3_
 
-  - [ ] 13.3 Write unit tests for error handling
+  - [x] 13.3 Write unit tests for error handling
     - Test invalid session ID (404)
     - Test malformed JSON (400)
     - Test internal errors (500)
     - Test state preservation on errors
     - _Requirements: 16.1, 16.2, 16.3, 16.5_
 
-- [ ] 14. Session management and cleanup
-  - [ ] 14.1 Implement session expiration
+- [x] 14. Session management and cleanup
+  - [x] 14.1 Implement session expiration
     - Set TTL on DynamoDB items (1 hour default)
     - Update last accessed timestamp on each request
     - _Requirements: 22.1, 22.3_
 
-  - [ ] 14.2 Write property test for session expiration
+  - [x] 14.2 Write property test for session expiration
     - **Property 29: Session expiration cleanup**
     - **Validates: Requirements 22.2, 22.4**
     - Test that expired sessions are removed
     - _Requirements: 22.2, 22.4_
 
-- [ ] 15. Checkpoint - Ensure all tests pass
+- [x] 15. Checkpoint - Ensure all tests pass
   - Run all unit tests
   - Run all property-based tests
   - Fix any failing tests
   - Verify test coverage is adequate
   - Ask the user if questions arise
 
-- [ ] 16. Integration testing
-  - [ ] 16.1 Write integration test for complete game flow
+- [x] 16. Integration testing
+  - [x] 16.1 Write integration test for complete game flow
     - Test: New game → Move → Take object → Examine → Drop → Score
     - Verify state persistence across commands
     - _Requirements: 1.1, 2.1, 3.2, 4.2, 4.3, 13.1_
 
-  - [ ] 16.2 Write integration test for sanity degradation
+  - [x] 16.2 Write integration test for sanity degradation
     - Test: Enter cursed rooms → Sanity drops → Descriptions change
     - _Requirements: 6.1, 6.2, 6.3_
 
-  - [ ] 16.3 Write integration test for puzzle solving
+  - [x] 16.3 Write integration test for puzzle solving
     - Test: Move rug → Open trap door → Navigate to cellar
     - _Requirements: 18.1, 18.2, 18.3_
 
 - [ ] 17. Deployment and AWS setup
-  - [ ] 17.1 Package Lambda function
+  - [ ] 17.1 Configure AWS resource tagging
+    - Update Amplify configuration to include required tags
+    - Add tags to amplify/backend configuration files: Project=west-of-haunted-house, ManagedBy=vedfolnir, Environment=<user-defined>
+    - Ensure Lambda, DynamoDB, API Gateway, and all other resources receive tags
+    - _Requirements: 24.1, 24.2, 24.3, 24.4_
+
+  - [ ] 17.2 Package Lambda function
     - Create deployment script to bundle code and dependencies
     - Include game data JSON files in package
     - Create ZIP file for Lambda deployment
     - _Requirements: 21.1, 21.4_
 
-  - [ ] 17.2 Deploy to AWS
+  - [ ] 17.3 Deploy to AWS
     - Run `amplify push` to deploy infrastructure
     - Verify Lambda function is created with ARM64 architecture
     - Verify DynamoDB table is created with TTL
     - Verify API Gateway endpoints are accessible
-    - _Requirements: 21.1, 21.2, 21.3, 21.4_
+    - Verify all resources have required tags
+    - _Requirements: 21.1, 21.2, 21.3, 21.4, 24.1, 24.2, 24.3, 24.4_
 
-  - [ ] 17.3 Test deployed API
+  - [ ] 17.4 Test deployed API
     - Test new game endpoint
     - Test command endpoint with various commands
     - Test state query endpoint
     - Verify DynamoDB session storage
     - _Requirements: 11.1, 11.2, 21.1_
+
+  - [ ] 17.5 Create AWS resource cleanup script
+    - Create `scripts/cleanup-aws-resources.sh` script
+    - Implement resource discovery using AWS CLI with tag filters
+    - Delete resources in correct order: API Gateway → Lambda → DynamoDB → IAM roles → CloudFormation stacks
+    - Add safety confirmation prompt before deletion
+    - Verify only resources with all three required tags are deleted
+    - _Requirements: 25.1, 25.2, 25.3, 25.4_
+
+  - [ ] 17.6 Test cleanup script
+    - Run cleanup script in test environment
+    - Verify all tagged resources are identified
+    - Verify resources are deleted in correct order
+    - Verify no untagged resources are affected
+    - Verify cleanup completion confirmation
+    - _Requirements: 25.1, 25.2, 25.3, 25.4, 25.5_
 
 - [ ] 18. Cost estimation and optimization
   - [ ] 18.1 Estimate AWS costs

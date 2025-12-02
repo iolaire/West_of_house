@@ -120,6 +120,17 @@ def test_movement_succeeds_only_for_valid_exits(data):
         state = GameState.create_new_game()
         state.current_room = room_id
         
+        # Set flags for known flag-gated exits to ensure they're accessible
+        # Trap door puzzle
+        if room_id == "living_room" and direction == "DOWN":
+            state.set_flag("trap_door_open", True)
+        # Grating puzzle
+        if room_id == "grating_clearing" and direction == "DOWN":
+            state.set_flag("grate_unlocked", True)
+        # Kitchen window puzzle
+        if room_id == "east_of_house" and target_room_id == "kitchen":
+            state.set_flag("kitchen_window_open", True)
+        
         # Attempt movement
         result = engine.handle_movement(direction, state)
         

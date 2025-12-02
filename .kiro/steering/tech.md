@@ -43,6 +43,19 @@
 - **AWS CLI Profile**: Use `--profile amplify-deploy` for deployment commands
 - **Key Rotation**: Rotate access keys regularly for security
 
+## AWS Resource Tagging
+
+**Required Tags (ALL resources MUST have these):**
+- **Project**: `west-of-haunted-house` (identifies all resources for this project)
+- **ManagedBy**: `vedfolnir` (identifies the managing entity)
+- **Environment**: User-defined value (e.g., `dev`, `staging`, `prod`)
+
+**Tagging Rules:**
+- All AWS resources created by deployment scripts MUST include all three tags
+- Amplify configuration files MUST specify these tags for automatic application
+- Cleanup scripts MUST filter resources by all three tags to ensure safe deletion
+- Cost tracking and resource queries MUST use these tags for filtering
+
 ## Cost Optimization
 
 - **Target**: Under $5/month for typical usage (1000 games/month)
@@ -65,11 +78,27 @@ amplify add api
 # Add DynamoDB storage
 amplify add storage
 
-# Deploy to AWS
+# Deploy to AWS (ensure tags are configured first)
 amplify push
 
 # Add hosting
 amplify add hosting
+```
+
+### AWS Resource Management
+
+```bash
+# List all project resources by tags
+aws resourcegroupstaggingapi get-resources \
+  --tag-filters Key=Project,Values=west-of-haunted-house \
+                Key=ManagedBy,Values=vedfolnir
+
+# Cleanup all project resources (use with caution!)
+./scripts/cleanup-aws-resources.sh
+
+# Verify resource tags
+aws lambda list-tags --resource <function-arn>
+aws dynamodb list-tags-of-resource --resource-arn <table-arn>
 ```
 
 ### Lambda Packaging

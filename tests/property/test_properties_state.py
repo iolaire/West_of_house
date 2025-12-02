@@ -7,6 +7,7 @@ serialization, and session management.
 
 import sys
 import os
+from datetime import datetime, timedelta
 
 # Add src directory to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler'))
@@ -15,6 +16,7 @@ import pytest
 from hypothesis import given, strategies as st, settings
 from state_manager import GameState
 import json
+import time
 
 
 # Custom strategies for generating test data
@@ -229,3 +231,139 @@ def test_session_id_uniqueness(num_sessions):
     
     # Verify we got the expected number of unique IDs
     assert len(session_ids) == num_sessions
+
+
+# Feature: game-backend-api, Property 29: Session expiration cleanup
+@settings(max_examples=100)
+@given(st.integers(min_value=1, max_value=10))
+def test_session_expiration_ttl_set(num_sessions):
+    """
+    For any new game session, the TTL (expires field) should be set to a future timestamp.
+    
+    **Validates: Requirements 22.2, 22.4**
+    
+    This property ensures that all sessions have proper expiration times set,
+    which allows DynamoDB to automatically clean up expired sessions.
+    
+    Note: DynamoDB TTL cleanup is asynchronous and handled by AWS, so we test
+    that the TTL field is properly set rather than testing actual deletion.
+    """
+    current_time = int(datetime.utcnow().timestamp())
+    
+    for _ in range(num_sessions):
+        # Create new game session
+        state = GameState.create_new_game()
+        
+        # Verify expires field is set
+        assert state.expires is not None, "expires field should be set"
+        
+        # Verify expires is an integer (Unix timestamp)
+        assert isinstance(state.expires, int), "expires should be an integer timestamp"
+        
+        # Verify expires is in the future (at least 30 minutes from now)
+        # We use 30 minutes as a buffer since the default is 1 hour
+        min_expected_expiry = current_time + (30 * 60)  # 30 minutes in seconds
+        assert state.expires >= min_expected_expiry, \
+            f"expires should be at least 30 minutes in the future (got {state.expires}, expected >= {min_expected_expiry})"
+        
+        # Verify expires is not too far in the future (less than 2 hours)
+        max_expected_expiry = current_time + (2 * 60 * 60)  # 2 hours in seconds
+        assert state.expires <= max_expected_expiry, \
+            f"expires should not be more than 2 hours in the future (got {state.expires}, expected <= {max_expected_expiry})"
+
+
+# Feature: game-backend-api, Property 29: Session expiration cleanup (TTL update)
+@settings(max_examples=100)
+@given(state=game_state_strategy(), hours=st.integers(min_value=1, max_value=5))
+def test_session_ttl_update(state, hours):
+    """
+    For any game state and TTL duration, updating TTL should set expires to the correct future time.
+    
+    **Validates: Requirements 22.2, 22.4**
+    
+    This property ensures that TTL updates correctly extend session lifetime.
+    """
+    # Record time before update
+    before_time = int(datetime.utcnow().timestamp())
+    
+    # Update TTL
+    state.update_ttl(hours=hours)
+    
+    # Record time after update
+    after_time = int(datetime.utcnow().timestamp())
+    
+    # Calculate expected expiry range
+    min_expected_expiry = before_time + (hours * 60 * 60)
+    max_expected_expiry = after_time + (hours * 60 * 60)
+    
+    # Verify expires is set correctly
+    assert state.expires is not None, "expires should be set after update_ttl"
+    assert isinstance(state.expires, int), "expires should be an integer"
+    assert min_expected_expiry <= state.expires <= max_expected_expiry, \
+        f"expires should be approximately {hours} hours in the future"
+    
+    # Verify last_accessed was updated
+    assert state.last_accessed is not None, "last_accessed should be updated"
+
+
+# Feature: game-backend-api, Property 29: Session expiration cleanup (multiple updates)
+@settings(max_examples=100)
+@given(st.integers(min_value=2, max_value=10))
+def test_session_ttl_extends_on_access(num_accesses):
+    """
+    For any number of session accesses, each access should extend the TTL.
+    
+    **Validates: Requirements 22.2, 22.4**
+    
+    This property ensures that active sessions don't expire while being used.
+    """
+    state = GameState.create_new_game()
+    
+    previous_expires = state.expires
+    
+    for i in range(num_accesses):
+        # Simulate a small delay between accesses
+        time.sleep(0.01)
+        
+        # Update TTL (simulating session access)
+        state.update_ttl(hours=1)
+        
+        # Verify expires was extended (should be >= previous value)
+        # Note: Due to timing, it should actually be slightly greater
+        assert state.expires >= previous_expires, \
+            f"Access {i+1}: expires should be extended or maintained (got {state.expires}, previous {previous_expires})"
+        
+        previous_expires = state.expires
+
+
+# Feature: game-backend-api, Property 29: Session expiration cleanup (serialization preserves TTL)
+@settings(max_examples=100)
+@given(state=game_state_strategy())
+def test_session_ttl_preserved_in_serialization(state):
+    """
+    For any game state with TTL, serialization should preserve the expires field.
+    
+    **Validates: Requirements 22.2, 22.4**
+    
+    This ensures TTL information is not lost during persistence operations.
+    """
+    # Set a TTL if not already set
+    if state.expires is None:
+        state.update_ttl(hours=1)
+    
+    original_expires = state.expires
+    
+    # Serialize and deserialize
+    state_dict = state.to_dict()
+    restored_state = GameState.from_dict(state_dict)
+    
+    # Verify expires is preserved
+    assert restored_state.expires == original_expires, \
+        "expires field should be preserved through serialization"
+    
+    # Also test JSON serialization
+    json_str = state.to_json()
+    restored_from_json = GameState.from_json(json_str)
+    
+    assert restored_from_json.expires == original_expires, \
+        "expires field should be preserved through JSON serialization"
