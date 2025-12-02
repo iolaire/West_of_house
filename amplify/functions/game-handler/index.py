@@ -173,16 +173,16 @@ def handler(event, context):
             return handle_command(event, request_id)
         
         elif (path.startswith('/api/game/state/') or path.startswith('/game/state/')) and http_method == 'GET':
-            # Extract session_id from path
-            session_id = path.split('/')[-1]
-            if not session_id:
-                print(f"[{request_id}] ERROR: Missing session_id in path")
+            # Extract sessionId from path
+            sessionId = path.split('/')[-1]
+            if not sessionId:
+                print(f"[{request_id}] ERROR: Missing sessionId in path")
                 return create_error_response(
                     400,
                     'MISSING_SESSION_ID',
                     'Session ID is required in path'
                 )
-            return handle_get_state(session_id, request_id)
+            return handle_get_state(sessionId, request_id)
         
         else:
             # Unknown endpoint
@@ -242,10 +242,10 @@ def handle_new_game(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[
         # Create new game state with default starting values
         state = GameState.create_new_game(starting_room="west_of_house")
         
-        print(f"[{request_id}] Created new game session: {state.session_id}")
+        print(f"[{request_id}] Created new game session: {state.sessionId}")
         
         # Validate state was created correctly
-        if not state.session_id:
+        if not state.sessionId:
             raise ValueError("Failed to generate session ID")
         
         if not state.current_room:
@@ -261,7 +261,7 @@ def handle_new_game(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[
         # Save to DynamoDB
         try:
             session_manager.save_session(state)
-            print(f"[{request_id}] Saved session {state.session_id} to DynamoDB")
+            print(f"[{request_id}] Saved session {state.sessionId} to DynamoDB")
         except Exception as e:
             print(f"[{request_id}] ERROR: Failed to save session to DynamoDB - {str(e)}")
             raise Exception(f"Database error: Failed to save session")
@@ -293,7 +293,7 @@ def handle_new_game(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[
         # Build response
         response_body = {
             'success': True,
-            'session_id': state.session_id,
+            'sessionId': state.sessionId,
             'room': state.current_room,
             'description': description,
             'exits': list(room.exits.keys()),
@@ -310,7 +310,7 @@ def handle_new_game(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[
             }
         }
         
-        print(f"[{request_id}] Successfully created new game session {state.session_id}")
+        print(f"[{request_id}] Successfully created new game session {state.sessionId}")
         return create_response(200, response_body)
     
     except ValueError as e:
@@ -330,10 +330,10 @@ def handle_new_game(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[
         print(traceback.format_exc())
         
         # If we created a state but failed later, try to clean up
-        if state and state.session_id:
+        if state and state.sessionId:
             try:
-                session_manager.delete_session(state.session_id)
-                print(f"[{request_id}] Cleaned up failed session {state.session_id}")
+                session_manager.delete_session(state.sessionId)
+                print(f"[{request_id}] Cleaned up failed session {state.sessionId}")
             except Exception as cleanup_error:
                 print(f"[{request_id}] WARNING: Failed to clean up session - {str(cleanup_error)}")
         
@@ -387,17 +387,17 @@ def handle_command(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[s
                 'Request body must be a JSON object'
             )
         
-        # Extract session_id and command
-        session_id = body.get('session_id')
+        # Extract sessionId and command
+        sessionId = body.get('sessionId')
         command_text = body.get('command')
         
         # Validate required fields
-        if not session_id:
-            print(f"[{request_id}] ERROR: Missing session_id in request")
+        if not sessionId:
+            print(f"[{request_id}] ERROR: Missing sessionId in request")
             return create_error_response(
                 400,
                 'MISSING_SESSION_ID',
-                'session_id is required'
+                'sessionId is required'
             )
         
         if not command_text:
@@ -426,11 +426,11 @@ def handle_command(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[s
                 'command cannot be empty'
             )
         
-        print(f"[{request_id}] Processing command for session {session_id}: {command_text}")
+        print(f"[{request_id}] Processing command for session {sessionId}: {command_text}")
         
         # Load session from DynamoDB
         try:
-            state = session_manager.load_session(session_id)
+            state = session_manager.load_session(sessionId)
         except Exception as e:
             print(f"[{request_id}] ERROR: Failed to load session from DynamoDB - {str(e)}")
             return create_error_response(
@@ -440,11 +440,11 @@ def handle_command(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[s
             )
         
         if state is None:
-            print(f"[{request_id}] ERROR: Session not found - {session_id}")
+            print(f"[{request_id}] ERROR: Session not found - {sessionId}")
             return create_error_response(
                 404,
                 'SESSION_NOT_FOUND',
-                f'Session not found or expired: {session_id}'
+                f'Session not found or expired: {sessionId}'
             )
         
         # Create a backup of the original state for rollback
@@ -485,7 +485,7 @@ def handle_command(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[s
         # Save updated state to DynamoDB
         try:
             session_manager.save_session(state)
-            print(f"[{request_id}] Saved updated session {session_id}")
+            print(f"[{request_id}] Saved updated session {sessionId}")
         except Exception as e:
             print(f"[{request_id}] ERROR: Failed to save session to DynamoDB - {str(e)}")
             
@@ -563,7 +563,7 @@ def handle_command(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[s
             'notifications': result.notifications
         }
         
-        print(f"[{request_id}] Successfully executed command for session {session_id}")
+        print(f"[{request_id}] Successfully executed command for session {sessionId}")
         return create_response(200, response_body)
     
     except json.JSONDecodeError as e:
@@ -594,14 +594,14 @@ def handle_command(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[s
         )
 
 
-def handle_get_state(session_id: str, request_id: str = 'unknown') -> Dict[str, Any]:
+def handle_get_state(sessionId: str, request_id: str = 'unknown') -> Dict[str, Any]:
     """
-    Handle GET /api/game/state/{session_id} - Get current game state.
+    Handle GET /api/game/state/{sessionId} - Get current game state.
     
     Loads session from DynamoDB and returns complete game state.
     
     Args:
-        session_id: The session identifier
+        sessionId: The session identifier
         request_id: Request identifier for logging
         
     Returns:
@@ -610,11 +610,11 @@ def handle_get_state(session_id: str, request_id: str = 'unknown') -> Dict[str, 
     Requirements: 19.1, 19.2, 19.3, 16.1, 16.2, 16.3
     """
     try:
-        print(f"[{request_id}] Retrieving state for session {session_id}")
+        print(f"[{request_id}] Retrieving state for session {sessionId}")
         
-        # Validate session_id format
-        if not session_id or not isinstance(session_id, str):
-            print(f"[{request_id}] ERROR: Invalid session_id format")
+        # Validate sessionId format
+        if not sessionId or not isinstance(sessionId, str):
+            print(f"[{request_id}] ERROR: Invalid sessionId format")
             return create_error_response(
                 400,
                 'INVALID_SESSION_ID',
@@ -623,7 +623,7 @@ def handle_get_state(session_id: str, request_id: str = 'unknown') -> Dict[str, 
         
         # Load session from DynamoDB
         try:
-            state = session_manager.load_session(session_id)
+            state = session_manager.load_session(sessionId)
         except Exception as e:
             print(f"[{request_id}] ERROR: Failed to load session from DynamoDB - {str(e)}")
             return create_error_response(
@@ -633,11 +633,11 @@ def handle_get_state(session_id: str, request_id: str = 'unknown') -> Dict[str, 
             )
         
         if state is None:
-            print(f"[{request_id}] ERROR: Session not found - {session_id}")
+            print(f"[{request_id}] ERROR: Session not found - {sessionId}")
             return create_error_response(
                 404,
                 'SESSION_NOT_FOUND',
-                f'Session not found or expired: {session_id}'
+                f'Session not found or expired: {sessionId}'
             )
         
         # Update last accessed timestamp and TTL
@@ -646,7 +646,7 @@ def handle_get_state(session_id: str, request_id: str = 'unknown') -> Dict[str, 
         # Save updated session to extend TTL
         try:
             session_manager.save_session(state)
-            print(f"[{request_id}] Updated TTL for session {session_id}")
+            print(f"[{request_id}] Updated TTL for session {sessionId}")
         except Exception as e:
             print(f"[{request_id}] WARNING: Failed to update session TTL - {str(e)}")
             # Continue anyway - this is not critical for read operations
@@ -701,7 +701,7 @@ def handle_get_state(session_id: str, request_id: str = 'unknown') -> Dict[str, 
         # Build response with complete game state
         response_body = {
             'success': True,
-            'session_id': state.session_id,
+            'sessionId': state.sessionId,
             'current_room': state.current_room,
             'description': description,
             'exits': list(room.exits.keys()),
@@ -726,7 +726,7 @@ def handle_get_state(session_id: str, request_id: str = 'unknown') -> Dict[str, 
             'last_accessed': state.last_accessed
         }
         
-        print(f"[{request_id}] Successfully retrieved state for session {session_id}")
+        print(f"[{request_id}] Successfully retrieved state for session {sessionId}")
         return create_response(200, response_body)
     
     except Exception as e:

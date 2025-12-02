@@ -467,7 +467,7 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Verify all resources have required tags
     - _Requirements: 21.1, 21.2, 21.3, 21.4, 24.1, 24.2, 24.3, 24.4_
 
-  - [ ] 17.5 Test deployed API
+  - [x] 17.5 Test deployed API
     - Test new game endpoint
     - Test command endpoint with various commands
     - Test state query endpoint

@@ -51,6 +51,7 @@ const schema = a.schema({
       createdAt: a.datetime(),
       updatedAt: a.datetime(),
     })
+    .identifier(['sessionId']) // Use sessionId as the primary key instead of default 'id'
     .authorization((allow) => [
       // Allow guest access for MVP (no authentication required)
       allow.guest(),

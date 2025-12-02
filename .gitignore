@@ -100,3 +100,7 @@ amplifytools.xcconfig
 .amplify/
 amplify_outputs*
 amplifyconfiguration*
+
+#package
+package-lock.json
+package.json

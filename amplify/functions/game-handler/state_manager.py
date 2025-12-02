@@ -20,10 +20,12 @@ class GameState:
     
     Includes player location, inventory, game flags, Halloween mechanics
     (sanity, curse, blood moon, souls), and original Zork statistics.
+    
+    Note: Uses camelCase for field names to match DynamoDB schema.
     """
     
     # Session identification
-    session_id: str
+    sessionId: str
     
     # Player location and inventory
     current_room: str
@@ -208,14 +210,14 @@ class GameState:
         Returns:
             New GameState instance with initial values
         """
-        session_id = str(uuid.uuid4())
+        sessionId = str(uuid.uuid4())
         now = datetime.utcnow()
         
         # Set TTL to 1 hour from now (3600 seconds)
         expires = int((now + timedelta(hours=1)).timestamp())
         
         return cls(
-            session_id=session_id,
+            sessionId=sessionId,
             current_room=starting_room,
             inventory=[],
             flags={},
@@ -288,8 +290,8 @@ class SessionManager:
             # Convert state to dictionary
             item = state.to_dict()
             
-            # Ensure session_id is the partition key
-            item['sessionId'] = state.session_id
+            # Ensure sessionId is the partition key
+            item['sessionId'] = state.sessionId
             
             # Put item in DynamoDB
             self.dynamodb.put_item(
@@ -300,14 +302,14 @@ class SessionManager:
             return True
             
         except Exception as e:
-            raise Exception(f"Failed to save session {state.session_id}: {str(e)}")
+            raise Exception(f"Failed to save session {state.sessionId}: {str(e)}")
     
-    def load_session(self, session_id: str) -> Optional[GameState]:
+    def load_session(self, sessionId: str) -> Optional[GameState]:
         """
         Load game state from DynamoDB.
         
         Args:
-            session_id: The session identifier to load
+            sessionId: The session identifier to load
             
         Returns:
             GameState instance if found, None if not found
@@ -319,7 +321,7 @@ class SessionManager:
             # Get item from DynamoDB
             response = self.dynamodb.get_item(
                 TableName=self.table_name,
-                Key={'sessionId': {'S': session_id}}
+                Key={'sessionId': {'S': sessionId}}
             )
             
             # Check if item exists
@@ -338,14 +340,14 @@ class SessionManager:
             return state
             
         except Exception as e:
-            raise Exception(f"Failed to load session {session_id}: {str(e)}")
+            raise Exception(f"Failed to load session {sessionId}: {str(e)}")
     
-    def delete_session(self, session_id: str) -> bool:
+    def delete_session(self, sessionId: str) -> bool:
         """
         Delete a game session from DynamoDB.
         
         Args:
-            session_id: The session identifier to delete
+            sessionId: The session identifier to delete
             
         Returns:
             True if deletion successful, False otherwise
@@ -357,20 +359,20 @@ class SessionManager:
             # Delete item from DynamoDB
             self.dynamodb.delete_item(
                 TableName=self.table_name,
-                Key={'sessionId': {'S': session_id}}
+                Key={'sessionId': {'S': sessionId}}
             )
             
             return True
             
         except Exception as e:
-            raise Exception(f"Failed to delete session {session_id}: {str(e)}")
+            raise Exception(f"Failed to delete session {sessionId}: {str(e)}")
     
-    def session_exists(self, session_id: str) -> bool:
+    def session_exists(self, sessionId: str) -> bool:
         """
         Check if a session exists in DynamoDB.
         
         Args:
-            session_id: The session identifier to check
+            sessionId: The session identifier to check
             
         Returns:
             True if session exists, False otherwise
@@ -378,7 +380,7 @@ class SessionManager:
         try:
             response = self.dynamodb.get_item(
                 TableName=self.table_name,
-                Key={'sessionId': {'S': session_id}},
+                Key={'sessionId': {'S': sessionId}},
                 ProjectionExpression='sessionId'
             )
             

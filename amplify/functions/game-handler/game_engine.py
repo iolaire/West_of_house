@@ -1338,6 +1338,105 @@ class GameEngine:
         """
         return state.score >= 350
     
+    def handle_look(
+        self,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle LOOK command to redisplay current room description.
+        
+        Shows full room description, exits, and visible items.
+        
+        Args:
+            state: Current game state
+            
+        Returns:
+            ActionResult with room description
+            
+        Requirements: 3.3
+        """
+        try:
+            # Get current room
+            room = self.world.get_room(state.current_room)
+            
+            # Check if room is lit
+            is_lit = self.is_room_lit(state.current_room, state)
+            
+            # Get room description based on lighting and sanity
+            if not is_lit:
+                description = self.get_darkness_description(state.current_room)
+            else:
+                description = self.world.get_room_description(state.current_room, state.sanity)
+            
+            return ActionResult(
+                success=True,
+                message=description
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message="You can't see anything here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while looking around."
+            )
+    
+    def handle_inventory(
+        self,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle INVENTORY command to list items in player's inventory.
+        
+        Shows all items currently carried by the player.
+        
+        Args:
+            state: Current game state
+            
+        Returns:
+            ActionResult with inventory listing
+            
+        Requirements: 5.1
+        """
+        try:
+            if not state.inventory:
+                return ActionResult(
+                    success=True,
+                    message="You are empty-handed."
+                )
+            
+            # Get display names for all inventory items
+            inventory_names = []
+            for item_id in state.inventory:
+                try:
+                    obj = self.world.get_object(item_id)
+                    display_name = obj.name_spooky if obj.name_spooky else obj.name
+                    inventory_names.append(display_name)
+                except ValueError:
+                    # Object not found, use ID as fallback
+                    inventory_names.append(item_id)
+            
+            # Format inventory list
+            if len(inventory_names) == 1:
+                message = f"You are carrying: {inventory_names[0]}"
+            else:
+                items_list = ", ".join(inventory_names[:-1]) + f" and {inventory_names[-1]}"
+                message = f"You are carrying: {items_list}"
+            
+            return ActionResult(
+                success=True,
+                message=message
+            )
+            
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while checking your inventory."
+            )
+    
     def execute_command(
         self,
         command: ParsedCommand,
@@ -1358,6 +1457,14 @@ class GameEngine:
         # Handle movement commands
         if command.verb == "GO" and command.direction:
             return self.handle_movement(command.direction, state)
+        
+        # Handle LOOK command
+        if command.verb == "LOOK":
+            return self.handle_look(state)
+        
+        # Handle INVENTORY command
+        if command.verb == "INVENTORY":
+            return self.handle_inventory(state)
         
         # Handle examine commands
         if command.verb == "EXAMINE" and command.object:
@@ -1399,6 +1506,13 @@ class GameEngine:
         # Handle lamp off commands (EXTINGUISH, TURN OFF)
         if command.verb in ["EXTINGUISH", "TURN_OFF"] and command.object == "lamp":
             return self.handle_lamp_off(state)
+        
+        # Handle QUIT command
+        if command.verb == "QUIT":
+            return ActionResult(
+                success=True,
+                message="Thanks for playing West of Haunted House! Your progress has been saved."
+            )
         
         # Handle unknown commands
         if command.verb == "UNKNOWN":
