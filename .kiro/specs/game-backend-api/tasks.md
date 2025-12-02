@@ -14,79 +14,79 @@ This implementation plan breaks down the MVP backend development into discrete, 
 
 ## Tasks
 
-- [-] 1. Project setup and AWS infrastructure
-  - [ ] 1.1 Create deployment IAM user
+- [ ] 1. Project setup and AWS infrastructure
+  - [x] 1.1 Create deployment IAM user
     - Create IAM user `West_of_house_AmplifyDeploymentUser` with deployment permissions
     - Attach policy for Amplify, Lambda, DynamoDB, IAM, CloudFormation, S3, API Gateway
     - Generate access keys and configure AWS CLI profile
     - Document deployment credentials setup in README
     - _Requirements: 21.6, 21.7_
   
-  - [ ] 1.2 Initialize project structure
+  - [x] 1.2 Initialize project structure
     - Create folder structure: src/, tests/, scripts/, data/, documents/
     - Copy game data JSON files to data/ directory
     - Create .gitignore to exclude sensitive files and build artifacts
     - _Requirements: 22.4_
   
-  - [ ] 1.3 Set up AWS Amplify project
+  - [x] 1.3 Set up AWS Amplify project
     - Run `amplify init` with project configuration
     - Add API with REST endpoints
     - Add Lambda function with Python 3.12 ARM64 runtime
     - Add DynamoDB table with TTL enabled
     - _Requirements: 22.1, 22.2, 22.3_
   
-  - [ ] 1.4 Configure IAM roles for runtime
+  - [x] 1.4 Configure IAM roles for runtime
     - Create Lambda execution role with least-privilege DynamoDB permissions
     - Verify IAM policies scope to specific table ARN (no wildcards)
     - Add CloudWatch Logs permissions for debugging
     - _Requirements: 21.1, 21.2, 21.3, 21.4, 21.5_
   
-  - [ ] 1.5 Create deployment scripts
+  - [x] 1.5 Create deployment scripts
     - Create script to package Lambda function with dependencies
     - Create script to bundle game data JSON files
     - Create script to deploy via Amplify CLI
     - _Requirements: 22.4_
 
-- [ ] 2. Data layer and world loader
-  - [ ] 2.1 Copy game data JSON files to Lambda data directory
+- [x] 2. Data layer and world loader
+  - [x] 2.1 Copy game data JSON files to Lambda data directory
     - Copy `west_of_house_json/*.json` to `src/lambda/game_handler/data/`
     - Verify JSON structure and spooky field presence
     - _Requirements: 20.4_
 
-  - [ ] 2.2 Implement world data loader
+  - [x] 2.2 Implement world data loader
     - Create `world_loader.py` to load rooms, objects, and flags from JSON
     - Implement caching mechanism for Lambda warm starts
     - Add error handling for missing or malformed JSON
     - _Requirements: 20.1, 20.2, 20.3_
 
-  - [ ] 2.3 Write unit tests for world loader
+  - [x] 2.3 Write unit tests for world loader
     - Test JSON loading and parsing
     - Test error handling for invalid data
     - Test caching behavior
     - _Requirements: 20.4_
 
-- [ ] 3. Game state management
-  - [ ] 3.1 Implement GameState data model
+- [x] 3. Game state management
+  - [x] 3.1 Implement GameState data model
     - Create `state_manager.py` with GameState class
     - Include fields: session_id, current_room, inventory, flags, sanity, score, moves, lamp_battery
     - Implement state serialization/deserialization for DynamoDB
     - _Requirements: 1.2, 1.5_
 
-  - [ ] 3.2 Implement DynamoDB session operations
+  - [x] 3.2 Implement DynamoDB session operations
     - Create session save function (put_item with TTL)
     - Create session load function (get_item)
     - Create session delete function for cleanup
     - Add error handling for DynamoDB operations
     - _Requirements: 22.1, 22.2, 22.3_
 
-  - [ ] 3.3 Write property test for state persistence
+  - [x] 3.3 Write property test for state persistence
     - **Property 16: Save/load round trip**
     - **Validates: Requirements 1.2, 1.5**
     - Test that saving and loading state preserves all fields
     - _Requirements: 1.2, 1.5_
 
-- [ ] 4. Command parser
-  - [ ] 4.1 Implement basic command parser
+- [x] 4. Command parser
+  - [x] 4.1 Implement basic command parser
     - Create `command_parser.py` with CommandParser class
     - Parse movement commands (GO, NORTH, SOUTH, EAST, WEST, UP, DOWN, IN, OUT)
     - Parse object commands (TAKE, DROP, EXAMINE, OPEN, CLOSE, READ, MOVE)
@@ -94,13 +94,13 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Handle synonyms and variations
     - _Requirements: 2.2_
 
-  - [ ] 4.2 Write property test for parsing determinism
+  - [x] 4.2 Write property test for parsing determinism
     - **Property 4: Command parsing determinism**
     - **Validates: Requirements 2.2**
     - Test that parsing same command always produces same result
     - _Requirements: 2.2_
 
-  - [ ] 4.3 Write unit tests for command parser
+  - [x] 4.3 Write unit tests for command parser
     - Test all verb categories
     - Test synonym handling
     - Test invalid command handling
