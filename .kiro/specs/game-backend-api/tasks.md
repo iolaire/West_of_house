@@ -166,8 +166,8 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Test move for moveable objects (rug)
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 7. Sanity system (Halloween mechanic)
-  - [ ] 7.1 Implement sanity mechanics
+- [x] 7. Sanity system (Halloween mechanic)
+  - [x] 7.1 Implement sanity mechanics
     - Create `sanity_system.py` with SanitySystem class
     - Implement sanity loss function with triggers
     - Implement sanity gain function (capped at 100)
@@ -175,19 +175,19 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Track safe rooms for sanity restoration
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-  - [ ] 7.2 Write property test for sanity bounds
+  - [x] 7.2 Write property test for sanity bounds
     - **Property 10: Sanity bounds**
     - **Validates: Requirements 6.1, 6.5**
     - Test that sanity always stays in [0, 100]
     - _Requirements: 6.1, 6.5_
 
-  - [ ] 7.3 Write property test for sanity threshold effects
+  - [x] 7.3 Write property test for sanity threshold effects
     - **Property 11: Sanity threshold effects**
     - **Validates: Requirements 6.2, 6.3, 6.4**
     - Test that descriptions change at correct sanity thresholds
     - _Requirements: 6.2, 6.3, 6.4_
 
-  - [ ] 7.4 Write unit tests for sanity system
+  - [x] 7.4 Write unit tests for sanity system
     - Test sanity loss from cursed rooms
     - Test sanity gain in safe rooms
     - Test description variants at different sanity levels
