@@ -2,6 +2,72 @@
 
 This directory contains scripts for packaging and deploying the West of Haunted House backend to AWS.
 
+## Amplify Gen 2 Scripts (Recommended)
+
+### `deploy-gen2.sh` ⭐ NEW
+Deploy using Amplify Gen 2 with TypeScript-based infrastructure.
+
+**Usage:**
+```bash
+# Deploy to cloud sandbox (for testing)
+./scripts/deploy-gen2.sh --type sandbox
+
+# Deploy via pipeline (automatic from GitHub)
+./scripts/deploy-gen2.sh --type pipeline
+
+# Use specific AWS profile
+./scripts/deploy-gen2.sh --profile my-profile --type sandbox
+```
+
+**Deployment Types:**
+- **sandbox**: Personal cloud environment for testing (runs locally, creates real AWS resources)
+- **pipeline**: Automatic deployment via Git push (requires GitHub connection)
+
+**What it does:**
+1. Verifies AWS credentials
+2. Installs npm dependencies in amplify/
+3. Deploys backend resources (Lambda, DynamoDB, API Gateway)
+4. Displays deployment information
+
+**Key Benefits:**
+- No manual environment variable configuration
+- TypeScript-based infrastructure (type-safe)
+- Automatic resource tagging
+- Preserves Amplify app between deployments
+
+### `cleanup-backend.sh` ⭐ NEW
+Remove backend resources while preserving the Amplify app.
+
+**Usage:**
+```bash
+# Preview what would be deleted (dry run)
+./scripts/cleanup-backend.sh --dry-run
+
+# Delete backend resources (with confirmation)
+./scripts/cleanup-backend.sh
+
+# Delete without confirmation
+./scripts/cleanup-backend.sh --force
+```
+
+**What it does:**
+- Deletes Lambda functions
+- Deletes DynamoDB tables
+- Deletes API Gateway APIs
+- Deletes CloudWatch log groups
+- Deletes Lambda execution roles
+- **PRESERVES** Amplify app and GitHub connection
+
+**Safety Features:**
+- Only deletes resources with required tags (Project, ManagedBy)
+- Confirmation prompt before deletion
+- Dry-run mode to preview changes
+- Preserves Amplify service roles
+
+## Amplify Gen 1 Scripts (Legacy)
+
+These scripts are for the older Gen 1 deployment method. Use Gen 2 scripts above for new deployments.
+
 ## Scripts Overview
 
 ### 1. `bundle-game-data.sh`

@@ -9,9 +9,34 @@ This guide explains how to deploy the West of Haunted House backend using AWS Am
 ✅ **Code Committed**: Gen 2 infrastructure code has been committed to the main branch
 ✅ **Code Pushed**: Changes have been pushed to GitHub (commit c822301)
 
-## Next Steps for Deployment
+## Deployment Options
 
-### Option 1: Deploy via Amplify Console (Recommended)
+### Option 1: Deploy via Scripts (Recommended) ⭐
+
+Use the provided deployment scripts for easy deployment:
+
+```bash
+# Deploy to cloud sandbox (for testing)
+./scripts/deploy-gen2.sh --type sandbox
+
+# Deploy via pipeline (automatic from GitHub)
+./scripts/deploy-gen2.sh --type pipeline
+```
+
+**Sandbox Deployment:**
+- Creates a personal cloud environment
+- Uses real AWS resources
+- Perfect for testing before production
+- Press Ctrl+C to stop when done
+
+**Pipeline Deployment:**
+- Requires one-time GitHub connection setup (see Option 2)
+- Automatic deployment on every push to main
+- Production-ready
+
+### Option 2: One-Time GitHub Connection Setup
+
+If you haven't connected GitHub yet, do this once:
 
 1. **Open AWS Amplify Console**
    ```bash
@@ -32,25 +57,24 @@ This guide explains how to deploy the West of Haunted House backend using AWS Am
    - Build settings should be automatically configured
    - Review and confirm
 
-4. **Add Environment Variables** (if needed)
-   - No manual environment variables needed for Gen 2
-   - DynamoDB table name is auto-resolved
-
-5. **Deploy**
+4. **Deploy**
    - Click "Save and deploy"
    - Monitor deployment progress in the Amplify Console
    - Deployment typically takes 5-10 minutes
 
-### Option 2: Deploy via Amplify CLI
+After this setup, all future deployments happen automatically on git push!
+
+### Option 3: Manual CLI Deployment
 
 ```bash
 # Navigate to project root
 cd /path/to/West_of_house
 
 # Deploy to cloud sandbox (for testing)
+cd amplify
 npx ampx sandbox --profile amplify-deploy
 
-# Or deploy to production branch
+# Or deploy to production branch (requires app-id from console)
 npx ampx pipeline-deploy --branch main --app-id <app-id>
 ```
 
@@ -152,6 +176,35 @@ curl -X POST "${API_ENDPOINT}/game/command" \
   }'
 ```
 
+## Cleaning Up Backend Resources
+
+To remove backend resources while preserving the Amplify app:
+
+```bash
+# Preview what would be deleted (dry run)
+./scripts/cleanup-backend.sh --dry-run
+
+# Delete backend resources (with confirmation)
+./scripts/cleanup-backend.sh
+
+# Delete without confirmation
+./scripts/cleanup-backend.sh --force
+```
+
+**What gets deleted:**
+- Lambda functions
+- DynamoDB tables
+- API Gateway APIs
+- CloudWatch log groups
+- Lambda execution roles
+
+**What gets preserved:**
+- Amplify app and hosting
+- GitHub connection
+- Amplify service roles
+
+This allows you to clean up and redeploy without reconnecting GitHub!
+
 ## Automatic Deployments
 
 Once connected to GitHub, Amplify will automatically deploy on every push to main:
@@ -160,6 +213,11 @@ Once connected to GitHub, Amplify will automatically deploy on every push to mai
 2. Amplify detects the change
 3. Builds and deploys automatically
 4. Notifies via email (if configured)
+
+Or use the deployment script:
+```bash
+./scripts/deploy-gen2.sh --type pipeline
+```
 
 ## Rollback
 
