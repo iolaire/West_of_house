@@ -193,21 +193,21 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Test description variants at different sanity levels
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-- [ ] 8. Container system
-  - [ ] 8.1 Implement container operations
+- [x] 8. Container system
+  - [x] 8.1 Implement container operations
     - Add open/close handlers for containers
     - Add put/take handlers for container contents
     - Validate capacity limits
     - Handle transparent containers (trophy case)
     - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5_
 
-  - [ ] 8.2 Write property test for container capacity
+  - [x] 8.2 Write property test for container capacity
     - **Property 23: Container capacity enforcement**
     - **Validates: Requirements 15.2**
     - Test that container capacity is never exceeded
     - _Requirements: 15.2_
 
-  - [ ] 8.3 Write unit tests for containers
+  - [x] 8.3 Write unit tests for containers
     - Test open/close operations
     - Test put/take from containers
     - Test capacity enforcement

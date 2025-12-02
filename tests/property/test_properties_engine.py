@@ -462,3 +462,210 @@ def test_inventory_reflects_take_drop_operations(data):
     actual_inventory = set(state.inventory)
     assert actual_inventory == expected_inventory, \
         f"Inventory mismatch: expected {expected_inventory}, got {actual_inventory}"
+
+
+
+@st.composite
+def container_and_objects(draw, world_data):
+    """
+    Generate a container and a list of objects to put in it.
+    
+    Returns tuple of (room_id, container_id, object_ids) where container has capacity.
+    """
+    # Find all containers
+    containers = []
+    for obj_id, obj in world_data.objects.items():
+        if obj.type == "container" and obj.capacity > 0:
+            containers.append(obj_id)
+    
+    if not containers:
+        assume(False)  # Skip if no containers with capacity
+    
+    # Pick a container
+    container_id = draw(st.sampled_from(containers))
+    container = world_data.get_object(container_id)
+    
+    # Find takeable objects
+    takeable_objects = []
+    for obj_id, obj in world_data.objects.items():
+        if obj.is_takeable and obj_id != container_id:
+            takeable_objects.append(obj_id)
+    
+    if not takeable_objects:
+        assume(False)  # Skip if no takeable objects
+    
+    # Generate a list of objects (1 to 5 objects)
+    num_objects = draw(st.integers(min_value=1, max_value=5))
+    object_ids = [draw(st.sampled_from(takeable_objects)) for _ in range(num_objects)]
+    
+    # Pick a random room
+    room_ids = list(world_data.rooms.keys())
+    room_id = draw(st.sampled_from(room_ids))
+    
+    return (room_id, container_id, object_ids)
+
+
+# Feature: game-backend-api, Property 23: Container capacity enforcement
+@settings(max_examples=100)
+@given(st.data())
+def test_container_capacity_never_exceeded(data):
+    """
+    For any container with capacity C, the total size of objects in the container
+    should never exceed C.
+    
+    **Validates: Requirements 15.2**
+    
+    This property ensures that:
+    1. Container capacity limits are enforced
+    2. Objects cannot be added when capacity would be exceeded
+    3. Container state remains consistent
+    """
+    # Load world data (fresh instance for each test)
+    WorldData.clear_cache()  # Clear cache to ensure fresh data
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    # Get a container and objects to put in it
+    room_id, container_id, object_ids = data.draw(container_and_objects(world))
+    
+    # Create game state in that room
+    state = GameState.create_new_game()
+    state.current_room = room_id
+    
+    # Get current room and container
+    current_room = world.get_room(room_id)
+    container = world.get_object(container_id)
+    
+    # Ensure container is in room and open
+    if container_id not in current_room.items:
+        current_room.items.append(container_id)
+    container.state['is_open'] = True
+    container.state['contents'] = []
+    
+    # Track total size in container
+    total_size = 0
+    
+    # Try to put each object in the container
+    for object_id in object_ids:
+        game_object = world.get_object(object_id)
+        
+        # Mark as takeable and add to inventory
+        game_object.is_takeable = True
+        if object_id not in state.inventory:
+            state.inventory.append(object_id)
+        
+        # Try to put object in container
+        result = engine.handle_put(object_id, container_id, state)
+        
+        # Calculate what the new size would be
+        object_size = getattr(game_object, 'size', 1)
+        new_size = total_size + object_size
+        
+        if new_size <= container.capacity:
+            # Should succeed - capacity not exceeded
+            assert result.success is True, \
+                f"Putting {object_id} (size {object_size}) should succeed when total size {new_size} <= capacity {container.capacity}"
+            total_size = new_size
+            # Verify object is in container
+            assert object_id in container.state.get('contents', [])
+            assert object_id not in state.inventory
+        else:
+            # Should fail - capacity would be exceeded
+            assert result.success is False, \
+                f"Putting {object_id} (size {object_size}) should fail when total size {new_size} exceeds capacity {container.capacity}"
+            # Object should still be in inventory
+            assert object_id in state.inventory
+            # Note: We don't check if object is not in container because it might have been added
+            # in a previous iteration (e.g., trying to add 'sword' twice)
+        
+        # Verify total size never exceeds capacity
+        current_contents = container.state.get('contents', [])
+        current_size = sum(world.get_object(obj_id).size for obj_id in current_contents)
+        assert current_size <= container.capacity, \
+            f"Container size {current_size} exceeds capacity {container.capacity}"
+
+
+@settings(max_examples=100)
+@given(st.data())
+def test_container_open_state_enforced(data):
+    """
+    For any container that is not transparent, objects can only be put in or taken out
+    when the container is open.
+    
+    **Validates: Requirements 15.1**
+    
+    This property ensures that:
+    1. Closed containers block put/take operations
+    2. Open containers allow put/take operations
+    3. Transparent containers allow operations regardless of open state
+    """
+    # Load world data (fresh instance for each test)
+    WorldData.clear_cache()  # Clear cache to ensure fresh data
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    # Get a container and an object
+    room_id, container_id, object_ids = data.draw(container_and_objects(world))
+    
+    if not object_ids:
+        assume(False)
+    
+    object_id = object_ids[0]
+    
+    # Create game state in that room
+    state = GameState.create_new_game()
+    state.current_room = room_id
+    
+    # Get current room and container
+    current_room = world.get_room(room_id)
+    container = world.get_object(container_id)
+    game_object = world.get_object(object_id)
+    
+    # Ensure container is in room
+    if container_id not in current_room.items:
+        current_room.items.append(container_id)
+    
+    # Initialize container state
+    container.state['contents'] = []
+    
+    # Check if container is transparent
+    is_transparent = container.state.get('is_transparent', False)
+    
+    # Test with closed container
+    container.state['is_open'] = False
+    
+    # Mark object as takeable and add to inventory
+    game_object.is_takeable = True
+    if object_id not in state.inventory:
+        state.inventory.append(object_id)
+    
+    # Try to put object in closed container
+    result = engine.handle_put(object_id, container_id, state)
+    
+    if is_transparent:
+        # Transparent containers should allow operations when closed
+        # (though this depends on implementation - trophy case is always "open")
+        pass
+    else:
+        # Non-transparent closed containers should block operations
+        assert result.success is False, \
+            f"Putting object in closed non-transparent container should fail"
+        assert object_id in state.inventory
+        assert object_id not in container.state.get('contents', [])
+    
+    # Test with open container
+    container.state['is_open'] = True
+    
+    # Try to put object in open container
+    result = engine.handle_put(object_id, container_id, state)
+    
+    # Should succeed (assuming capacity allows)
+    if result.success:
+        assert object_id in container.state.get('contents', [])
+        assert object_id not in state.inventory

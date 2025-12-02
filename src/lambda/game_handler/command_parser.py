@@ -78,9 +78,10 @@ class CommandParser:
             'pick': 'TAKE',
             'pickup': 'TAKE',
             'drop': 'DROP',
-            'put': 'DROP',
             'place': 'DROP',
             'release': 'DROP',
+            'put': 'PUT',
+            'insert': 'PUT',
             'examine': 'EXAMINE',
             'look': 'EXAMINE',
             'inspect': 'EXAMINE',
@@ -218,7 +219,7 @@ class CommandParser:
                     object=obj if obj else None,
                     target=remaining if remaining else None,
                     instrument=remaining if remaining else None,
-                    preposition=preposition
+                    preposition=preposition.upper()
                 )
             else:
                 # No preposition, everything after verb is the object

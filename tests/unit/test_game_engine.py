@@ -787,3 +787,251 @@ class TestCommandExecutionWithObjects:
         
         # Verify it was handled
         assert result.message is not None
+
+
+
+class TestContainers:
+    """Test suite for container operations."""
+    
+    def test_open_container(self, game_engine, world_data, fresh_state):
+        """
+        Test opening a closed container.
+        
+        Requirements: 15.1
+        """
+        # Set up: place mailbox in current room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'mailbox' not in current_room.items:
+            current_room.items.append('mailbox')
+        
+        # Get mailbox and ensure it's closed
+        mailbox = world_data.get_object('mailbox')
+        mailbox.state['is_open'] = False
+        
+        # Open the mailbox
+        result = game_engine.handle_object_interaction('OPEN', 'mailbox', fresh_state)
+        
+        # Verify it opened
+        assert result.success is True
+        assert mailbox.state['is_open'] is True
+        assert 'open' in result.message.lower() or 'creak' in result.message.lower()
+    
+    def test_close_container(self, game_engine, world_data, fresh_state):
+        """
+        Test closing an open container.
+        
+        Requirements: 15.1
+        """
+        # Set up: place mailbox in current room and open it
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'mailbox' not in current_room.items:
+            current_room.items.append('mailbox')
+        
+        mailbox = world_data.get_object('mailbox')
+        mailbox.state['is_open'] = True
+        
+        # Close the mailbox
+        result = game_engine.handle_object_interaction('CLOSE', 'mailbox', fresh_state)
+        
+        # Verify it closed
+        assert result.success is True
+        assert mailbox.state['is_open'] is False
+        assert 'close' in result.message.lower() or 'shut' in result.message.lower()
+    
+    def test_put_object_in_container(self, game_engine, world_data, fresh_state):
+        """
+        Test putting an object into an open container.
+        
+        Requirements: 15.2, 15.3
+        """
+        # Set up: place mailbox in room and leaflet in inventory
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'mailbox' not in current_room.items:
+            current_room.items.append('mailbox')
+        
+        mailbox = world_data.get_object('mailbox')
+        mailbox.state['is_open'] = True
+        mailbox.state['contents'] = []
+        
+        leaflet = world_data.get_object('leaflet')
+        leaflet.is_takeable = True
+        fresh_state.inventory.append('leaflet')
+        
+        # Put leaflet in mailbox
+        result = game_engine.handle_put('leaflet', 'mailbox', fresh_state)
+        
+        # Verify it was added
+        assert result.success is True
+        assert 'leaflet' in mailbox.state['contents']
+        assert 'leaflet' not in fresh_state.inventory
+    
+    def test_take_object_from_container(self, game_engine, world_data, fresh_state):
+        """
+        Test taking an object from an open container.
+        
+        Requirements: 15.3
+        """
+        # Set up: place mailbox in room with leaflet inside
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'mailbox' not in current_room.items:
+            current_room.items.append('mailbox')
+        
+        mailbox = world_data.get_object('mailbox')
+        mailbox.state['is_open'] = True
+        mailbox.state['contents'] = ['leaflet']
+        
+        leaflet = world_data.get_object('leaflet')
+        leaflet.is_takeable = True
+        
+        # Take leaflet from mailbox
+        result = game_engine.handle_take_from_container('leaflet', 'mailbox', fresh_state)
+        
+        # Verify it was taken
+        assert result.success is True
+        assert 'leaflet' not in mailbox.state['contents']
+        assert 'leaflet' in fresh_state.inventory
+    
+    def test_container_capacity_enforcement(self, game_engine, world_data, fresh_state):
+        """
+        Test that container capacity limits are enforced.
+        
+        Requirements: 15.2
+        """
+        # Set up: place mailbox (capacity 5) in room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'mailbox' not in current_room.items:
+            current_room.items.append('mailbox')
+        
+        mailbox = world_data.get_object('mailbox')
+        mailbox.state['is_open'] = True
+        mailbox.state['contents'] = []
+        
+        # Add objects to inventory
+        sword = world_data.get_object('sword')
+        sword.is_takeable = True
+        sword.size = 3
+        
+        painting = world_data.get_object('painting')
+        painting.is_takeable = True
+        painting.size = 4
+        
+        fresh_state.inventory.extend(['sword', 'painting'])
+        
+        # Put sword (size 3) in mailbox - should succeed
+        result1 = game_engine.handle_put('sword', 'mailbox', fresh_state)
+        assert result1.success is True
+        assert 'sword' in mailbox.state['contents']
+        
+        # Try to put painting (size 4) - should fail (3 + 4 = 7 > 5)
+        result2 = game_engine.handle_put('painting', 'mailbox', fresh_state)
+        assert result2.success is False
+        assert 'painting' not in mailbox.state['contents']
+        assert 'painting' in fresh_state.inventory
+        assert 'full' in result2.message.lower()
+    
+    def test_examine_container_shows_contents(self, game_engine, world_data, fresh_state):
+        """
+        Test that examining an open container shows its contents.
+        
+        Requirements: 15.4
+        """
+        # Set up: place mailbox in room with items inside
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'mailbox' not in current_room.items:
+            current_room.items.append('mailbox')
+        
+        mailbox = world_data.get_object('mailbox')
+        mailbox.state['is_open'] = True
+        mailbox.state['contents'] = ['leaflet', 'lamp']
+        
+        # Examine the mailbox
+        result = game_engine.handle_examine_container('mailbox', fresh_state)
+        
+        # Verify contents are shown
+        assert result.success is True
+        assert 'leaflet' in result.message.lower() or 'parchment' in result.message.lower()
+        assert 'lamp' in result.message.lower() or 'lantern' in result.message.lower()
+    
+    def test_transparent_container_trophy_case(self, game_engine, world_data, fresh_state):
+        """
+        Test that transparent containers (trophy case) allow operations when closed.
+        
+        Requirements: 15.4
+        """
+        # Set up: place trophy case in room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'trophy_case' not in current_room.items:
+            current_room.items.append('trophy_case')
+        
+        trophy_case = world_data.get_object('trophy_case')
+        trophy_case.state['is_open'] = True  # Trophy case is always open/transparent
+        trophy_case.state['is_transparent'] = True
+        trophy_case.state['contents'] = []
+        
+        # Add object to inventory
+        skull = world_data.get_object('skull')
+        skull.is_takeable = True
+        fresh_state.inventory.append('skull')
+        
+        # Put object in trophy case (should work even if "closed" because it's transparent)
+        result = game_engine.handle_put('skull', 'trophy_case', fresh_state)
+        
+        # Verify it was added
+        assert result.success is True
+        assert 'skull' in trophy_case.state['contents']
+    
+    def test_cannot_put_in_closed_container(self, game_engine, world_data, fresh_state):
+        """
+        Test that objects cannot be put into a closed non-transparent container.
+        
+        Requirements: 15.1
+        """
+        # Set up: place closed mailbox in room
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'mailbox' not in current_room.items:
+            current_room.items.append('mailbox')
+        
+        mailbox = world_data.get_object('mailbox')
+        mailbox.state['is_open'] = False
+        mailbox.state['contents'] = []
+        
+        # Add object to inventory
+        leaflet = world_data.get_object('leaflet')
+        leaflet.is_takeable = True
+        fresh_state.inventory.append('leaflet')
+        
+        # Try to put object in closed container
+        result = game_engine.handle_put('leaflet', 'mailbox', fresh_state)
+        
+        # Verify it failed
+        assert result.success is False
+        assert 'leaflet' not in mailbox.state['contents']
+        assert 'leaflet' in fresh_state.inventory
+        assert 'closed' in result.message.lower()
+    
+    def test_cannot_take_from_closed_container(self, game_engine, world_data, fresh_state):
+        """
+        Test that objects cannot be taken from a closed non-transparent container.
+        
+        Requirements: 15.1
+        """
+        # Set up: place closed mailbox with item inside
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'mailbox' not in current_room.items:
+            current_room.items.append('mailbox')
+        
+        mailbox = world_data.get_object('mailbox')
+        mailbox.state['is_open'] = False
+        mailbox.state['contents'] = ['leaflet']
+        
+        leaflet = world_data.get_object('leaflet')
+        leaflet.is_takeable = True
+        
+        # Try to take object from closed container
+        result = game_engine.handle_take_from_container('leaflet', 'mailbox', fresh_state)
+        
+        # Verify it failed
+        assert result.success is False
+        assert 'leaflet' in mailbox.state['contents']
+        assert 'leaflet' not in fresh_state.inventory
+        assert 'closed' in result.message.lower()

@@ -2,6 +2,7 @@
   "mailbox": {
     "name": "rusted mailbox",
     "type": "container",
+    "capacity": 5,
     "state": {
       "is_open": false,
       "is_locked": false
@@ -37,6 +38,8 @@
   "leaflet": {
     "name": "cursed parchment",
     "type": "item",
+    "is_takeable": true,
+    "size": 1,
     "state": {
       "is_taken": false,
       "is_read": false
@@ -131,6 +134,7 @@
   "trophy_case": {
     "name": "cursed trophy case",
     "type": "container",
+    "capacity": 20,
     "state": {
       "is_open": true,
       "is_transparent": true
@@ -213,6 +217,8 @@
   "lamp": {
     "name": "cursed lantern",
     "type": "item",
+    "is_takeable": true,
+    "size": 2,
     "state": {
       "is_on": false,
       "is_taken": false,
@@ -244,6 +250,8 @@
   "sword": {
     "name": "spectral blade",
     "type": "item",
+    "is_takeable": true,
+    "size": 3,
     "state": {
       "is_taken": false,
       "is_glowing": false
@@ -290,6 +298,8 @@
   "skull": {
     "name": "crystal skull",
     "type": "item",
+    "is_takeable": true,
+    "size": 2,
     "state": {
       "is_taken": false
     },
@@ -308,6 +318,8 @@
   "painting": {
     "name": "portrait of the damned",
     "type": "item",
+    "is_takeable": true,
+    "size": 4,
     "state": {
       "is_taken": false
     },
