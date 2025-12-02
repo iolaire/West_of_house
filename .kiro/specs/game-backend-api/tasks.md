@@ -261,7 +261,7 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Test that won_flag is set when score reaches 350
     - _Requirements: 13.4_
 
-- [-] 11. Basic puzzles
+- [x] 11. Basic puzzles
   - [x] 11.1 Implement simple flag-based puzzles
     - Move rug to reveal trap door (rug_moved flag)
     - Open trap door to access cellar
@@ -270,15 +270,15 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Unlock grating with keys (grate_unlocked flag)
     - _Requirements: 18.1, 18.2, 18.3_
 
-  - [-] 11.2 Write unit tests for puzzles
+  - [x] 11.2 Write unit tests for puzzles
     - Test rug/trap door puzzle
     - Test window entry puzzle
     - Test grating puzzle
     - Test prerequisite checking
     - _Requirements: 18.1, 18.2, 18.3_
 
-- [ ] 12. Lambda handler and API integration
-  - [ ] 12.1 Implement Lambda handler
+- [x] 12. Lambda handler and API integration
+  - [x] 12.1 Implement Lambda handler
     - Create `index.py` as Lambda entry point
     - Parse API Gateway events
     - Route to appropriate game engine functions
@@ -286,26 +286,26 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Handle errors and return appropriate status codes
     - _Requirements: 11.1, 11.2, 11.3, 2.1, 2.3, 2.4_
 
-  - [ ] 12.2 Implement new game endpoint
+  - [x] 12.2 Implement new game endpoint
     - Generate unique session ID
     - Initialize game state with starting values
     - Save to DynamoDB
     - Return initial room description and state
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-  - [ ] 12.3 Write property test for session uniqueness
+  - [x] 12.3 Write property test for session uniqueness
     - **Property 1: Session uniqueness**
     - **Validates: Requirements 1.1**
     - Test that all generated session IDs are unique
     - _Requirements: 1.1_
 
-  - [ ] 12.4 Write property test for initialization consistency
+  - [x] 12.4 Write property test for initialization consistency
     - **Property 2: Initialization consistency**
     - **Validates: Requirements 1.2, 1.5**
     - Test that all new games start with same initial state
     - _Requirements: 1.2, 1.5_
 
-  - [ ] 12.5 Implement command endpoint
+  - [x] 12.5 Implement command endpoint
     - Load session from DynamoDB
     - Parse command
     - Execute command via game engine
@@ -314,18 +314,18 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Return response with updated state
     - _Requirements: 2.1, 2.3, 2.4, 11.1_
 
-  - [ ] 12.6 Write property test for invalid command state preservation
+  - [x] 12.6 Write property test for invalid command state preservation
     - **Property 5: Invalid command state preservation**
     - **Validates: Requirements 2.5, 16.5**
     - Test that invalid commands don't change state
     - _Requirements: 2.5, 16.5_
 
-  - [ ] 12.7 Implement state query endpoint
+  - [x] 12.7 Implement state query endpoint
     - Load session from DynamoDB
     - Return complete game state
     - _Requirements: 19.1, 19.2, 19.3_
 
-  - [ ] 12.8 Write property test for API response format
+  - [x] 12.8 Write property test for API response format
     - **Property 17: API response format consistency**
     - **Validates: Requirements 11.2, 19.2, 19.4**
     - Test that all responses follow consistent JSON schema
