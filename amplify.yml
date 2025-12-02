@@ -7,3 +7,16 @@ backend:
     build:
       commands:
         - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+frontend:
+  phases:
+    build:
+      commands:
+        - mkdir -p build
+        - echo '<!DOCTYPE html><html><head><title>West of Haunted House API</title></head><body><h1>West of Haunted House Backend API</h1><p>Backend deployed successfully. API endpoints are available.</p></body></html>' > build/index.html
+  artifacts:
+    baseDirectory: build
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
