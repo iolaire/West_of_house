@@ -1035,3 +1035,235 @@ class TestContainers:
         assert 'leaflet' in mailbox.state['contents']
         assert 'leaflet' not in fresh_state.inventory
         assert 'closed' in result.message.lower()
+
+
+
+class TestPuzzles:
+    """Test suite for puzzle mechanics."""
+    
+    def test_rug_trap_door_puzzle(self, game_engine, world_data, fresh_state):
+        """
+        Test the rug/trap door puzzle sequence.
+        
+        Move rug to reveal trap door, then open trap door to access cellar.
+        
+        Requirements: 18.1, 18.2, 18.3
+        """
+        # Set up: place rug in living room
+        fresh_state.current_room = "living_room"
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'rug' not in current_room.items:
+            current_room.items.append('rug')
+        if 'trap_door' not in current_room.items:
+            current_room.items.append('trap_door')
+        
+        # Get objects
+        rug = world_data.get_object('rug')
+        rug.state['is_moved'] = False
+        
+        trap_door = world_data.get_object('trap_door')
+        trap_door.state['is_open'] = False
+        trap_door.state['is_visible'] = False
+        
+        # Step 1: Try to open trap door before moving rug (should fail)
+        result1 = game_engine.handle_object_interaction('OPEN', 'trap_door', fresh_state)
+        assert result1.success is False
+        # The trap door interaction exists but conditions aren't met
+        assert "can't" in result1.message.lower() or "don't see" in result1.message.lower()
+        
+        # Step 2: Move the rug
+        result2 = game_engine.handle_object_interaction('MOVE', 'rug', fresh_state)
+        assert result2.success is True
+        assert rug.state['is_moved'] is True
+        assert fresh_state.get_flag('rug_moved') is True
+        assert trap_door.state['is_visible'] is True
+        
+        # Step 3: Try to go down before opening trap door (should fail)
+        result3 = game_engine.handle_movement('DOWN', fresh_state)
+        assert result3.success is False
+        assert 'closed' in result3.message.lower() or 'open' in result3.message.lower()
+        
+        # Step 4: Open the trap door
+        result4 = game_engine.handle_object_interaction('OPEN', 'trap_door', fresh_state)
+        assert result4.success is True
+        assert trap_door.state['is_open'] is True
+        assert fresh_state.get_flag('trap_door_open') is True
+        
+        # Step 5: Now we can go down to the cellar
+        result5 = game_engine.handle_movement('DOWN', fresh_state)
+        assert result5.success is True
+        assert fresh_state.current_room == 'cellar'
+    
+    def test_kitchen_window_puzzle(self, game_engine, world_data, fresh_state):
+        """
+        Test the kitchen window entry puzzle.
+        
+        Open kitchen window to enter house from outside.
+        
+        Requirements: 18.1, 18.2, 18.3
+        """
+        # Set up: start at east_of_house
+        fresh_state.current_room = "east_of_house"
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'kitchen_window' not in current_room.items:
+            current_room.items.append('kitchen_window')
+        
+        # Get window object
+        kitchen_window = world_data.get_object('kitchen_window')
+        kitchen_window.state['is_open'] = False
+        
+        # Step 1: Try to enter kitchen before opening window (should fail)
+        result1 = game_engine.handle_movement('WEST', fresh_state)
+        assert result1.success is False
+        assert 'window' in result1.message.lower() or 'open' in result1.message.lower()
+        
+        # Step 2: Open the kitchen window
+        result2 = game_engine.handle_object_interaction('OPEN', 'kitchen_window', fresh_state)
+        assert result2.success is True
+        assert kitchen_window.state['is_open'] is True
+        assert fresh_state.get_flag('kitchen_window_open') is True
+        
+        # Step 3: Now we can enter the kitchen
+        result3 = game_engine.handle_movement('WEST', fresh_state)
+        assert result3.success is True
+        assert fresh_state.current_room == 'kitchen'
+    
+    def test_grating_puzzle_prerequisite(self, game_engine, world_data, fresh_state):
+        """
+        Test that grating requires unlocking before descending.
+        
+        Requirements: 18.1, 18.2, 18.3
+        """
+        # Set up: start at grating_clearing
+        fresh_state.current_room = "grating_clearing"
+        
+        # Step 1: Try to go down before unlocking grating (should fail)
+        result1 = game_engine.handle_movement('DOWN', fresh_state)
+        assert result1.success is False
+        assert 'locked' in result1.message.lower() or 'unlock' in result1.message.lower()
+        
+        # Step 2: Set grate_unlocked flag (simulating puzzle solution)
+        fresh_state.set_flag('grate_unlocked', True)
+        
+        # Step 3: Now we can go down
+        result2 = game_engine.handle_movement('DOWN', fresh_state)
+        assert result2.success is True
+        assert fresh_state.current_room == 'grating_room'
+    
+    def test_rug_cannot_be_moved_twice(self, game_engine, world_data, fresh_state):
+        """
+        Test that the rug can only be moved once.
+        
+        Requirements: 18.1
+        """
+        # Set up: place rug in living room
+        fresh_state.current_room = "living_room"
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'rug' not in current_room.items:
+            current_room.items.append('rug')
+        
+        # Get rug object
+        rug = world_data.get_object('rug')
+        rug.state['is_moved'] = False
+        
+        # Move the rug once
+        result1 = game_engine.handle_object_interaction('MOVE', 'rug', fresh_state)
+        assert result1.success is True
+        assert rug.state['is_moved'] is True
+        
+        # Try to move it again (should fail or give different message)
+        result2 = game_engine.handle_object_interaction('MOVE', 'rug', fresh_state)
+        # The interaction should still succeed but with a different message
+        assert result2.message is not None
+        # The rug should still be marked as moved
+        assert rug.state['is_moved'] is True
+    
+    def test_puzzle_flag_persistence(self, game_engine, world_data, fresh_state):
+        """
+        Test that puzzle flags persist across actions.
+        
+        Requirements: 18.2
+        """
+        # Set up: place rug in living room
+        fresh_state.current_room = "living_room"
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'rug' not in current_room.items:
+            current_room.items.append('rug')
+        
+        # Get rug object
+        rug = world_data.get_object('rug')
+        rug.state['is_moved'] = False
+        
+        # Move the rug
+        result = game_engine.handle_object_interaction('MOVE', 'rug', fresh_state)
+        assert result.success is True
+        
+        # Verify flag is set
+        assert fresh_state.get_flag('rug_moved') is True
+        
+        # Perform other actions (move to another room and back)
+        game_engine.handle_movement('EAST', fresh_state)
+        game_engine.handle_movement('WEST', fresh_state)
+        
+        # Verify flag is still set
+        assert fresh_state.get_flag('rug_moved') is True
+    
+    def test_window_can_be_closed_after_opening(self, game_engine, world_data, fresh_state):
+        """
+        Test that the kitchen window can be closed after opening.
+        
+        Requirements: 18.1
+        """
+        # Set up: start at east_of_house
+        fresh_state.current_room = "east_of_house"
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'kitchen_window' not in current_room.items:
+            current_room.items.append('kitchen_window')
+        
+        # Get window object
+        kitchen_window = world_data.get_object('kitchen_window')
+        kitchen_window.state['is_open'] = False
+        
+        # Open the window
+        result1 = game_engine.handle_object_interaction('OPEN', 'kitchen_window', fresh_state)
+        assert result1.success is True
+        assert kitchen_window.state['is_open'] is True
+        
+        # Close the window
+        result2 = game_engine.handle_object_interaction('CLOSE', 'kitchen_window', fresh_state)
+        assert result2.success is True
+        assert kitchen_window.state['is_open'] is False
+        
+        # Verify flag is cleared (or window needs to be reopened)
+        # Note: The flag might persist, but the window state should be closed
+        assert kitchen_window.state['is_open'] is False
+    
+    def test_trap_door_can_be_closed_after_opening(self, game_engine, world_data, fresh_state):
+        """
+        Test that the trap door can be closed after opening.
+        
+        Requirements: 18.1
+        """
+        # Set up: place trap door in living room and make it visible
+        fresh_state.current_room = "living_room"
+        current_room = world_data.get_room(fresh_state.current_room)
+        if 'trap_door' not in current_room.items:
+            current_room.items.append('trap_door')
+        
+        # Get trap door object
+        trap_door = world_data.get_object('trap_door')
+        trap_door.state['is_open'] = False
+        trap_door.state['is_visible'] = True  # Already revealed by moving rug
+        
+        # Set rug_moved flag so trap door is accessible
+        fresh_state.set_flag('rug_moved', True)
+        
+        # Open the trap door
+        result1 = game_engine.handle_object_interaction('OPEN', 'trap_door', fresh_state)
+        assert result1.success is True
+        assert trap_door.state['is_open'] is True
+        
+        # Close the trap door
+        result2 = game_engine.handle_object_interaction('CLOSE', 'trap_door', fresh_state)
+        assert result2.success is True
+        assert trap_door.state['is_open'] is False

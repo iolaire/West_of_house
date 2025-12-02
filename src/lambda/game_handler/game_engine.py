@@ -102,6 +102,37 @@ class GameEngine:
                             room_changed=False
                         )
             
+            # Puzzle-specific movement checks
+            # Puzzle 2: Kitchen window entry
+            if state.current_room == "east_of_house" and target_room_id == "kitchen":
+                kitchen_window_open = state.get_flag("kitchen_window_open", False)
+                if not kitchen_window_open:
+                    return ActionResult(
+                        success=False,
+                        message="The window is not open wide enough to enter. You need to open it first.",
+                        room_changed=False
+                    )
+            
+            # Puzzle 1: Trap door to cellar
+            if state.current_room == "living_room" and target_room_id == "cellar" and direction == "DOWN":
+                trap_door_open = state.get_flag("trap_door_open", False)
+                if not trap_door_open:
+                    return ActionResult(
+                        success=False,
+                        message="The trap door is closed. You need to open it first.",
+                        room_changed=False
+                    )
+            
+            # Puzzle 3: Grating to underground (if grating exists)
+            if state.current_room == "grating_clearing" and direction == "DOWN":
+                grate_unlocked = state.get_flag("grate_unlocked", False)
+                if not grate_unlocked:
+                    return ActionResult(
+                        success=False,
+                        message="The grating is locked. You need to unlock it first.",
+                        room_changed=False
+                    )
+            
             # Get target room to validate it exists
             target_room = self.world.get_room(target_room_id)
             
@@ -404,7 +435,7 @@ class GameEngine:
         Returns:
             ActionResult with success status and message
             
-        Requirements: 4.4, 4.5
+        Requirements: 4.4, 4.5, 18.1, 18.2, 18.3
         """
         try:
             # Get current room
@@ -461,9 +492,41 @@ class GameEngine:
                 for flag_name, flag_value in matching_interaction.flag_change.items():
                     state.set_flag(flag_name, flag_value)
             
+            # Handle puzzle-specific logic
+            notifications = []
+            
+            # Puzzle 1: Moving rug reveals trap door
+            if object_id == "rug" and verb == "MOVE":
+                if game_object.state.get("is_moved", False):
+                    # Rug has been moved, make trap door visible
+                    state.set_flag("rug_moved", True)
+                    try:
+                        trap_door = self.world.get_object("trap_door")
+                        trap_door.state["is_visible"] = True
+                        notifications.append("The trap door is now visible!")
+                    except ValueError:
+                        pass  # Trap door object doesn't exist
+            
+            # Puzzle 2: Opening kitchen window allows entry
+            if object_id == "kitchen_window" and verb == "OPEN":
+                if game_object.state.get("is_open", False):
+                    state.set_flag("kitchen_window_open", True)
+                    notifications.append("You can now enter through the window.")
+            
+            # Puzzle 3: Opening trap door (requires rug to be moved first)
+            if object_id == "trap_door" and verb == "OPEN":
+                rug_moved = state.get_flag("rug_moved", False)
+                if not rug_moved:
+                    return ActionResult(
+                        success=False,
+                        message="You don't see any trap door here."
+                    )
+                if game_object.state.get("is_open", False):
+                    state.set_flag("trap_door_open", True)
+                    notifications.append("The way to the cellar is now open.")
+            
             # Apply sanity effects
             sanity_change = matching_interaction.sanity_effect
-            notifications = []
             
             if sanity_change != 0:
                 state.sanity = max(0, min(100, state.sanity + sanity_change))

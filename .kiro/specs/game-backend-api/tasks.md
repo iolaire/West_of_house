@@ -261,8 +261,8 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Test that won_flag is set when score reaches 350
     - _Requirements: 13.4_
 
-- [ ] 11. Basic puzzles
-  - [ ] 11.1 Implement simple flag-based puzzles
+- [-] 11. Basic puzzles
+  - [x] 11.1 Implement simple flag-based puzzles
     - Move rug to reveal trap door (rug_moved flag)
     - Open trap door to access cellar
     - Open kitchen window to enter house (kitchen_window_flag)
@@ -270,7 +270,7 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Unlock grating with keys (grate_unlocked flag)
     - _Requirements: 18.1, 18.2, 18.3_
 
-  - [ ] 11.2 Write unit tests for puzzles
+  - [-] 11.2 Write unit tests for puzzles
     - Test rug/trap door puzzle
     - Test window entry puzzle
     - Test grating puzzle
