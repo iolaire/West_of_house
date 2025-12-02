@@ -453,7 +453,7 @@ This implementation plan breaks down the MVP backend development into discrete, 
       - Verify DynamoDB integration
       - _Requirements: 11.1, 11.2, 22.1, 22.3_
     
-    - [-] 17.3.8 Deploy to AWS with Gen 2
+    - [x] 17.3.8 Deploy to AWS with Gen 2
       - Commit Gen 2 configuration to Git
       - Push to main branch for automatic deployment
       - Monitor deployment progress in Amplify Console
