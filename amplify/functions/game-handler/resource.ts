@@ -94,12 +94,12 @@ export const gameHandler = defineFunction(
        * Environment variables
        * 
        * GAME_SESSIONS_TABLE_NAME: DynamoDB table name for game sessions
-       * This must match the table name created in backend.ts
+       * This will be set dynamically in backend.ts after table creation
        * 
        * Requirements: 22.7
        */
       environment: {
-        GAME_SESSIONS_TABLE_NAME: 'WestOfHauntedHouse-GameSessions',
+        // Table name will be set in backend.ts
       },
     }),
   {

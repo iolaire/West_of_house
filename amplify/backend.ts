@@ -45,6 +45,10 @@ const backend = defineBackend({
  */
 const gameHandlerStack = backend.gameHandler.resources.lambda.stack;
 
+// Get the environment name from the stack (sandbox, production, etc.)
+const envName = gameHandlerStack.stackName.includes('sandbox') ? 'sandbox' : 
+                gameHandlerStack.stackName.includes('production') ? 'production' : 'dev';
+
 const gameSessionsTable = new Table(gameHandlerStack, 'GameSessions', {
   partitionKey: {
     name: 'sessionId',
@@ -53,17 +57,20 @@ const gameSessionsTable = new Table(gameHandlerStack, 'GameSessions', {
   billingMode: BillingMode.PAY_PER_REQUEST,
   timeToLiveAttribute: 'expires',
   removalPolicy: RemovalPolicy.DESTROY, // For dev - change to RETAIN for production
-  tableName: 'WestOfHauntedHouse-GameSessions',
+  tableName: `WestOfHauntedHouse-GameSessions-${envName}`,
 });
 
 /**
  * Grant Lambda function access to DynamoDB table
  * 
  * This adds IAM permissions for read/write operations.
- * Environment variables are set in the function's resource.ts file.
+ * Also sets the table name as an environment variable.
  */
 const gameHandlerLambda = backend.gameHandler.resources.lambda;
 gameSessionsTable.grantReadWriteData(gameHandlerLambda);
+
+// Set the table name as an environment variable
+gameHandlerLambda.addEnvironment('GAME_SESSIONS_TABLE_NAME', gameSessionsTable.tableName);
 
 /**
  * Create REST API Gateway
