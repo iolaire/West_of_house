@@ -162,6 +162,13 @@ class CommandParser:
             'scream': 'YELL',
             'shout': 'YELL',
             'echo': 'ECHO',
+            'damn': 'CURSE',
+            'dammit': 'CURSE',
+            'hell': 'CURSE',
+            'crap': 'CURSE',
+            'shit': 'CURSE',
+            'fuck': 'CURSE',
+            'bastard': 'CURSE',
         }
         
         # Utility verbs
@@ -185,7 +192,8 @@ class CommandParser:
         
         # Prepositions to recognize
         self.prepositions: Set[str] = {
-            'with', 'using', 'at', 'to', 'in', 'into', 'on', 'onto', 'from'
+            'with', 'using', 'at', 'to', 'in', 'into', 'on', 'onto', 'from',
+            'under', 'behind', 'inside', 'through', 'across', 'over', 'about'
         }
         
         # Words to ignore (articles, etc.)

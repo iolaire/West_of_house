@@ -337,7 +337,7 @@
   - **Property 30: Squeeze generates response or state change**
   - **Validates: Requirements 6.5, 6.6, 6.7, 6.8**
 
-- [-] 9. Implement meta-game commands
+- [x] 9. Implement meta-game commands
 - [x] 9.1 Implement SAVE command
   - Add handle_save method to GameEngine
   - Serialize current game state to JSON
@@ -354,7 +354,7 @@
   - Return success message
   - _Requirements: 7.2_
 
-- [ ] 9.3 Write property test for save/restore round-trip
+- [x] 9.3 Write property test for save/restore round-trip
   - **Property 31: Save/Restore round-trip**
   - **Validates: Requirements 7.1, 7.2**
 
@@ -374,7 +374,7 @@
   - Return formatted score display
   - _Requirements: 7.5_
 
-- [ ] 9.6 Write property test for score display
+- [x] 9.6 Write property test for score display
   - **Property 32: Score displays current value**
   - **Validates: Requirements 7.5**
 
@@ -404,14 +404,14 @@
   - Use haunted theme
   - _Requirements: 8.2_
 
-- [ ] 10.3 Implement CURSE command
+- [x] 10.3 Implement CURSE command
   - Add handle_curse method to GameEngine
   - Recognize profanity and curse words
   - Return chiding response
   - Don't penalize player
   - _Requirements: 8.3_
 
-- [ ] 10.4 Write property test for profanity handling
+- [x] 10.4 Write property test for profanity handling
   - **Property 33: Profanity handling**
   - **Validates: Requirements 8.3**
 
@@ -482,53 +482,53 @@
   - **Property 39: Missing parameter prompts**
   - **Validates: Requirements 9.5**
 
-- [ ] 12. Enhance command parser for synonyms and variations
-- [ ] 12.1 Add synonym support to parser
+- [x] 12. Enhance command parser for synonyms and variations
+- [x] 12.1 Add synonym support to parser
   - Expand synonym dictionary in command_parser.py
   - Map all Zork synonyms to primary verbs
   - Test synonym recognition
   - _Requirements: 10.1_
 
-- [ ] 12.2 Write property test for synonym equivalence
+- [x] 12.2 Write property test for synonym equivalence
   - **Property 40: Synonym equivalence**
   - **Validates: Requirements 10.1**
 
-- [ ] 12.3 Add abbreviation support
+- [x] 12.3 Add abbreviation support
   - Recognize common abbreviations (N, S, E, W, I, X, etc.)
   - Expand to full commands
   - Test abbreviation handling
   - _Requirements: 10.2_
 
-- [ ] 12.4 Write property test for abbreviation expansion
+- [x] 12.4 Write property test for abbreviation expansion
   - **Property 41: Abbreviation expansion**
   - **Validates: Requirements 10.2**
 
-- [ ] 12.5 Add variation mapping
+- [x] 12.5 Add variation mapping
   - Handle command variations (GET/TAKE, LOOK/EXAMINE, etc.)
   - Map to canonical forms
   - Test variation handling
   - _Requirements: 10.3_
 
-- [ ] 12.6 Write property test for variation mapping
+- [x] 12.6 Write property test for variation mapping
   - **Property 42: Variation mapping**
   - **Validates: Requirements 10.3**
 
-- [ ] 12.7 Improve preposition parsing
+- [x] 12.7 Improve preposition parsing
   - Handle all common prepositions (IN, ON, WITH, TO, FROM, etc.)
   - Parse multi-word commands correctly
   - Test preposition handling
   - _Requirements: 10.4_
 
-- [ ] 12.8 Write property test for preposition parsing
+- [x] 12.8 Write property test for preposition parsing
   - **Property 43: Preposition parsing**
   - **Validates: Requirements 10.4**
 
-- [ ] 12.9 Add article handling
+- [x] 12.9 Add article handling
   - Ignore articles (A, AN, THE) appropriately
   - Test commands with and without articles
   - _Requirements: 10.5_
 
-- [ ] 12.10 Write property test for article handling
+- [x] 12.10 Write property test for article handling
   - **Property 44: Article handling**
   - **Validates: Requirements 10.5**
 

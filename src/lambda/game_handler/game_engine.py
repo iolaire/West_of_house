@@ -4325,6 +4325,18 @@ class GameEngine:
             return ActionResult(success=True, message="Echo... echo... echo...")
         return ActionResult(success=True, message=f"Echo: {text}")
     
+    def handle_curse(self, state: GameState) -> ActionResult:
+        """Handle profanity/curse words."""
+        messages = [
+            "Such language! The spirits are offended by your crude words.",
+            "Your profanity echoes through the halls, but the darkness does not care.",
+            "Cursing won't help you here. The house has heard far worse.",
+            "Mind your tongue! This place feeds on negativity.",
+            "The shadows seem amused by your colorful language."
+        ]
+        import random
+        return ActionResult(success=True, message=random.choice(messages))
+    
     def handle_place_treasure(
         self,
         object_id: str,
@@ -5816,6 +5828,10 @@ class GameEngine:
         
         if command.verb == "ECHO":
             return self.handle_echo(command.object, state)
+        
+        # Handle profanity/curse words
+        if command.verb == "CURSE":
+            return self.handle_curse(state)
         
         # Handle save command
         if command.verb == "SAVE":

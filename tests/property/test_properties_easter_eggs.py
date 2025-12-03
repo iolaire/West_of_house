@@ -157,3 +157,29 @@ def test_echo_repeats_input(text):
     assert result.success is True
     assert result.message is not None
     assert text in result.message
+
+
+# Feature: complete-zork-commands, Property 33: Profanity handling
+@settings(max_examples=100)
+@given(st.data())
+def test_profanity_handling(data):
+    """Profanity should generate chiding response without penalty. Validates: Requirements 8.3"""
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    state = GameState.create_new_game()
+    
+    initial_sanity = state.sanity
+    initial_score = state.score
+    
+    result = engine.handle_curse(state)
+    
+    assert result.success is True
+    assert result.message is not None
+    assert len(result.message) > 0
+    
+    # No penalty - sanity and score unchanged
+    assert state.sanity == initial_sanity
+    assert state.score == initial_score
