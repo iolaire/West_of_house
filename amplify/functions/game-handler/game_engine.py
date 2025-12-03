@@ -53,6 +53,163 @@ class GameEngine:
         """
         self.world = world_data
     
+    def handle_climb(
+        self,
+        direction: str,
+        object_id: Optional[str],
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle climbing up or down with climbable objects.
+        
+        Validates that the object is climbable, checks for valid exits in the
+        specified direction, and moves the player to the connected room.
+        
+        Args:
+            direction: The direction to climb (UP or DOWN)
+            object_id: The object to climb (optional, can be implicit from room)
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status, message, and room information
+            
+        Requirements: 2.1
+        """
+        try:
+            # Validate direction is UP or DOWN
+            if direction not in ["UP", "DOWN"]:
+                return ActionResult(
+                    success=False,
+                    message="You can only climb up or down.",
+                    room_changed=False
+                )
+            
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if the room has an exit in the specified direction
+            if direction not in current_room.exits:
+                return ActionResult(
+                    success=False,
+                    message=f"There's nothing to climb {direction.lower()} here.",
+                    room_changed=False
+                )
+            
+            # If an object is specified, validate it exists and is climbable
+            if object_id:
+                # Check if object is in current room
+                if object_id not in current_room.items:
+                    # Check if it's mentioned in the room description (scenery)
+                    try:
+                        game_object = self.world.get_object(object_id)
+                        # Object exists but not in room
+                        return ActionResult(
+                            success=False,
+                            message=f"You don't see any {object_id} here.",
+                            room_changed=False
+                        )
+                    except ValueError:
+                        # Object doesn't exist at all
+                        return ActionResult(
+                            success=False,
+                            message=f"You don't see any {object_id} here.",
+                            room_changed=False
+                        )
+                
+                # Get object and check if it's climbable
+                game_object = self.world.get_object(object_id)
+                is_climbable = game_object.state.get('is_climbable', False)
+                
+                if not is_climbable:
+                    return ActionResult(
+                        success=False,
+                        message=f"You can't climb the {object_id}.",
+                        room_changed=False
+                    )
+            
+            # Get target room ID
+            target_room_id = current_room.exits[direction]
+            
+            # Check if exit is conditional on flags
+            if current_room.flags_required:
+                for flag_name, required_value in current_room.flags_required.items():
+                    current_value = state.get_flag(flag_name, False)
+                    if current_value != required_value:
+                        return ActionResult(
+                            success=False,
+                            message="The way is blocked. You need to do something first.",
+                            room_changed=False
+                        )
+            
+            # Get target room to validate it exists
+            target_room = self.world.get_room(target_room_id)
+            
+            # Move player to new room
+            state.move_to_room(target_room_id)
+            
+            # Check if room is lit (for dark rooms)
+            is_lit = self.is_room_lit(target_room_id, state)
+            
+            # Get room description based on lighting and sanity level
+            if not is_lit:
+                description = self.get_darkness_description(target_room_id)
+            else:
+                description = self.world.get_room_description(target_room_id, state.sanity)
+            
+            # Apply room effects (sanity changes)
+            sanity_change = 0
+            notifications = []
+            
+            if target_room.sanity_effect != 0:
+                sanity_change = target_room.sanity_effect
+                state.sanity = max(0, min(100, state.sanity + sanity_change))
+                
+                if sanity_change < 0:
+                    notifications.append("Your sanity slips as dread washes over you...")
+                elif sanity_change > 0:
+                    notifications.append("You feel a sense of calm returning...")
+            
+            # Increment turn counter
+            state.increment_turn()
+            
+            # Apply lamp battery drain
+            lamp_notifications = self.apply_lamp_battery_drain(state)
+            notifications.extend(lamp_notifications)
+            
+            # Create success message with haunted theme
+            climb_message = f"You climb {direction.lower()}, your hands gripping cold surfaces."
+            full_message = f"{climb_message}\n\n{description}"
+            
+            return ActionResult(
+                success=True,
+                message=full_message,
+                room_changed=True,
+                new_room=target_room_id,
+                state_changes={
+                    'current_room': target_room_id,
+                    'moves': state.moves,
+                    'turn_count': state.turn_count,
+                    'sanity': state.sanity
+                },
+                notifications=notifications,
+                sanity_change=sanity_change
+            )
+            
+        except ValueError as e:
+            # Room not found or other validation error
+            return ActionResult(
+                success=False,
+                message=f"An error occurred: {str(e)}",
+                room_changed=False
+            )
+        except Exception as e:
+            # Unexpected error
+            return ActionResult(
+                success=False,
+                message="Something went wrong while climbing.",
+                room_changed=False
+            )
+    
     def handle_movement(
         self,
         direction: str,
@@ -1454,6 +1611,10 @@ class GameEngine:
         Returns:
             ActionResult with outcome of command execution
         """
+        # Handle climb commands
+        if command.verb == "CLIMB" and command.direction:
+            return self.handle_climb(command.direction, command.object, state)
+        
         # Handle movement commands
         if command.verb == "GO" and command.direction:
             return self.handle_movement(command.direction, state)

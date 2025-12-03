@@ -40,6 +40,10 @@ class CommandParser:
             'run': 'GO',
             'travel': 'GO',
             'head': 'GO',
+            'climb': 'CLIMB',
+            'scale': 'CLIMB',
+            'ascend': 'CLIMB',
+            'descend': 'CLIMB',
         }
         
         # Direction words (can be used alone or with GO)
@@ -202,6 +206,31 @@ class CommandParser:
         # Check if first word is a movement verb
         if first_word in self.movement_verbs:
             verb = self.movement_verbs[first_word]
+            
+            # Special handling for CLIMB command
+            if verb == "CLIMB":
+                # Look for direction (UP or DOWN)
+                direction = None
+                obj = None
+                
+                if len(words) > 1:
+                    # Check if second word is a direction
+                    if words[1] in self.directions and self.directions[words[1]] in ['UP', 'DOWN']:
+                        direction = self.directions[words[1]]
+                        # Check if there's an object after the direction
+                        if len(words) > 2:
+                            obj = " ".join(words[2:])
+                    # Check if second word is an object (implicit UP)
+                    else:
+                        obj = " ".join(words[1:])
+                        # Default to UP if no direction specified
+                        direction = "UP"
+                
+                return ParsedCommand(
+                    verb=verb,
+                    direction=direction,
+                    object=obj
+                )
             
             # Look for direction in remaining words
             if len(words) > 1 and words[1] in self.directions:
