@@ -1,0 +1,111 @@
+/**
+ * CommandInput Component Styles
+ * Feature: grimoire-frontend
+ */
+
+.command-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 0.5rem);
+}
+
+.command-input-label {
+  font-family: var(--font-heading, 'Cinzel', 'Palatino', serif);
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--color-text-secondary, #e0e0e0);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.command-input {
+  padding: var(--spacing-md, 1rem);
+  background: var(--color-bg-medium, #2d1b3d);
+  border: 2px solid var(--color-border, #6a5a7a);
+  border-radius: 4px;
+  font-family: var(--font-mono, 'Courier New', 'Courier', monospace);
+  font-size: var(--font-size-base, 1rem);
+  color: var(--color-text-primary, #f5f5dc);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.command-input::placeholder {
+  color: var(--color-text-dim, #b8b8b8);
+  opacity: 0.7;
+}
+
+/* Focus state - visible focus indicator for accessibility */
+.command-input:focus {
+  outline: none;
+  border-color: var(--color-focus, #ffd700);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+}
+
+/* Blinking cursor effect when enabled */
+.command-input:not(:disabled) {
+  caret-color: var(--color-accent-gold, #ffd700);
+  animation: blink-caret 1s step-end infinite;
+}
+
+@keyframes blink-caret {
+  from, to {
+    caret-color: var(--color-accent-gold, #ffd700);
+  }
+  50% {
+    caret-color: transparent;
+  }
+}
+
+/* Disabled state */
+.command-input--disabled,
+.command-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  border-color: var(--color-border, #6a5a7a);
+  background: var(--color-bg-dark, #1a0f1f);
+}
+
+.command-input:disabled::placeholder {
+  color: var(--color-text-dim, #b8b8b8);
+  opacity: 0.5;
+}
+
+/* Hover state (only when not disabled) */
+.command-input:not(:disabled):hover {
+  border-color: var(--color-accent-ghost, #e6e6fa);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .command-input {
+    animation: none;
+    transition: none;
+  }
+  
+  @keyframes blink-caret {
+    from, to {
+      caret-color: var(--color-accent-gold, #ffd700);
+    }
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .command-input {
+    border-width: 3px;
+  }
+  
+  .command-input:focus {
+    border-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .command-input {
+    font-size: var(--font-size-sm, 0.875rem);
+    padding: var(--spacing-sm, 0.5rem);
+  }
+}

@@ -86,7 +86,7 @@
   - **Property 15: Image Update Synchronization**
   - **Validates: Requirements 6.4**
 
-- [ ] 7. Create RoomImage component
+- [x] 7. Create RoomImage component
   - Implement image rendering with alt text from description_spooky
   - Add CSS transition for opacity changes
   - Handle image load errors with fallback
@@ -94,11 +94,11 @@
   - Add lazy loading attribute
   - _Requirements: 6.3, 8.1, 10.2_
 
-- [ ] 7.1 Write property test for alt text
+- [x] 7.1 Write property test for alt text
   - **Property 17: Image Alt Text**
   - **Validates: Requirements 8.1**
 
-- [ ] 8. Implement GameOutput component
+- [x] 8. Implement GameOutput component
   - Create scrollable output area for command history
   - Render OutputLine components for commands and responses
   - Implement auto-scroll to bottom on new content
@@ -106,23 +106,23 @@
   - Implement 1000-line limit with trimming of oldest entries
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 8.1 Write property test for command output appending
+- [x] 8.1 Write property test for command output appending
   - **Property 8: Command Output Appending**
   - **Validates: Requirements 4.1**
 
-- [ ] 8.2 Write property test for response output ordering
+- [x] 8.2 Write property test for response output ordering
   - **Property 9: Response Output Ordering**
   - **Validates: Requirements 4.2**
 
-- [ ] 8.3 Write property test for auto-scroll behavior
+- [x] 8.3 Write property test for auto-scroll behavior
   - **Property 10: Auto-scroll Behavior**
   - **Validates: Requirements 4.3**
 
-- [ ] 8.4 Write property test for output line limit
+- [x] 8.4 Write property test for output line limit
   - **Property 11: Output Line Limit**
   - **Validates: Requirements 4.5**
 
-- [ ] 9. Create CommandInput component
+- [x] 9. Create CommandInput component
   - Implement text input field with Enter key submission
   - Add command history navigation with up arrow key
   - Clear input after command submission
@@ -130,21 +130,21 @@
   - Show blinking cursor when enabled
   - _Requirements: 3.1, 3.4, 3.5_
 
-- [ ] 9.1 Write property test for input state after completion
+- [x] 9.1 Write property test for input state after completion
   - **Property 7: Input State After Completion**
   - **Validates: Requirements 3.4**
 
-- [ ] 10. Implement LoadingIndicator component
+- [x] 10. Implement LoadingIndicator component
   - Create pulsing or spinning indicator
   - Show/hide based on isLoading prop
   - Position near command input
   - _Requirements: 3.3, 7.1_
 
-- [ ] 10.1 Write property test for input state during processing
+- [x] 10.1 Write property test for input state during processing
   - **Property 6: Input State During Processing**
   - **Validates: Requirements 3.3**
 
-- [ ] 11. Create GrimoireContainer component
+- [x] 11. Create GrimoireContainer component
   - Implement two-column grid layout (image left, text right)
   - Manage overall game state (currentRoom, roomImage, gameOutput)
   - Coordinate image transitions with text updates
@@ -152,7 +152,7 @@
   - Integrate ImagePane, GameOutput, CommandInput, LoadingIndicator
   - _Requirements: 1.2, 1.3, 1.5, 10.1, 10.5_
 
-- [ ] 12. Implement command submission flow
+- [-] 12. Implement command submission flow
   - Connect CommandInput to API client
   - Display command in GameOutput
   - Send command to backend API

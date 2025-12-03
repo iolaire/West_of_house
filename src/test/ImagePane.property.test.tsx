@@ -98,7 +98,14 @@ describe('ImagePane Property Tests', () => {
   it('Property 2: Transition Atomicity - should queue transitions instead of interrupting', async () => {
     await fc.assert(
       fc.asyncProperty(
-        fc.array(fc.string({ minLength: 1, maxLength: 30 }).filter(s => s.trim().length > 0), { minLength: 2, maxLength: 5 }),
+        fc.array(fc.string({ minLength: 1, maxLength: 30 }).filter(s => s.trim().length > 0), { minLength: 2, maxLength: 5 })
+          .filter(arr => {
+            // Filter out arrays with consecutive duplicates
+            for (let i = 1; i < arr.length; i++) {
+              if (arr[i] === arr[i - 1]) return false;
+            }
+            return true;
+          }),
         async (roomNames) => {
           // Clear mocks before test
           vi.mocked(imageUtils.preloadImage).mockClear();

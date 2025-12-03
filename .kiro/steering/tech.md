@@ -32,9 +32,18 @@
 
 ## Testing
 
+**Backend (Python):**
 - **Unit Tests**: pytest
 - **Property-Based Tests**: Hypothesis library (minimum 100 iterations per property)
 - **Test Tagging**: `# Feature: game-backend-api, Property {number}: {property_text}`
+
+**Frontend (React/TypeScript):**
+- **Test Framework**: Vitest with React Testing Library
+- **Property-Based Tests**: fast-check library (minimum 100 iterations per property)
+- **Test Command**: `npm test` (already includes `--run` flag, do NOT add it again)
+- **Watch Mode**: `npm run test:watch`
+- **UI Mode**: `npm run test:ui`
+- **Test Location**: `src/test/` directory
 
 ## Security
 
@@ -255,6 +264,7 @@ zip -r ../function.zip .
 
 ### Testing
 
+**Backend (Python):**
 ```bash
 # Run all tests
 pytest
@@ -264,6 +274,21 @@ pytest tests/property/
 
 # Run with coverage
 pytest --cov=src tests/
+```
+
+**Frontend (React/TypeScript):**
+```bash
+# Run all tests (includes --run flag automatically)
+npm test
+
+# Run specific test file
+npm test src/test/RoomImage.property.test.tsx
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with UI
+npm run test:ui
 ```
 
 ### Local Development

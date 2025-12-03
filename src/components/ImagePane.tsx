@@ -42,28 +42,39 @@ const ImagePane: React.FC<ImagePaneProps> = ({
   
   // Ref to track if component is mounted (for cleanup)
   const isMountedRef = useRef<boolean>(true);
+  
+  // Ref to track if currently transitioning (avoids stale closure issues)
+  const isTransitioningRef = useRef<boolean>(false);
 
   /**
    * Starts a transition to a new room image
    * If a transition is in progress, queues the new transition
    */
   const startTransition = useCallback(
-    (newRoomName: string) => {
-      // If already transitioning, queue this transition
-      if (isTransitioning) {
-        setTransitionQueue((prev) => [...prev, newRoomName]);
-        return;
-      }
-
+    (newRoomName: string, skipPreload: boolean = false) => {
       // Map room name to image path
       const newImagePath = mapRoomToImage(newRoomName);
 
-      // Preload the image before starting transition
-      preloadImage(newImagePath)
+      // If already transitioning, queue this transition
+      if (isTransitioningRef.current) {
+        setTransitionQueue((prev) => [...prev, newRoomName]);
+        // Preload in background for queued transitions
+        if (!skipPreload) {
+          preloadImage(newImagePath).catch(() => {
+            // Ignore errors, they'll be handled when transition actually starts
+          });
+        }
+        return;
+      }
+
+      // Wait for preload to complete before starting transition
+      const preloadPromise = skipPreload ? Promise.resolve() : preloadImage(newImagePath);
+      preloadPromise
         .then(() => {
           if (!isMountedRef.current) return;
 
           // Start the transition
+          isTransitioningRef.current = true;
           setIsTransitioning(true);
           setNextImage(newImagePath);
 
@@ -73,14 +84,15 @@ const ImagePane: React.FC<ImagePaneProps> = ({
 
             setCurrentImage(newImagePath);
             setNextImage(null);
+            isTransitioningRef.current = false;
             setIsTransitioning(false);
 
             // Process next item in queue
             setTransitionQueue((prev) => {
               if (prev.length > 0) {
                 const [next, ...rest] = prev;
-                // Start next transition on next tick
-                setTimeout(() => startTransition(next), 0);
+                // Start next transition on next tick, skipping preload since we already did it
+                setTimeout(() => startTransition(next, true), 0);
                 return rest;
               }
               return prev;
@@ -96,6 +108,7 @@ const ImagePane: React.FC<ImagePaneProps> = ({
           // Use default image instead
           const fallbackPath = DEFAULT_ROOM_IMAGE;
           
+          isTransitioningRef.current = true;
           setIsTransitioning(true);
           setNextImage(fallbackPath);
 
@@ -104,13 +117,15 @@ const ImagePane: React.FC<ImagePaneProps> = ({
 
             setCurrentImage(fallbackPath);
             setNextImage(null);
+            isTransitioningRef.current = false;
             setIsTransitioning(false);
 
             // Process next item in queue
             setTransitionQueue((prev) => {
               if (prev.length > 0) {
                 const [next, ...rest] = prev;
-                setTimeout(() => startTransition(next), 0);
+                // Start next transition on next tick, skipping preload since we already did it
+                setTimeout(() => startTransition(next, true), 0);
                 return rest;
               }
               return prev;
@@ -118,15 +133,45 @@ const ImagePane: React.FC<ImagePaneProps> = ({
           }, transitionDuration);
         });
     },
-    [isTransitioning, transitionDuration]
+    [transitionDuration]
   );
+
+  // Ref to track if this is the first render
+  const isFirstRenderRef = useRef<boolean>(true);
+  
+  // Ref to track previous room name to avoid duplicate transitions
+  const prevRoomNameRef = useRef<string>('');
 
   /**
    * Effect to handle room changes
-   * Triggers transition when roomName changes
+   * On first render, sets initial image without transition
+   * On subsequent renders, triggers transition when roomName changes
    */
   useEffect(() => {
-    if (roomName) {
+    if (roomName && roomName !== prevRoomNameRef.current) {
+      prevRoomNameRef.current = roomName;
+      
+      // On first render, preload and set the initial image without transition
+      if (isFirstRenderRef.current) {
+        isFirstRenderRef.current = false;
+        const initialImage = mapRoomToImage(roomName);
+        
+        // Preload the initial image
+        preloadImage(initialImage)
+          .then(() => {
+            if (isMountedRef.current) {
+              setCurrentImage(initialImage);
+            }
+          })
+          .catch(() => {
+            // On error, use default image
+            if (isMountedRef.current) {
+              setCurrentImage(DEFAULT_ROOM_IMAGE);
+            }
+          });
+        return;
+      }
+      
       startTransition(roomName);
     }
   }, [roomName, startTransition]);
