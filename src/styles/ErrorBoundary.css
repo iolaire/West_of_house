@@ -88,9 +88,10 @@
   opacity: 0.9;
 }
 
-.error-boundary__button:focus {
-  outline: 2px solid var(--color-focus);
+.error-boundary__button:focus-visible {
+  outline: 3px solid var(--color-focus);
   outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(255, 215, 0, 0.2);
 }
 
 .error-boundary__button:active {

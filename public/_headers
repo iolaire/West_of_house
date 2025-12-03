@@ -1,0 +1,44 @@
+# Cache headers for AWS Amplify Hosting
+# This file configures browser caching for static assets
+
+# Images - Cache for 1 year (immutable)
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# WebP images - Cache for 1 year (immutable)
+/images/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+# PNG images - Cache for 1 year (immutable)
+/images/*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+# JavaScript and CSS - Cache for 1 year with immutable flag
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fonts - Cache for 1 year
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML - No cache (always fetch latest)
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Root HTML
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Service worker (if added later) - No cache
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Manifest (if added later) - Cache for 1 day
+/manifest.json
+  Cache-Control: public, max-age=86400

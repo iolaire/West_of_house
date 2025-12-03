@@ -20,12 +20,16 @@ import './styles/ErrorBoundary.css';
  * - Wraps application in ErrorBoundary for error handling
  * - Provides SessionManager context to all child components
  * - Renders the main GrimoireContainer
+ * - Includes skip link for keyboard navigation accessibility
  * 
  * Session initialization happens in GrimoireContainer on mount (Requirement 5.1)
  */
 function App() {
   return (
     <ErrorBoundary>
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       <SessionProvider>
         <GrimoireContainer />
       </SessionProvider>

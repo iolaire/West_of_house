@@ -1,0 +1,60 @@
+/**
+ * RoomImage Component Styles
+ * Feature: grimoire-frontend
+ * 
+ * Styles for individual room images with transition support
+ * Requirements: 6.3, 8.1, 10.2
+ */
+
+/* Room image base styles */
+.room-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: opacity var(--transition-dissolve, 3000ms) ease-in-out;
+}
+
+/* Transitioning state */
+.room-image.transitioning {
+  /* Opacity is controlled via inline style for precise control */
+  /* This class is used for additional styling if needed */
+}
+
+/* Loading state - subtle pulse while image loads */
+.room-image[loading="lazy"] {
+  background: var(--color-bg-medium, #2d1b3d);
+}
+
+/* Error state - when image fails to load */
+.room-image--error {
+  opacity: 0.7;
+  filter: grayscale(50%);
+}
+
+/* Reduced motion support - instant transitions */
+@media (prefers-reduced-motion: reduce) {
+  .room-image {
+    transition: opacity 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .room-image {
+    filter: contrast(1.2);
+  }
+  
+  .room-image--error {
+    filter: grayscale(50%) contrast(1.2);
+  }
+}
+
+/* Print styles - ensure images print well */
+@media print {
+  .room-image {
+    page-break-inside: avoid;
+    max-height: 80vh;
+  }
+}

@@ -170,11 +170,44 @@ class GameState:
         Returns:
             GameState instance
         """
-        # Convert rooms_visited list back to set
-        if 'rooms_visited' in data and isinstance(data['rooms_visited'], list):
-            data['rooms_visited'] = set(data['rooms_visited'])
+        # Remove AppSync/Amplify Data metadata fields
+        data = {k: v for k, v in data.items() if not k.startswith('__')}
         
-        return cls(**data)
+        # Map camelCase DynamoDB fields to snake_case Python fields
+        field_mapping = {
+            'currentRoom': 'current_room',
+            'roomsVisited': 'rooms_visited',
+            'turnCount': 'turn_count',
+            'lampBattery': 'lamp_battery',
+            'soulsCollected': 'souls_collected',
+            'curseDuration': 'curse_duration',
+            'thiefHere': 'thief_here',
+            'wonFlag': 'won_flag',
+            'bloodMoonActive': 'blood_moon_active',
+            'createdAt': 'created_at',
+            'lastAccessed': 'last_accessed',
+        }
+        
+        # Apply field name mapping
+        mapped_data = {}
+        for key, value in data.items():
+            mapped_key = field_mapping.get(key, key)
+            mapped_data[mapped_key] = value
+        
+        # Convert rooms_visited list back to set
+        if 'rooms_visited' in mapped_data and isinstance(mapped_data['rooms_visited'], list):
+            mapped_data['rooms_visited'] = set(mapped_data['rooms_visited'])
+        
+        # Remove any fields that don't exist in GameState
+        valid_fields = {
+            'sessionId', 'current_room', 'inventory', 'flags', 'rooms_visited',
+            'turn_count', 'sanity', 'cursed', 'blood_moon_active', 'souls_collected',
+            'curse_duration', 'score', 'moves', 'lamp_battery', 'lucky', 'thief_here',
+            'created_at', 'last_accessed', 'expires'
+        }
+        filtered_data = {k: v for k, v in mapped_data.items() if k in valid_fields}
+        
+        return cls(**filtered_data)
     
     def to_json(self) -> str:
         """

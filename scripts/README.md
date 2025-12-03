@@ -283,3 +283,118 @@ For issues or questions:
 2. Review AWS CloudFormation stack events
 3. Check Lambda function logs in CloudWatch
 4. Verify IAM permissions with `verify-iam-config.sh`
+
+
+## Image Optimization Scripts
+
+### `convert-images-to-webp.sh` ⭐ NEW
+Converts PNG images to WebP format for better performance and reduced bandwidth costs.
+
+**Usage:**
+```bash
+# Convert all images
+./scripts/convert-images-to-webp.sh
+
+# Or use npm script
+npm run convert-webp
+```
+
+**What it does:**
+- Converts all PNG images in `public/images/` to WebP format
+- Preserves original PNG files as fallbacks for older browsers
+- Skips images that are already up-to-date
+- Uses quality 85 for optimal balance of size and quality
+
+**Requirements:**
+- `cwebp` tool installed:
+  - macOS: `brew install webp`
+  - Ubuntu/Debian: `sudo apt-get install webp`
+  - Windows: Download from https://developers.google.com/speed/webp/download
+
+**Benefits:**
+- 75% reduction in image file size (2MB PNG → 500KB WebP)
+- Faster page load times
+- Significant cost savings on data transfer (~$1.80/month for 1000 games)
+- Automatic fallback to PNG for older browsers
+
+**Note:** This script is automatically run during `npm run build`, but can also be run manually with `npm run convert-webp`.
+
+**Example Output:**
+```
+🖼️  Converting PNG images to WebP format...
+🔄 Converting west_of_house.png to WebP...
+✅ Converted west_of_house: 2.1M (PNG) → 512K (WebP)
+🔄 Converting east_of_house.png to WebP...
+✅ Converted east_of_house: 2.0M (PNG) → 498K (WebP)
+⏭️  Skipping north_of_house (WebP is up to date)
+
+✨ Conversion complete!
+   Converted: 2 images
+   Skipped: 1 images (already up to date)
+
+💡 Note: PNG files are preserved as fallbacks for older browsers
+```
+
+## Image Optimization Workflow
+
+### Development
+```bash
+# 1. Add new room images to images/ directory
+
+# 2. Copy images to public directory
+npm run copy-images
+
+# 3. Convert to WebP format (optional in dev)
+npm run convert-webp
+
+# 4. Start dev server
+npm run dev
+```
+
+### Production Build
+```bash
+# Full build with all optimizations
+npm run build
+
+# This automatically:
+# 1. Copies images (npm run copy-images)
+# 2. Converts to WebP (npm run convert-webp)
+# 3. Compiles TypeScript
+# 4. Builds with Vite
+```
+
+### Troubleshooting WebP Conversion
+
+**Problem:** `cwebp: command not found`
+
+**Solution:** Install WebP tools
+```bash
+# macOS
+brew install webp
+
+# Ubuntu/Debian
+sudo apt-get install webp
+
+# Verify installation
+cwebp -version
+```
+
+**Problem:** Images not converting
+
+**Solution:** Check file permissions and paths
+```bash
+# Make script executable
+chmod +x scripts/convert-images-to-webp.sh
+
+# Verify images exist
+ls -la public/images/*.png
+```
+
+**Problem:** WebP files too large
+
+**Solution:** Adjust quality setting in script (default is 85)
+```bash
+# Edit scripts/convert-images-to-webp.sh
+# Change: cwebp -q 85 ...
+# To:     cwebp -q 75 ...  (smaller files, slightly lower quality)
+```

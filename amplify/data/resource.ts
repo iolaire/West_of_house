@@ -1,4 +1,5 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
+import { gameHandler } from '../functions/game-handler/resource';
 
 /**
  * GameSessions DynamoDB Table Schema
@@ -56,6 +57,35 @@ const schema = a.schema({
       // Allow guest access for MVP (no authentication required)
       allow.guest(),
     ]),
+  
+  /**
+   * Custom Query: Process game command via Lambda function
+   * 
+   * This custom query invokes the game handler Lambda function to process
+   * player commands and return the updated game state.
+   */
+  processCommand: a
+    .query()
+    .arguments({
+      sessionId: a.string().required(),
+      command: a.string().required(),
+    })
+    .returns(
+      a.customType({
+        room: a.string().required(),
+        description_spooky: a.string().required(),
+        exits: a.string().array().required(),
+        objects: a.string().array().required(),
+        inventory: a.string().array().required(),
+        sanity: a.integer().required(),
+        score: a.integer().required(),
+        moves: a.integer().required(),
+        lampBattery: a.integer().required(),
+        message: a.string().required(),
+      })
+    )
+    .authorization((allow) => [allow.guest()])
+    .handler(a.handler.function(gameHandler)),
 });
 
 export type Schema = ClientSchema<typeof schema>;

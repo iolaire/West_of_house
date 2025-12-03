@@ -123,11 +123,16 @@ const CommandInput: React.FC<CommandInputProps> = ({ onSubmit, disabled }) => {
         onKeyDown={handleKeyDown}
         disabled={disabled}
         placeholder={disabled ? 'Processing...' : 'Enter command...'}
-        aria-label="Game command input"
+        aria-label="Game command input. Type commands like 'go north', 'take lamp', or 'look'"
+        aria-describedby="command-help"
         aria-disabled={disabled}
+        aria-required="false"
         autoComplete="off"
         spellCheck={false}
       />
+      <span id="command-help" className="visually-hidden">
+        Press Enter to submit command. Press up arrow to recall previous commands.
+      </span>
     </div>
   );
 };

@@ -20,7 +20,7 @@ import {
   SessionExpiredError,
   ApiError,
 } from '../types';
-import { gameApiClient } from '../services';
+import { graphQLApiClient } from '../services';
 
 /**
  * Session Context
@@ -89,8 +89,8 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
     setError(null);
 
     try {
-      // Call API to create new session
-      const newSessionId = await gameApiClient.createSession();
+      // Call GraphQL API to create new session
+      const newSessionId = await graphQLApiClient.createSession();
       
       // Store session in state
       setSessionId(newSessionId);
@@ -127,8 +127,8 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
     setError(null);
 
     try {
-      // Send command to API
-      const response = await gameApiClient.sendCommand(sessionId, command);
+      // Send command to GraphQL API
+      const response = await graphQLApiClient.sendCommand(sessionId, command);
       
       // Update last accessed timestamp
       const storedData = localStorage.getItem(SESSION_STORAGE_KEY);
@@ -159,7 +159,7 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
           await createSession();
           // Retry the command with the new session
           if (sessionId) {
-            return await gameApiClient.sendCommand(sessionId, command);
+            return await graphQLApiClient.sendCommand(sessionId, command);
           }
         } catch (retryErr) {
           console.error('Failed to create new session after expiration:', retryErr);

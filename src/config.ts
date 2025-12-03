@@ -4,6 +4,10 @@
  * This file reads configuration from Amplify outputs (amplify_outputs.json)
  * which is automatically generated during deployment.
  * 
+ * Note: The frontend now uses AppSync GraphQL API for all game operations.
+ * The REST API configuration below is kept for backward compatibility with
+ * the legacy GameApiClient, but GraphQLApiClient is the primary client.
+ * 
  * For local development, you can override the API URL by setting:
  * VITE_API_BASE_URL environment variable
  */

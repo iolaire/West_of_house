@@ -83,11 +83,18 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   render(): ReactNode {
     if (this.state.hasError) {
       return (
-        <div className="error-boundary">
+        <div 
+          className="error-boundary"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
           <div className="error-boundary__content">
-            <h1 className="error-boundary__title">Something went wrong</h1>
+            <h1 className="error-boundary__title" id="error-title">
+              Something went wrong
+            </h1>
             
-            <p className="error-boundary__message">
+            <p className="error-boundary__message" id="error-message">
               The grimoire has encountered an unexpected error. 
               Please try refreshing the page to start a new game.
             </p>
@@ -95,7 +102,11 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             {this.state.error && (
               <details className="error-boundary__details">
                 <summary>Error details</summary>
-                <pre className="error-boundary__stack">
+                <pre 
+                  className="error-boundary__stack"
+                  role="region"
+                  aria-label="Error stack trace"
+                >
                   {this.state.error.toString()}
                   {this.state.errorInfo && this.state.errorInfo.componentStack}
                 </pre>
@@ -106,6 +117,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
               className="error-boundary__button"
               onClick={this.handleReset}
               type="button"
+              aria-describedby="error-message"
             >
               Reload Page
             </button>

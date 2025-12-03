@@ -4,4 +4,5 @@
  */
 
 export { GameApiClient, gameApiClient } from './GameApiClient';
+export { GraphQLApiClient, graphQLApiClient } from './GraphQLApiClient';
 

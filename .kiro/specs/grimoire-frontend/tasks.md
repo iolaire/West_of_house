@@ -193,7 +193,7 @@
   - Render GrimoireContainer
   - _Requirements: 5.1_
 
-- [ ] 14. Implement visual design system
+- [x] 14. Implement visual design system
   - Create CSS variables for color palette (WCAG AA compliant)
   - Define typography system (Crimson Text, Cinzel fonts)
   - Set up spacing system and layout breakpoints
@@ -202,7 +202,7 @@
   - Implement prefers-reduced-motion support
   - _Requirements: 8.5, 8.6, 8.7, 10.3, 10.4, 11.1, 11.2, 11.3, 11.4_
 
-- [ ] 15. Implement accessibility features
+- [x] 15. Implement accessibility features
   - Add ARIA labels and roles to all interactive elements
   - Ensure keyboard navigation with Tab key
   - Add visible focus indicators
@@ -211,7 +211,7 @@
   - Add prefers-reduced-motion CSS media query
   - _Requirements: 8.2, 8.3, 8.4, 8.5, 8.6, 8.7_
 
-- [ ] 16. Optimize images for performance and cost
+- [x] 16. Optimize images for performance and cost
   - Implement lazy loading for room images
   - Add image preloading for adjacent rooms
   - Configure browser caching headers (1 year)

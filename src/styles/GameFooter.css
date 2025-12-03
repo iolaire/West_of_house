@@ -1,0 +1,166 @@
+/**
+ * GameFooter Styles
+ * Feature: grimoire-frontend
+ * 
+ * Spooky footer styling that matches the grimoire aesthetic
+ */
+
+.game-footer {
+  background: linear-gradient(to bottom, rgba(20, 10, 5, 0.95), rgba(10, 5, 0, 0.98));
+  border-top: 2px solid rgba(139, 69, 19, 0.5);
+  padding: 1.5rem 2rem 1rem;
+  color: rgba(210, 180, 140, 0.9);
+  font-family: 'Courier New', monospace;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.8);
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto 1rem;
+}
+
+.footer-section {
+  padding: 0.5rem;
+}
+
+.footer-title {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: rgba(255, 215, 0, 0.8);
+  margin: 0 0 0.75rem 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.footer-text {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
+  color: rgba(210, 180, 140, 0.85);
+  font-style: italic;
+}
+
+.command-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.command-item {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: rgba(139, 69, 19, 0.3);
+  border: 1px solid rgba(139, 69, 19, 0.5);
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: rgba(255, 215, 0, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.command-item:hover {
+  background: rgba(139, 69, 19, 0.5);
+  border-color: rgba(255, 215, 0, 0.6);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.footer-warning {
+  text-align: center;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(139, 69, 19, 0.3);
+  margin-top: 1rem;
+}
+
+.footer-warning p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(220, 20, 60, 0.8);
+  font-style: italic;
+  text-shadow: 0 0 8px rgba(220, 20, 60, 0.4);
+  animation: pulse-warning 3s ease-in-out infinite;
+}
+
+@keyframes pulse-warning {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 12px rgba(220, 20, 60, 0.6);
+  }
+}
+
+/* Accessibility improvements */
+.footer-section:focus-within {
+  outline: 2px solid rgba(255, 215, 0, 0.5);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .command-item {
+    transition: none;
+  }
+  
+  .command-item:hover {
+    transform: none;
+  }
+  
+  .footer-warning p {
+    animation: none;
+    opacity: 0.9;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .game-footer {
+    padding: 1rem 1rem 0.75rem;
+  }
+  
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .footer-title {
+    font-size: 0.85rem;
+  }
+  
+  .footer-text {
+    font-size: 0.8rem;
+  }
+  
+  .command-item {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+  }
+  
+  .footer-warning p {
+    font-size: 0.75rem;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .footer-content {
+    gap: 1rem;
+  }
+  
+  .command-list {
+    gap: 0.4rem;
+  }
+  
+  .command-item {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+  }
+}

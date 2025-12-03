@@ -112,7 +112,7 @@ function extractRoomNameFromPath(imagePath: string): string | null {
  * @param attemptedPath - The path that was attempted
  */
 function logUnmappedRoom(roomName: string, attemptedPath: string): void {
-  console.warn(
+  console.error(
     `[Image Mapping] Failed to load image for room: "${roomName}"`,
     `\n  Attempted path: ${attemptedPath}`,
     `\n  Falling back to: ${DEFAULT_ROOM_IMAGE}`
@@ -174,4 +174,130 @@ export function downloadUnmappedRoomsReport(): void {
   document.body.removeChild(link);
   
   URL.revokeObjectURL(url);
+}
+
+/**
+ * Converts a PNG image path to WebP format
+ * 
+ * @param imagePath - The original image path (e.g., "/images/west_of_house.png")
+ * @returns The WebP version of the image path
+ * 
+ * @example
+ * getWebPPath("/images/west_of_house.png") // returns "/images/west_of_house.webp"
+ */
+export function getWebPPath(imagePath: string): string {
+  // If already WebP or not a PNG, return as-is
+  if (imagePath.endsWith('.webp') || !imagePath.endsWith('.png')) {
+    return imagePath;
+  }
+  
+  return imagePath.replace(/\.png$/, '.webp');
+}
+
+/**
+ * Ensures a path is in PNG format
+ * 
+ * @param imagePath - The image path
+ * @returns The PNG version of the image path
+ * 
+ * @example
+ * getPNGPath("/images/west_of_house.webp") // returns "/images/west_of_house.png"
+ */
+export function getPNGPath(imagePath: string): string {
+  // If already PNG, return as-is
+  if (imagePath.endsWith('.png')) {
+    return imagePath;
+  }
+  
+  // Convert WebP to PNG
+  if (imagePath.endsWith('.webp')) {
+    return imagePath.replace(/\.webp$/, '.png');
+  }
+  
+  // For other formats, assume PNG
+  return imagePath;
+}
+
+/**
+ * Responsive image sizes configuration
+ */
+interface ResponsiveSizes {
+  webp: {
+    srcSet: string;
+  };
+  png: {
+    srcSet: string;
+  };
+  sizes: string;
+}
+
+/**
+ * Generates responsive image srcset for different screen sizes
+ * 
+ * Creates multiple image sizes for optimal loading on different devices:
+ * - Small (640w): Mobile devices
+ * - Medium (1024w): Tablets
+ * - Large (1920w): Desktop displays
+ * 
+ * @param imagePath - The base image path
+ * @returns Object containing WebP and PNG srcsets with sizes attribute
+ * 
+ * @example
+ * getResponsiveSizes("/images/west_of_house.png")
+ * // returns {
+ * //   webp: { srcSet: "/images/west_of_house.webp 1920w, ..." },
+ * //   png: { srcSet: "/images/west_of_house.png 1920w, ..." },
+ * //   sizes: "(max-width: 640px) 100vw, ..."
+ * // }
+ */
+export function getResponsiveSizes(imagePath: string): ResponsiveSizes {
+  // For now, we'll use the same image for all sizes
+  // In a production environment, you would generate multiple sizes during build
+  // and reference them here (e.g., west_of_house-640w.png, west_of_house-1024w.png)
+  
+  const webpPath = getWebPPath(imagePath);
+  const pngPath = getPNGPath(imagePath);
+  
+  // Since we don't have pre-generated responsive images yet,
+  // we'll use the same image for all sizes
+  // The browser will scale it appropriately
+  return {
+    webp: {
+      srcSet: `${webpPath} 1920w`,
+    },
+    png: {
+      srcSet: `${pngPath} 1920w`,
+    },
+    // Sizes attribute tells the browser how much space the image will take
+    // This helps it choose the right image from srcset
+    sizes: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px',
+  };
+}
+
+/**
+ * Preloads adjacent room images based on available exits
+ * This improves transition smoothness by loading images before they're needed
+ * 
+ * @param adjacentRooms - Array of room names that are adjacent to the current room
+ * @returns Promise that resolves when all adjacent images are preloaded
+ * 
+ * @example
+ * await preloadAdjacentRooms(["North of House", "South of House"])
+ */
+export async function preloadAdjacentRooms(adjacentRooms: string[]): Promise<void> {
+  // Preload up to 3 adjacent rooms to avoid excessive bandwidth usage
+  const roomsToPreload = adjacentRooms.slice(0, 3);
+  
+  const preloadPromises = roomsToPreload.map(roomName => {
+    const imagePath = mapRoomToImage(roomName);
+    // Try WebP first, fall back to PNG if it fails
+    return preloadImage(getWebPPath(imagePath))
+      .catch(() => preloadImage(getPNGPath(imagePath)))
+      .catch(() => {
+        // Ignore errors for adjacent room preloading
+        // They'll be handled when the user actually navigates to that room
+      });
+  });
+  
+  await Promise.all(preloadPromises);
 }

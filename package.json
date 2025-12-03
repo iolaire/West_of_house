@@ -8,12 +8,15 @@
   },
   "scripts": {
     "dev": "npm run copy-images && vite",
-    "build": "npm run copy-images && tsc && vite build",
+    "build": "npm run copy-images && npm run convert-webp && tsc && vite build",
     "preview": "vite preview",
     "copy-images": "bash scripts/copy-images.sh",
+    "convert-webp": "bash scripts/convert-images-to-webp.sh",
     "test": "vitest --run",
     "test:watch": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "repository": {
     "type": "git",
@@ -30,6 +33,7 @@
   "devDependencies": {
     "@aws-amplify/backend": "^1.18.0",
     "@aws-amplify/backend-cli": "^1.8.0",
+    "@playwright/test": "^1.57.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",

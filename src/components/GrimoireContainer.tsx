@@ -19,6 +19,7 @@ import ImagePane from './ImagePane';
 import GameOutput from './GameOutput';
 import CommandInput from './CommandInput';
 import LoadingIndicator from './LoadingIndicator';
+import GameFooter from './GameFooter';
 import '../styles/GrimoireContainer.css';
 
 /**
@@ -36,7 +37,7 @@ const GrimoireContainer: React.FC = () => {
   const { sessionId, createSession, sendCommand, isLoading, error: sessionError } = useSession();
   
   // Game state
-  const [currentRoom, setCurrentRoom] = useState<string>('West of House');
+  const [currentRoom, setCurrentRoom] = useState<string>('west_of_house');
   const [roomDescription, setRoomDescription] = useState<string>('You are standing in an open field west of a white house, with a boarded front door.');
   const [outputLines, setOutputLines] = useState<OutputLine[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -150,39 +151,59 @@ const GrimoireContainer: React.FC = () => {
   }, [sessionError]);
 
   return (
-    <div className="grimoire-container">
-      {/* Left page: Room image (Requirement 1.2) */}
-      <div className="grimoire-page grimoire-page--left">
-        <ImagePane
-          roomName={currentRoom}
-          roomDescription={roomDescription}
-        />
-      </div>
+    <>
+      <main 
+        id="main-content"
+        className="grimoire-container"
+        role="main"
+        aria-label="West of Haunted House game interface"
+      >
+        {/* Left page: Room image (Requirement 1.2) */}
+        <section 
+          className="grimoire-page grimoire-page--left"
+          aria-label="Room visualization"
+        >
+          <ImagePane
+            roomName={currentRoom}
+            roomDescription={roomDescription}
+          />
+        </section>
 
-      {/* Right page: Game text and input (Requirement 1.3) */}
-      <div className="grimoire-page grimoire-page--right">
-        <div className="text-pane">
-          {/* Game output area */}
-          <GameOutput lines={outputLines} />
-          
-          {/* Command input and loading indicator */}
-          <div className="input-area">
-            <CommandInput
-              onSubmit={handleCommandSubmit}
-              disabled={isLoading}
-            />
-            <LoadingIndicator isVisible={isLoading} />
-          </div>
-          
-          {/* Error display */}
-          {error && (
-            <div className="error-message" role="alert">
-              {error}
+        {/* Right page: Game text and input (Requirement 1.3) */}
+        <section 
+          className="grimoire-page grimoire-page--right"
+          aria-label="Game interaction area"
+        >
+          <div className="text-pane">
+            {/* Game output area */}
+            <GameOutput lines={outputLines} />
+            
+            {/* Command input and loading indicator */}
+            <div className="input-area">
+              <CommandInput
+                onSubmit={handleCommandSubmit}
+                disabled={isLoading}
+              />
+              <LoadingIndicator isVisible={isLoading} />
             </div>
-          )}
-        </div>
-      </div>
-    </div>
+            
+            {/* Error display */}
+            {error && (
+              <div 
+                className="error-message" 
+                role="alert"
+                aria-live="assertive"
+              >
+                {error}
+              </div>
+            )}
+          </div>
+        </section>
+      </main>
+      
+      {/* Game instructions footer */}
+      <GameFooter />
+    </>
   );
 };
 

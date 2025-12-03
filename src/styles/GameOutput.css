@@ -4,7 +4,13 @@
  */
 
 .game-output {
-  flex: 1;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: reverse;
+  -webkit-flex-direction: column-reverse;
+  flex-direction: column-reverse; /* Newest content at top */
   overflow-y: auto;
   overflow-x: hidden;
   padding: var(--spacing-md, 1rem);
@@ -15,8 +21,8 @@
   font-size: var(--font-size-base, 1rem);
   line-height: var(--line-height-relaxed, 1.75);
   color: var(--color-text-primary, #f5f5dc);
-  max-height: 600px;
-  min-height: 300px;
+  height: 400px; /* Fixed height to keep command input visible */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 /* Scrollbar styling for webkit browsers */
@@ -72,10 +78,19 @@
   font-weight: 500;
 }
 
+/* Empty state styling */
+.output-line--empty {
+  color: var(--color-text-dim, #b8b8b8);
+  font-style: italic;
+  text-align: center;
+  padding: var(--spacing-lg, 1.5rem);
+}
+
 /* Focus indicator for accessibility */
 .game-output:focus-visible {
-  outline: 2px solid var(--color-focus, #ffd700);
+  outline: 3px solid var(--color-focus, #ffd700);
   outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(255, 215, 0, 0.2);
 }
 
 /* Reduced motion support */

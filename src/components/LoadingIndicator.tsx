@@ -32,15 +32,16 @@ const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({ isVisible }) => {
       className="loading-indicator"
       role="status"
       aria-live="polite"
+      aria-busy="true"
       aria-label="Processing command"
     >
-      <div className="loading-indicator__spinner">
+      <div className="loading-indicator__spinner" aria-hidden="true">
         <div className="loading-indicator__dot loading-indicator__dot--1"></div>
         <div className="loading-indicator__dot loading-indicator__dot--2"></div>
         <div className="loading-indicator__dot loading-indicator__dot--3"></div>
       </div>
-      <span className="loading-indicator__text">Processing...</span>
-      <span className="loading-indicator__sr-only">Command is being processed</span>
+      <span className="loading-indicator__text" aria-hidden="true">Processing...</span>
+      <span className="visually-hidden">Command is being processed, please wait</span>
     </div>
   );
 };

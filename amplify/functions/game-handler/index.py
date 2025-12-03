@@ -113,19 +113,165 @@ def create_error_response(status_code: int, error_code: str, message: str, detai
     return create_response(status_code, error_body)
 
 
+def handle_graphql_request(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[str, Any]:
+    """
+    Handle AppSync GraphQL requests.
+    
+    Routes GraphQL queries/mutations to appropriate handlers based on fieldName.
+    
+    Args:
+        event: AppSync event with 'typeName', 'fieldName' and 'arguments' fields
+        request_id: Request identifier for logging
+        
+    Returns:
+        GraphQL response data (not wrapped in API Gateway format)
+    """
+    try:
+        # Extract GraphQL field name and arguments
+        # AppSync direct Lambda resolver events have fieldName at root level
+        field_name = event['fieldName']
+        arguments = event.get('arguments', {})
+        
+        print(f"[{request_id}] GraphQL field: {field_name}, arguments: {arguments}")
+        
+        # Route to appropriate handler
+        if field_name == 'processCommand':
+            return handle_graphql_process_command(arguments, request_id)
+        else:
+            raise ValueError(f"Unknown GraphQL field: {field_name}")
+    
+    except Exception as e:
+        print(f"[{request_id}] ERROR in GraphQL handler: {str(e)}")
+        print(traceback.format_exc())
+        # For GraphQL, throw the error so AppSync can handle it
+        raise
+
+
+def handle_graphql_process_command(arguments: Dict[str, Any], request_id: str = 'unknown') -> Dict[str, Any]:
+    """
+    Handle GraphQL processCommand query.
+    
+    Processes a game command and returns the updated game state.
+    
+    Args:
+        arguments: GraphQL arguments containing sessionId and command
+        request_id: Request identifier for logging
+        
+    Returns:
+        Game response data
+    """
+    original_state = None
+    state = None
+    
+    try:
+        # Extract arguments
+        sessionId = arguments.get('sessionId')
+        command_text = arguments.get('command')
+        
+        # Validate required fields
+        if not sessionId:
+            raise ValueError('sessionId is required')
+        
+        if not command_text:
+            raise ValueError('command is required')
+        
+        if not isinstance(command_text, str) or not command_text.strip():
+            raise ValueError('command must be a non-empty string')
+        
+        print(f"[{request_id}] Processing GraphQL command for session {sessionId}: {command_text}")
+        
+        # Load session from DynamoDB
+        state = session_manager.load_session(sessionId)
+        
+        if state is None:
+            raise ValueError(f'Session not found or expired: {sessionId}')
+        
+        # Create a backup of the original state for rollback
+        import copy
+        original_state = copy.deepcopy(state)
+        
+        # Parse command
+        parsed_command = command_parser.parse(command_text)
+        print(f"[{request_id}] Parsed command: {parsed_command}")
+        
+        # Execute command via game engine
+        result = game_engine.execute_command(parsed_command, state)
+        print(f"[{request_id}] Command result: success={result.success}")
+        
+        # Save updated state to DynamoDB
+        session_manager.save_session(state)
+        print(f"[{request_id}] Saved updated session {sessionId}")
+        
+        # Get current room information
+        room = world_data.get_room(state.current_room)
+        description = result.message if result.success else result.message
+        
+        # Get visible items in room
+        items_visible = []
+        for item_id in room.items:
+            try:
+                obj = world_data.get_object(item_id)
+                if obj.state.get('is_visible', True):
+                    display_name = obj.name_spooky if obj.name_spooky else obj.name
+                    items_visible.append(display_name)
+            except Exception as e:
+                print(f"[{request_id}] WARNING: Error processing object {item_id} - {str(e)}")
+                continue
+        
+        # Get inventory display names
+        inventory_display = []
+        for item_id in state.inventory:
+            try:
+                obj = world_data.get_object(item_id)
+                display_name = obj.name_spooky if obj.name_spooky else obj.name
+                inventory_display.append(display_name)
+            except Exception as e:
+                print(f"[{request_id}] WARNING: Error processing inventory object {item_id} - {str(e)}")
+                inventory_display.append(item_id)
+        
+        # Return GraphQL response (matches the custom type schema)
+        return {
+            'room': state.current_room,
+            'description_spooky': world_data.get_room_description(state.current_room, state.sanity) if result.room_changed else description,
+            'exits': list(room.exits.keys()),
+            'objects': items_visible,
+            'inventory': inventory_display,
+            'sanity': state.sanity,
+            'score': state.score,
+            'moves': state.moves,
+            'lampBattery': state.lamp_battery,
+            'message': result.message
+        }
+    
+    except Exception as e:
+        print(f"[{request_id}] ERROR in GraphQL processCommand: {str(e)}")
+        print(traceback.format_exc())
+        
+        # Try to restore original state on error
+        if original_state and state and original_state != state:
+            try:
+                session_manager.save_session(original_state)
+                print(f"[{request_id}] Restored original state after error")
+            except Exception as restore_error:
+                print(f"[{request_id}] WARNING: Failed to restore original state - {str(restore_error)}")
+        
+        # Re-raise for AppSync to handle
+        raise
+
+
 def handler(event, context):
     """
     Main Lambda handler function.
     
-    Processes API Gateway events, routes to appropriate handlers,
-    and returns formatted JSON responses.
+    Processes both API Gateway (REST) and AppSync (GraphQL) events,
+    routes to appropriate handlers, and returns formatted responses.
     
     Args:
-        event: API Gateway event
+        event: API Gateway or AppSync event
         context: Lambda context
         
     Returns:
-        API Gateway response
+        API Gateway response or GraphQL result
         
     Requirements: 11.1, 11.2, 11.3, 2.1, 2.3, 2.4, 16.1, 16.2, 16.3, 16.5
     """
@@ -147,6 +293,13 @@ def handler(event, context):
                 'Invalid request format'
             )
         
+        # Check if this is an AppSync GraphQL request
+        # AppSync direct Lambda resolver events have 'typeName' and 'fieldName' at root level
+        if 'typeName' in event and 'fieldName' in event:
+            print(f"[{request_id}] Detected AppSync GraphQL request")
+            return handle_graphql_request(event, request_id)
+        
+        # Otherwise, handle as API Gateway REST request
         # Extract HTTP method and path
         http_method = event.get('httpMethod', '')
         path = event.get('path', '')

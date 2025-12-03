@@ -24,45 +24,46 @@ const GameOutput: React.FC<GameOutputProps> = ({ lines }) => {
   const [autoScroll, setAutoScroll] = useState(true);
   const prevLinesLengthRef = useRef(lines.length);
 
-  // Trim lines to MAX_OUTPUT_LINES if needed
+  // Trim lines to MAX_OUTPUT_LINES if needed, then reverse for newest-first display
   const trimmedLines = lines.length > MAX_OUTPUT_LINES 
     ? lines.slice(lines.length - MAX_OUTPUT_LINES)
     : lines;
+  
+  // Reverse the array so newest entries appear at top
+  const reversedLines = [...trimmedLines].reverse();
 
-  // Handle auto-scroll behavior
+  // Handle auto-scroll behavior (scroll to top for newest content)
   useEffect(() => {
     if (!outputRef.current) return;
 
     const element = outputRef.current;
     
-    // Check if user has scrolled up manually
-    const isScrolledToBottom = 
-      element.scrollHeight - element.scrollTop <= element.clientHeight + 50;
+    // Check if user has scrolled down manually
+    const isScrolledToTop = element.scrollTop <= 50;
 
     // Update autoScroll state based on user scroll position
-    if (!isScrolledToBottom && autoScroll) {
+    if (!isScrolledToTop && autoScroll) {
       setAutoScroll(false);
     }
 
-    // Auto-scroll to bottom when new content is added and autoScroll is enabled
+    // Auto-scroll to top when new content is added and autoScroll is enabled
     if (lines.length > prevLinesLengthRef.current && autoScroll) {
-      element.scrollTop = element.scrollHeight;
+      element.scrollTop = 0;
     }
 
     // Update previous lines length
     prevLinesLengthRef.current = lines.length;
   }, [lines, autoScroll]);
 
-  // Handle scroll event to detect when user scrolls to bottom
+  // Handle scroll event to detect when user scrolls to top
   const handleScroll = () => {
     if (!outputRef.current) return;
 
     const element = outputRef.current;
-    const isScrolledToBottom = 
-      element.scrollHeight - element.scrollTop <= element.clientHeight + 50;
+    const isScrolledToTop = element.scrollTop <= 50;
 
-    // Re-enable auto-scroll when user scrolls back to bottom
-    if (isScrolledToBottom && !autoScroll) {
+    // Re-enable auto-scroll when user scrolls back to top
+    if (isScrolledToTop && !autoScroll) {
       setAutoScroll(true);
     }
   };
@@ -75,10 +76,18 @@ const GameOutput: React.FC<GameOutputProps> = ({ lines }) => {
       role="log"
       aria-live="polite"
       aria-atomic="false"
+      aria-label="Game output history"
+      tabIndex={0}
     >
-      {trimmedLines.map((line) => (
-        <OutputLineComponent key={line.id} line={line} />
-      ))}
+      {reversedLines.length === 0 ? (
+        <div className="output-line output-line--empty" aria-label="No game output yet">
+          <span className="output-line__text">The grimoire awaits your command...</span>
+        </div>
+      ) : (
+        reversedLines.map((line) => (
+          <OutputLineComponent key={line.id} line={line} />
+        ))
+      )}
     </div>
   );
 };
@@ -89,9 +98,22 @@ const GameOutput: React.FC<GameOutputProps> = ({ lines }) => {
 const OutputLineComponent: React.FC<{ line: OutputLine }> = ({ line }) => {
   const className = `output-line output-line--${line.type}`;
   
+  // Determine appropriate ARIA role and label based on line type
+  const ariaRole = line.type === 'error' ? 'alert' : undefined;
+  const ariaLabel = line.type === 'command' 
+    ? `Command: ${line.text}` 
+    : line.type === 'error'
+    ? `Error: ${line.text}`
+    : `Response: ${line.text}`;
+  
   return (
-    <div className={className} data-timestamp={line.timestamp}>
-      {line.type === 'command' && <span className="output-line__prompt">&gt; </span>}
+    <div 
+      className={className} 
+      data-timestamp={line.timestamp}
+      role={ariaRole}
+      aria-label={ariaLabel}
+    >
+      {line.type === 'command' && <span className="output-line__prompt" aria-hidden="true">&gt; </span>}
       <span className="output-line__text">{line.text}</span>
     </div>
   );

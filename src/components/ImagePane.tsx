@@ -12,6 +12,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ImagePaneProps, TRANSITION_DURATION, DEFAULT_ROOM_IMAGE } from '../types';
 import { mapRoomToImage, preloadImage } from '../utils/imageUtils';
 import RoomImage from './RoomImage';
+import '../styles/ImagePane.css';
 
 /**
  * ImagePane component with dissolve transitions
@@ -25,8 +26,10 @@ const ImagePane: React.FC<ImagePaneProps> = ({
   roomDescription,
   transitionDuration = TRANSITION_DURATION,
 }) => {
-  // Current displayed image
-  const [currentImage, setCurrentImage] = useState<string>(DEFAULT_ROOM_IMAGE);
+  // Current displayed image - initialize with the room's image if provided
+  const [currentImage, setCurrentImage] = useState<string>(() => 
+    roomName ? mapRoomToImage(roomName) : DEFAULT_ROOM_IMAGE
+  );
   
   // Next image to transition to (null when not transitioning)
   const [nextImage, setNextImage] = useState<string | null>(null);
@@ -35,7 +38,7 @@ const ImagePane: React.FC<ImagePaneProps> = ({
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   
   // Queue of pending room transitions
-  const [transitionQueue, setTransitionQueue] = useState<string[]>([]);
+  const [, setTransitionQueue] = useState<string[]>([]);
   
   // Ref to track the current transition timeout
   const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -92,7 +95,9 @@ const ImagePane: React.FC<ImagePaneProps> = ({
               if (prev.length > 0) {
                 const [next, ...rest] = prev;
                 // Start next transition on next tick, skipping preload since we already did it
-                setTimeout(() => startTransition(next, true), 0);
+                if (next) {
+                  setTimeout(() => startTransition(next, true), 0);
+                }
                 return rest;
               }
               return prev;
@@ -125,7 +130,9 @@ const ImagePane: React.FC<ImagePaneProps> = ({
               if (prev.length > 0) {
                 const [next, ...rest] = prev;
                 // Start next transition on next tick, skipping preload since we already did it
-                setTimeout(() => startTransition(next, true), 0);
+                if (next) {
+                  setTimeout(() => startTransition(next, true), 0);
+                }
                 return rest;
               }
               return prev;
@@ -136,42 +143,22 @@ const ImagePane: React.FC<ImagePaneProps> = ({
     [transitionDuration]
   );
 
-  // Ref to track if this is the first render
-  const isFirstRenderRef = useRef<boolean>(true);
-  
   // Ref to track previous room name to avoid duplicate transitions
   const prevRoomNameRef = useRef<string>('');
 
   /**
    * Effect to handle room changes
-   * On first render, sets initial image without transition
-   * On subsequent renders, triggers transition when roomName changes
+   * Triggers transition when roomName changes (but not on initial mount)
    */
   useEffect(() => {
+    // Skip transition on initial mount (when prevRoomNameRef is empty)
+    if (prevRoomNameRef.current === '') {
+      prevRoomNameRef.current = roomName || '';
+      return;
+    }
+    
     if (roomName && roomName !== prevRoomNameRef.current) {
       prevRoomNameRef.current = roomName;
-      
-      // On first render, preload and set the initial image without transition
-      if (isFirstRenderRef.current) {
-        isFirstRenderRef.current = false;
-        const initialImage = mapRoomToImage(roomName);
-        
-        // Preload the initial image
-        preloadImage(initialImage)
-          .then(() => {
-            if (isMountedRef.current) {
-              setCurrentImage(initialImage);
-            }
-          })
-          .catch(() => {
-            // On error, use default image
-            if (isMountedRef.current) {
-              setCurrentImage(DEFAULT_ROOM_IMAGE);
-            }
-          });
-        return;
-      }
-      
       startTransition(roomName);
     }
   }, [roomName, startTransition]);
@@ -181,6 +168,9 @@ const ImagePane: React.FC<ImagePaneProps> = ({
    * Clears timeout and marks component as unmounted
    */
   useEffect(() => {
+    // Mark as mounted
+    isMountedRef.current = true;
+    
     return () => {
       isMountedRef.current = false;
       if (transitionTimeoutRef.current) {
@@ -190,7 +180,11 @@ const ImagePane: React.FC<ImagePaneProps> = ({
   }, []);
 
   return (
-    <div className="image-pane">
+    <div 
+      className="image-pane"
+      role="img"
+      aria-label={`Room image: ${roomName || 'Unknown location'}. ${roomDescription}`}
+    >
       {/* Current image (fading out during transition) */}
       <RoomImage
         src={currentImage}
@@ -208,6 +202,11 @@ const ImagePane: React.FC<ImagePaneProps> = ({
           opacity={isTransitioning ? 1 : 0}
         />
       )}
+      
+      {/* Screen reader announcement for room changes */}
+      <div className="visually-hidden" role="status" aria-live="polite">
+        {isTransitioning ? `Transitioning to ${roomName || 'new location'}` : `Now viewing ${roomName || 'current location'}`}
+      </div>
     </div>
   );
 };

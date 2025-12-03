@@ -319,3 +319,147 @@ describe('Image Utils Property Tests', () => {
     );
   });
 });
+
+/**
+ * WebP Optimization Tests
+ * Tests for WebP format conversion and responsive image utilities
+ */
+describe('WebP Optimization Tests', () => {
+  /**
+   * Property: getWebPPath should convert PNG paths to WebP
+   */
+  it('should convert PNG paths to WebP format', async () => {
+    const { getWebPPath } = await import('../utils/imageUtils');
+    
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
+        (filename) => {
+          const pngPath = `/images/${filename}.png`;
+          const webpPath = getWebPPath(pngPath);
+
+          // Should end with .webp
+          expect(webpPath).toMatch(/\.webp$/);
+
+          // Should not contain .png
+          expect(webpPath).not.toContain('.png');
+
+          // Should preserve the directory structure
+          expect(webpPath).toContain('/images/');
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  /**
+   * Property: getPNGPath should convert WebP paths to PNG
+   */
+  it('should convert WebP paths to PNG format', async () => {
+    const { getPNGPath } = await import('../utils/imageUtils');
+    
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
+        (filename) => {
+          const webpPath = `/images/${filename}.webp`;
+          const pngPath = getPNGPath(webpPath);
+
+          // Should end with .png
+          expect(pngPath).toMatch(/\.png$/);
+
+          // Should not contain .webp
+          expect(pngPath).not.toContain('.webp');
+
+          // Should preserve the directory structure
+          expect(pngPath).toContain('/images/');
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  /**
+   * Property: Round-trip conversion should preserve filename
+   */
+  it('should preserve filename through round-trip conversion', async () => {
+    const { getWebPPath, getPNGPath } = await import('../utils/imageUtils');
+    
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
+        (filename) => {
+          const originalPng = `/images/${filename}.png`;
+          
+          // PNG -> WebP -> PNG
+          const webp = getWebPPath(originalPng);
+          const backToPng = getPNGPath(webp);
+
+          expect(backToPng).toBe(originalPng);
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  /**
+   * Property: getResponsiveSizes should return valid srcset
+   */
+  it('should generate valid responsive image sizes', async () => {
+    const { getResponsiveSizes } = await import('../utils/imageUtils');
+    
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
+        (filename) => {
+          const imagePath = `/images/${filename}.png`;
+          const sizes = getResponsiveSizes(imagePath);
+
+          // Should have webp and png srcsets
+          expect(sizes.webp).toBeDefined();
+          expect(sizes.png).toBeDefined();
+          expect(sizes.sizes).toBeDefined();
+
+          // WebP srcset should contain .webp
+          expect(sizes.webp.srcSet).toContain('.webp');
+
+          // PNG srcset should contain .png
+          expect(sizes.png.srcSet).toContain('.png');
+
+          // Sizes should be a valid CSS sizes attribute
+          expect(typeof sizes.sizes).toBe('string');
+          expect(sizes.sizes.length).toBeGreaterThan(0);
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  /**
+   * Property: preloadAdjacentRooms should handle empty arrays
+   */
+  it('should handle empty adjacent rooms array', async () => {
+    const { preloadAdjacentRooms } = await import('../utils/imageUtils');
+    
+    // Should not throw
+    await expect(preloadAdjacentRooms([])).resolves.toBeUndefined();
+  });
+
+  /**
+   * Property: preloadAdjacentRooms should limit to 3 rooms
+   */
+  it('should limit preloading to 3 adjacent rooms', async () => {
+    const { preloadAdjacentRooms } = await import('../utils/imageUtils');
+    
+    fc.assert(
+      fc.asyncProperty(
+        fc.array(fc.string({ minLength: 1, maxLength: 20 }), { minLength: 4, maxLength: 10 }),
+        async (rooms) => {
+          // Should not throw even with many rooms
+          await expect(preloadAdjacentRooms(rooms)).resolves.toBeUndefined();
+        }
+      ),
+      { numRuns: 50 }
+    );
+  });
+});
