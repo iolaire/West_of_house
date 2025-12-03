@@ -152,7 +152,7 @@
   - Integrate ImagePane, GameOutput, CommandInput, LoadingIndicator
   - _Requirements: 1.2, 1.3, 1.5, 10.1, 10.5_
 
-- [-] 12. Implement command submission flow
+- [x] 12. Implement command submission flow
   - Connect CommandInput to API client
   - Display command in GameOutput
   - Send command to backend API
@@ -162,31 +162,31 @@
   - Handle errors and display error messages
   - _Requirements: 3.1, 3.2, 4.1, 4.2, 7.2, 12.1, 12.2_
 
-- [ ] 12.1 Write property test for API response display
+- [x] 12.1 Write property test for API response display
   - **Property 5: API Response Display**
   - **Validates: Requirements 3.2**
 
-- [ ] 12.2 Write property test for error message display
+- [x] 12.2 Write property test for error message display
   - **Property 16: Error Message Display**
   - **Validates: Requirements 7.2**
 
-- [ ] 12.3 Write property test for spooky description display
+- [x] 12.3 Write property test for spooky description display
   - **Property 19: Spooky Description Display**
   - **Validates: Requirements 12.1**
 
-- [ ] 12.4 Write property test for spooky response display
+- [x] 12.4 Write property test for spooky response display
   - **Property 20: Spooky Response Display**
   - **Validates: Requirements 12.2**
 
-- [ ] 12.5 Write property test for original description exclusion
+- [x] 12.5 Write property test for original description exclusion
   - **Property 21: Original Description Exclusion**
   - **Validates: Requirements 12.3**
 
-- [ ] 12.6 Write property test for original response exclusion
+- [x] 12.6 Write property test for original response exclusion
   - **Property 22: Original Response Exclusion**
   - **Validates: Requirements 12.4**
 
-- [ ] 13. Create App component with error boundary
+- [x] 13. Create App component with error boundary
   - Set up SessionManager context provider
   - Initialize session on mount
   - Wrap application in ErrorBoundary

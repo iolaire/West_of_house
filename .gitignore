@@ -117,3 +117,5 @@ dist/
 # Cost analysis outputs
 cost_estimate_*.json
 documents/cost-analysis/*.json
+package-lock.json
+package.json

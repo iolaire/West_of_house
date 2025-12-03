@@ -7,9 +7,10 @@
     <meta name="description" content="West of Haunted House - A Halloween-themed text adventure game" />
     
     <!-- Content Security Policy -->
+    <!-- Note: connect-src includes localhost for development. Remove in production. -->
     <meta 
       http-equiv="Content-Security-Policy" 
-      content="default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:;"
+      content="default-src 'self'; connect-src 'self' http://localhost:* https://*.amazonaws.com https://*.amplifyapp.com; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com;"
     />
     
     <!-- Preconnect to API endpoint -->

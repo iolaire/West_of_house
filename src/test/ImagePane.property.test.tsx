@@ -403,11 +403,12 @@ describe('ImagePane Property Tests', () => {
       fc.asyncProperty(
         fc.string({ minLength: 1, maxLength: 50 }),
         async (roomName) => {
-          // Mock preloadImage to fail
-          vi.mocked(imageUtils.preloadImage).mockRejectedValueOnce(
-            new Error('Failed to load image')
-          );
-
+          // Reset mocks for this iteration
+          vi.clearAllMocks();
+          
+          // Mock preloadImage to succeed for initial render
+          vi.mocked(imageUtils.preloadImage).mockResolvedValueOnce();
+          
           const { container, rerender } = render(
             <ImagePane
               roomName="Initial Room"
@@ -419,6 +420,11 @@ describe('ImagePane Property Tests', () => {
           await act(async () => {
             await vi.advanceTimersByTimeAsync(0);
           });
+
+          // Mock preloadImage to fail for the transition
+          vi.mocked(imageUtils.preloadImage).mockRejectedValueOnce(
+            new Error('Failed to load image')
+          );
 
           // Trigger transition
           await act(async () => {

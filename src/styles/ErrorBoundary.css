@@ -1,0 +1,98 @@
+/**
+ * ErrorBoundary Styles
+ * Feature: grimoire-frontend
+ * 
+ * Styles for the error boundary fallback UI
+ */
+
+.error-boundary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--spacing-xl);
+  background: var(--color-bg-dark);
+  color: var(--color-text-primary);
+}
+
+.error-boundary__content {
+  max-width: 600px;
+  padding: var(--spacing-2xl);
+  background: var(--color-bg-medium);
+  border: 2px solid var(--color-error);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.error-boundary__title {
+  margin: 0 0 var(--spacing-lg) 0;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  color: var(--color-error);
+}
+
+.error-boundary__message {
+  margin: 0 0 var(--spacing-xl) 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-secondary);
+}
+
+.error-boundary__details {
+  margin: var(--spacing-lg) 0;
+  text-align: left;
+}
+
+.error-boundary__details summary {
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-dim);
+}
+
+.error-boundary__details summary:hover {
+  color: var(--color-text-secondary);
+}
+
+.error-boundary__stack {
+  margin: var(--spacing-md) 0 0 0;
+  padding: var(--spacing-md);
+  background: var(--color-bg-dark);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-dim);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.error-boundary__button {
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--color-error);
+  border: none;
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.error-boundary__button:hover {
+  opacity: 0.9;
+}
+
+.error-boundary__button:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.error-boundary__button:active {
+  opacity: 0.8;
+}
