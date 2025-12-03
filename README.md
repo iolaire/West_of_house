@@ -92,8 +92,8 @@ A modern resurrection of the 1977 text adventure Zork I with Halloween-themed tr
 
 ### Required Software
 
-- **Node.js**: v18.16.0 or later
-- **npm**: v6.14.4 or later
+- **Node.js**: v20.0.0 or later
+- **npm**: v10.0.0 or later
 - **Python**: 3.12
 - **AWS CLI**: Latest version
 - **Git**: For version control
@@ -136,8 +136,8 @@ pip install -r requirements.txt
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/west-of-haunted-house.git
-cd west-of-haunted-house
+git clone https://github.com/iolaire/West_of_house.git
+cd West_of_house
 ```
 
 ### 2. Install Dependencies
@@ -443,6 +443,7 @@ pytest tests/property/
 
 ```
 amplify/functions/game-handler/
+├── resource.ts           # Lambda function definition (TypeScript)
 ├── index.py              # Lambda entry point
 ├── game_engine.py        # Core game logic
 ├── command_parser.py     # Natural language parsing
@@ -451,9 +452,9 @@ amplify/functions/game-handler/
 ├── world_loader.py       # Load JSON game data
 ├── requirements.txt      # Python dependencies
 └── data/                 # Bundled game data
-    ├── flags_haunted.json
-    ├── objects_haunted.json
-    └── rooms_haunted.json
+    ├── west_of_house_flags_haunted.json
+    ├── west_of_house_objects_haunted.json
+    └── west_of_house_rooms_haunted.json
 ```
 
 ### Adding New Features
@@ -538,7 +539,7 @@ west-of-haunted-house/
 │   │   └── resource.ts           # DynamoDB table
 │   ├── functions/
 │   │   └── game-handler/
-│   │       ├── resource.ts       # Lambda definition
+│   │       ├── resource.ts       # Lambda definition (TypeScript)
 │   │       ├── index.py          # Lambda handler
 │   │       ├── game_engine.py
 │   │       ├── command_parser.py
@@ -637,7 +638,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/west-of-haunted-house/issues)
+- **Issues**: [GitHub Issues](https://github.com/iolaire/West_of_house/issues)
 - **Documentation**: See `documents/` folder
 - **Specs**: See `.kiro/specs/game-backend-api/`
 

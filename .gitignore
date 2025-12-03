@@ -101,10 +101,18 @@ amplifytools.xcconfig
 amplify_outputs*
 amplifyconfiguration*
 
-# Node.js dependencies (root level only - keep amplify/package.json)
-/package-lock.json
-/package.json
-/node_modules/
+# Node.js dependencies
+node_modules/
+package-lock.json
+
+# Frontend build artifacts
+dist/
+.vite/
+*.local
+
+# Environment variables (keep .env.example)
+.env.development
+.env.production
 
 # Cost analysis outputs
 cost_estimate_*.json
