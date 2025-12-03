@@ -1809,6 +1809,1959 @@ class GameEngine:
             # Room not found, assume lit
             return True
     
+    def handle_lock(
+        self,
+        object_id: str,
+        key_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle locking an object with a key.
+        
+        Validates that the object is lockable, the key is appropriate,
+        and updates the object's lock state.
+        
+        Args:
+            object_id: The object to lock
+            key_id: The key to use for locking
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 3.3
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if object is in current room or inventory
+            object_in_room = object_id in current_room.items
+            object_in_inventory = object_id in state.inventory
+            
+            if not object_in_room and not object_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Check if key is in inventory
+            if key_id not in state.inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have the {key_id}."
+                )
+            
+            # Get object and key data
+            game_object = self.world.get_object(object_id)
+            key_object = self.world.get_object(key_id)
+            
+            # Check if object is lockable
+            is_lockable = game_object.state.get('is_lockable', False)
+            
+            if not is_lockable:
+                return ActionResult(
+                    success=False,
+                    message=f"The {object_id} cannot be locked."
+                )
+            
+            # Check if object is already locked
+            is_locked = game_object.state.get('is_locked', False)
+            
+            if is_locked:
+                return ActionResult(
+                    success=False,
+                    message=f"The {object_id} is already locked."
+                )
+            
+            # Check if key matches the lock
+            required_key = game_object.state.get('required_key', None)
+            
+            if required_key and required_key != key_id:
+                return ActionResult(
+                    success=False,
+                    message=f"The {key_id} doesn't fit the lock."
+                )
+            
+            # Lock the object
+            game_object.state['is_locked'] = True
+            
+            # Create success message with haunted theme
+            lock_message = f"You lock the {object_id} with the {key_id}. A cold click echoes in the darkness."
+            
+            # Apply any flag changes
+            notifications = []
+            if object_id == "grate":
+                state.set_flag("grate_locked", True)
+                state.set_flag("grate_unlocked", False)
+            
+            return ActionResult(
+                success=True,
+                message=lock_message,
+                state_changes={
+                    'flags': state.flags
+                },
+                notifications=notifications
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while locking that."
+            )
+    
+    def handle_unlock(
+        self,
+        object_id: str,
+        key_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle unlocking an object with a key.
+        
+        Validates that the object is lockable, the key is appropriate,
+        and updates the object's lock state.
+        
+        Args:
+            object_id: The object to unlock
+            key_id: The key to use for unlocking
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 3.3
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if object is in current room or inventory
+            object_in_room = object_id in current_room.items
+            object_in_inventory = object_id in state.inventory
+            
+            if not object_in_room and not object_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Check if key is in inventory
+            if key_id not in state.inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have the {key_id}."
+                )
+            
+            # Get object and key data
+            game_object = self.world.get_object(object_id)
+            key_object = self.world.get_object(key_id)
+            
+            # Check if object is lockable
+            is_lockable = game_object.state.get('is_lockable', False)
+            
+            if not is_lockable:
+                return ActionResult(
+                    success=False,
+                    message=f"The {object_id} cannot be unlocked."
+                )
+            
+            # Check if object is already unlocked
+            is_locked = game_object.state.get('is_locked', False)
+            
+            if not is_locked:
+                return ActionResult(
+                    success=False,
+                    message=f"The {object_id} is already unlocked."
+                )
+            
+            # Check if key matches the lock
+            required_key = game_object.state.get('required_key', None)
+            
+            if required_key and required_key != key_id:
+                return ActionResult(
+                    success=False,
+                    message=f"The {key_id} doesn't fit the lock."
+                )
+            
+            # Unlock the object
+            game_object.state['is_locked'] = False
+            
+            # Create success message with haunted theme
+            unlock_message = f"You unlock the {object_id} with the {key_id}. The mechanism groans as it releases."
+            
+            # Apply any flag changes
+            notifications = []
+            if object_id == "grate":
+                state.set_flag("grate_unlocked", True)
+                state.set_flag("grate_locked", False)
+            
+            return ActionResult(
+                success=True,
+                message=unlock_message,
+                state_changes={
+                    'flags': state.flags
+                },
+                notifications=notifications
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while unlocking that."
+            )
+    
+    def handle_turn(
+        self,
+        object_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle turning turnable objects (dials, valves, etc.).
+        
+        Validates that the object is turnable, updates rotation/activation state,
+        and triggers any associated effects.
+        
+        Args:
+            object_id: The object to turn
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 3.4
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if object is in current room or inventory
+            object_in_room = object_id in current_room.items
+            object_in_inventory = object_id in state.inventory
+            
+            if not object_in_room and not object_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Get object data
+            game_object = self.world.get_object(object_id)
+            
+            # Check if object is turnable
+            is_turnable = game_object.state.get('is_turnable', False)
+            
+            if not is_turnable:
+                return ActionResult(
+                    success=False,
+                    message=f"You can't turn the {object_id}."
+                )
+            
+            # Get current rotation state
+            current_rotation = game_object.state.get('rotation', 0)
+            max_rotation = game_object.state.get('max_rotation', 360)
+            rotation_increment = game_object.state.get('rotation_increment', 90)
+            
+            # Update rotation
+            new_rotation = (current_rotation + rotation_increment) % max_rotation
+            game_object.state['rotation'] = new_rotation
+            
+            # Check if turning activates something
+            is_activated = game_object.state.get('is_activated', False)
+            activation_rotation = game_object.state.get('activation_rotation', None)
+            
+            notifications = []
+            
+            if activation_rotation is not None:
+                if new_rotation == activation_rotation:
+                    game_object.state['is_activated'] = True
+                    notifications.append(f"The {object_id} clicks into place!")
+                else:
+                    game_object.state['is_activated'] = False
+            
+            # Apply any flag changes based on activation
+            if game_object.state.get('is_activated', False):
+                activation_flag = game_object.state.get('activation_flag', None)
+                if activation_flag:
+                    state.set_flag(activation_flag, True)
+            
+            # Create success message with haunted theme
+            turn_message = f"You turn the {object_id}. It rotates with an eerie creak."
+            
+            # Add rotation description if available
+            rotation_descriptions = game_object.state.get('rotation_descriptions', {})
+            if str(new_rotation) in rotation_descriptions:
+                turn_message += f" {rotation_descriptions[str(new_rotation)]}"
+            
+            return ActionResult(
+                success=True,
+                message=turn_message,
+                state_changes={
+                    'flags': state.flags
+                },
+                notifications=notifications
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while turning that."
+            )
+    
+    def handle_push(
+        self,
+        object_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle pushing moveable objects.
+        
+        Validates that the object is moveable, updates location or position,
+        and triggers any associated effects (revealing items, etc.).
+        
+        Args:
+            object_id: The object to push
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 3.5
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if object is in current room
+            if object_id not in current_room.items:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Get object data
+            game_object = self.world.get_object(object_id)
+            
+            # Check if object is moveable
+            is_moveable = game_object.state.get('is_moveable', False)
+            
+            if not is_moveable:
+                return ActionResult(
+                    success=False,
+                    message=f"The {object_id} won't budge."
+                )
+            
+            # Check if already pushed
+            is_pushed = game_object.state.get('is_pushed', False)
+            
+            if is_pushed:
+                return ActionResult(
+                    success=False,
+                    message=f"The {object_id} has already been pushed as far as it will go."
+                )
+            
+            # Push the object
+            game_object.state['is_pushed'] = True
+            
+            # Check for revealed items
+            notifications = []
+            reveals_items = game_object.state.get('reveals_items', [])
+            
+            if reveals_items:
+                for item_id in reveals_items:
+                    if item_id not in current_room.items:
+                        current_room.items.append(item_id)
+                        try:
+                            revealed_obj = self.world.get_object(item_id)
+                            notifications.append(f"Pushing the {object_id} reveals {revealed_obj.name_spooky}!")
+                        except ValueError:
+                            notifications.append(f"Pushing the {object_id} reveals something hidden!")
+            
+            # Apply any flag changes
+            push_flag = game_object.state.get('push_flag', None)
+            if push_flag:
+                state.set_flag(push_flag, True)
+            
+            # Create success message with haunted theme
+            push_message = f"You push the {object_id}. It slides across the floor with a grinding sound."
+            
+            # Add custom push message if available
+            custom_message = game_object.state.get('push_message', None)
+            if custom_message:
+                push_message = custom_message
+            
+            return ActionResult(
+                success=True,
+                message=push_message,
+                state_changes={
+                    'flags': state.flags
+                },
+                notifications=notifications
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while pushing that."
+            )
+    
+    def handle_pull(
+        self,
+        object_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle pulling moveable objects.
+        
+        Validates that the object is moveable, updates location or position,
+        and triggers any associated effects (revealing items, etc.).
+        
+        Args:
+            object_id: The object to pull
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 3.5
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if object is in current room
+            if object_id not in current_room.items:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Get object data
+            game_object = self.world.get_object(object_id)
+            
+            # Check if object is moveable
+            is_moveable = game_object.state.get('is_moveable', False)
+            
+            if not is_moveable:
+                return ActionResult(
+                    success=False,
+                    message=f"The {object_id} won't budge."
+                )
+            
+            # Check if already pulled
+            is_pulled = game_object.state.get('is_pulled', False)
+            
+            if is_pulled:
+                return ActionResult(
+                    success=False,
+                    message=f"The {object_id} has already been pulled as far as it will go."
+                )
+            
+            # Pull the object
+            game_object.state['is_pulled'] = True
+            
+            # Check for revealed items
+            notifications = []
+            reveals_items = game_object.state.get('reveals_items', [])
+            
+            if reveals_items:
+                for item_id in reveals_items:
+                    if item_id not in current_room.items:
+                        current_room.items.append(item_id)
+                        try:
+                            revealed_obj = self.world.get_object(item_id)
+                            notifications.append(f"Pulling the {object_id} reveals {revealed_obj.name_spooky}!")
+                        except ValueError:
+                            notifications.append(f"Pulling the {object_id} reveals something hidden!")
+            
+            # Apply any flag changes
+            pull_flag = game_object.state.get('pull_flag', None)
+            if pull_flag:
+                state.set_flag(pull_flag, True)
+            
+            # Create success message with haunted theme
+            pull_message = f"You pull the {object_id}. It drags toward you with a scraping sound."
+            
+            # Add custom pull message if available
+            custom_message = game_object.state.get('pull_message', None)
+            if custom_message:
+                pull_message = custom_message
+            
+            return ActionResult(
+                success=True,
+                message=pull_message,
+                state_changes={
+                    'flags': state.flags
+                },
+                notifications=notifications
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while pulling that."
+            )
+    
+    def handle_tie(
+        self,
+        object_id: str,
+        target_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle tying rope-like objects to targets.
+        
+        Validates that the object is rope-like, the target is valid,
+        and tracks the tied state in object properties.
+        
+        Args:
+            object_id: The rope-like object to tie
+            target_id: The target to tie the rope to
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 3.6
+        """
+        try:
+            # Check if rope object is in inventory
+            if object_id not in state.inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have the {object_id}."
+                )
+            
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if target is in current room or inventory
+            target_in_room = target_id in current_room.items
+            target_in_inventory = target_id in state.inventory
+            
+            if not target_in_room and not target_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {target_id} here."
+                )
+            
+            # Get rope and target objects
+            rope_object = self.world.get_object(object_id)
+            target_object = self.world.get_object(target_id)
+            
+            # Check if object is rope-like
+            is_rope = rope_object.state.get('is_rope', False)
+            can_tie = rope_object.state.get('can_tie', False)
+            
+            if not is_rope or not can_tie:
+                return ActionResult(
+                    success=False,
+                    message=f"You can't tie the {object_id}."
+                )
+            
+            # Check if rope is already tied
+            is_tied = rope_object.state.get('is_tied', False)
+            
+            if is_tied:
+                tied_to = rope_object.state.get('tied_to', 'something')
+                return ActionResult(
+                    success=False,
+                    message=f"The {object_id} is already tied to {tied_to}."
+                )
+            
+            # Check if target is valid for tying
+            tie_targets = rope_object.state.get('tie_targets', [])
+            
+            if tie_targets and target_id not in tie_targets:
+                return ActionResult(
+                    success=False,
+                    message=f"You can't tie the {object_id} to the {target_id}."
+                )
+            
+            # Check if target can be tied to
+            can_be_tied_to = target_object.state.get('can_be_tied_to', True)
+            
+            if not can_be_tied_to:
+                return ActionResult(
+                    success=False,
+                    message=f"You can't tie anything to the {target_id}."
+                )
+            
+            # Tie the rope to the target
+            rope_object.state['is_tied'] = True
+            rope_object.state['tied_to'] = target_id
+            
+            # Update target object to track what's tied to it
+            if 'tied_objects' not in target_object.state:
+                target_object.state['tied_objects'] = []
+            target_object.state['tied_objects'].append(object_id)
+            
+            # Apply any flag changes
+            notifications = []
+            tie_flag = rope_object.state.get('tie_flag', None)
+            if tie_flag:
+                state.set_flag(tie_flag, True)
+            
+            # Create success message with haunted theme
+            tie_message = f"You tie the {object_id} to the {target_id}. The knot holds fast, though your fingers tremble."
+            
+            # Add custom tie message if available
+            custom_message = rope_object.state.get('tie_message', None)
+            if custom_message:
+                tie_message = custom_message
+            
+            return ActionResult(
+                success=True,
+                message=tie_message,
+                state_changes={
+                    'flags': state.flags
+                },
+                notifications=notifications
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {target_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while tying that."
+            )
+    
+    def handle_untie(
+        self,
+        object_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle untying previously tied objects.
+        
+        Validates that the object is tied and updates the tied state.
+        
+        Args:
+            object_id: The rope-like object to untie
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 3.6
+        """
+        try:
+            # Check if rope object is in inventory or current room
+            current_room = self.world.get_room(state.current_room)
+            
+            object_in_room = object_id in current_room.items
+            object_in_inventory = object_id in state.inventory
+            
+            if not object_in_room and not object_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Get rope object
+            rope_object = self.world.get_object(object_id)
+            
+            # Check if object is rope-like
+            is_rope = rope_object.state.get('is_rope', False)
+            
+            if not is_rope:
+                return ActionResult(
+                    success=False,
+                    message=f"You can't untie the {object_id}."
+                )
+            
+            # Check if rope is tied
+            is_tied = rope_object.state.get('is_tied', False)
+            
+            if not is_tied:
+                return ActionResult(
+                    success=False,
+                    message=f"The {object_id} is not tied to anything."
+                )
+            
+            # Get what it's tied to
+            tied_to = rope_object.state.get('tied_to', None)
+            
+            # Untie the rope
+            rope_object.state['is_tied'] = False
+            rope_object.state['tied_to'] = None
+            
+            # Update target object to remove this rope from tied objects
+            if tied_to:
+                try:
+                    target_object = self.world.get_object(tied_to)
+                    tied_objects = target_object.state.get('tied_objects', [])
+                    if object_id in tied_objects:
+                        tied_objects.remove(object_id)
+                        target_object.state['tied_objects'] = tied_objects
+                except ValueError:
+                    # Target object doesn't exist, that's okay
+                    pass
+            
+            # Apply any flag changes
+            notifications = []
+            untie_flag = rope_object.state.get('untie_flag', None)
+            if untie_flag:
+                state.set_flag(untie_flag, True)
+            
+            # Clear tie flag if it was set
+            tie_flag = rope_object.state.get('tie_flag', None)
+            if tie_flag:
+                state.set_flag(tie_flag, False)
+            
+            # Create success message with haunted theme
+            untie_message = f"You untie the {object_id}. The knot comes loose with an eerie whisper."
+            
+            # Add custom untie message if available
+            custom_message = rope_object.state.get('untie_message', None)
+            if custom_message:
+                untie_message = custom_message
+            
+            return ActionResult(
+                success=True,
+                message=untie_message,
+                state_changes={
+                    'flags': state.flags
+                },
+                notifications=notifications
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while untying that."
+            )
+    
+    def handle_fill(
+        self,
+        container_id: str,
+        source_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle filling containers from liquid sources.
+        
+        Validates that the container can hold liquids, the source has liquid,
+        and tracks liquid contents in container state. Validates container capacity.
+        
+        Args:
+            container_id: The container to fill
+            source_id: The liquid source to fill from
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 3.7
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if container is in inventory or current room
+            container_in_room = container_id in current_room.items
+            container_in_inventory = container_id in state.inventory
+            
+            if not container_in_room and not container_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have the {container_id}."
+                )
+            
+            # Check if source is in current room or inventory
+            source_in_room = source_id in current_room.items
+            source_in_inventory = source_id in state.inventory
+            
+            if not source_in_room and not source_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {source_id} here."
+                )
+            
+            # Get container and source objects
+            container_object = self.world.get_object(container_id)
+            source_object = self.world.get_object(source_id)
+            
+            # Check if container can hold liquids
+            can_hold_liquid = container_object.state.get('can_hold_liquid', False)
+            
+            if not can_hold_liquid:
+                return ActionResult(
+                    success=False,
+                    message=f"You can't fill the {container_id} with liquid."
+                )
+            
+            # Check if source has liquid
+            has_liquid = source_object.state.get('has_liquid', False)
+            is_liquid_source = source_object.state.get('is_liquid_source', False)
+            
+            if not has_liquid and not is_liquid_source:
+                return ActionResult(
+                    success=False,
+                    message=f"The {source_id} has no liquid to fill from."
+                )
+            
+            # Check if container is already full
+            is_full = container_object.state.get('is_full', False)
+            liquid_level = container_object.state.get('liquid_level', 0)
+            max_capacity = container_object.state.get('liquid_capacity', 100)
+            
+            if is_full or liquid_level >= max_capacity:
+                return ActionResult(
+                    success=False,
+                    message=f"The {container_id} is already full."
+                )
+            
+            # Get liquid type from source
+            liquid_type = source_object.state.get('liquid_type', 'water')
+            
+            # Fill the container
+            container_object.state['is_full'] = True
+            container_object.state['liquid_level'] = max_capacity
+            container_object.state['liquid_type'] = liquid_type
+            container_object.state['is_empty'] = False
+            
+            # Apply any flag changes
+            notifications = []
+            fill_flag = container_object.state.get('fill_flag', None)
+            if fill_flag:
+                state.set_flag(fill_flag, True)
+            
+            # Create success message with haunted theme
+            fill_message = f"You fill the {container_id} with {liquid_type} from the {source_id}. The liquid swirls with an unnatural darkness."
+            
+            # Add custom fill message if available
+            custom_message = container_object.state.get('fill_message', None)
+            if custom_message:
+                fill_message = custom_message
+            
+            return ActionResult(
+                success=True,
+                message=fill_message,
+                state_changes={
+                    'flags': state.flags
+                },
+                notifications=notifications
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {source_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while filling that."
+            )
+    
+    def handle_pour(
+        self,
+        container_id: str,
+        target_id: Optional[str],
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle pouring liquids from containers.
+        
+        Validates that the container has liquid, empties the container,
+        and handles liquid evaporation/spillage. Can pour into another container
+        or onto the ground.
+        
+        Args:
+            container_id: The container to pour from
+            target_id: The target to pour into (optional, defaults to ground)
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 3.8
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if container is in inventory or current room
+            container_in_room = container_id in current_room.items
+            container_in_inventory = container_id in state.inventory
+            
+            if not container_in_room and not container_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have the {container_id}."
+                )
+            
+            # Get container object
+            container_object = self.world.get_object(container_id)
+            
+            # Check if container can hold liquids
+            can_hold_liquid = container_object.state.get('can_hold_liquid', False)
+            
+            if not can_hold_liquid:
+                return ActionResult(
+                    success=False,
+                    message=f"The {container_id} doesn't contain any liquid."
+                )
+            
+            # Check if container has liquid
+            is_empty = container_object.state.get('is_empty', True)
+            liquid_level = container_object.state.get('liquid_level', 0)
+            
+            if is_empty or liquid_level <= 0:
+                return ActionResult(
+                    success=False,
+                    message=f"The {container_id} is empty."
+                )
+            
+            # Get liquid type
+            liquid_type = container_object.state.get('liquid_type', 'liquid')
+            
+            # Handle pouring into another container
+            if target_id:
+                # Check if target is in current room or inventory
+                target_in_room = target_id in current_room.items
+                target_in_inventory = target_id in state.inventory
+                
+                if not target_in_room and not target_in_inventory:
+                    return ActionResult(
+                        success=False,
+                        message=f"You don't see any {target_id} here."
+                    )
+                
+                # Get target object
+                target_object = self.world.get_object(target_id)
+                
+                # Check if target can hold liquids
+                target_can_hold_liquid = target_object.state.get('can_hold_liquid', False)
+                
+                if not target_can_hold_liquid:
+                    # Pouring onto an object that can't hold liquid
+                    pour_message = f"You pour the {liquid_type} onto the {target_id}. It spills away into the shadows."
+                else:
+                    # Check if target is full
+                    target_is_full = target_object.state.get('is_full', False)
+                    target_liquid_level = target_object.state.get('liquid_level', 0)
+                    target_max_capacity = target_object.state.get('liquid_capacity', 100)
+                    
+                    if target_is_full or target_liquid_level >= target_max_capacity:
+                        return ActionResult(
+                            success=False,
+                            message=f"The {target_id} is already full."
+                        )
+                    
+                    # Pour into target container
+                    target_object.state['is_full'] = True
+                    target_object.state['liquid_level'] = target_max_capacity
+                    target_object.state['liquid_type'] = liquid_type
+                    target_object.state['is_empty'] = False
+                    
+                    pour_message = f"You pour the {liquid_type} from the {container_id} into the {target_id}."
+            else:
+                # Pouring onto the ground
+                pour_message = f"You pour the {liquid_type} onto the ground. It seeps away into the darkness."
+            
+            # Empty the container
+            container_object.state['is_full'] = False
+            container_object.state['liquid_level'] = 0
+            container_object.state['liquid_type'] = None
+            container_object.state['is_empty'] = True
+            
+            # Apply any flag changes
+            notifications = []
+            pour_flag = container_object.state.get('pour_flag', None)
+            if pour_flag:
+                state.set_flag(pour_flag, True)
+            
+            # Add custom pour message if available
+            custom_message = container_object.state.get('pour_message', None)
+            if custom_message:
+                pour_message = custom_message
+            
+            return ActionResult(
+                success=True,
+                message=pour_message,
+                state_changes={
+                    'flags': state.flags
+                },
+                notifications=notifications
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {target_id if target_id else container_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while pouring that."
+            )
+    
+    def handle_look_under(
+        self,
+        object_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle looking under objects.
+        
+        Reveals hidden items or information under objects. Returns "nothing there"
+        message if appropriate. Uses haunted theme descriptions.
+        
+        Args:
+            object_id: The object to look under
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 4.2
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if object is in current room or inventory
+            object_in_room = object_id in current_room.items
+            object_in_inventory = object_id in state.inventory
+            
+            if not object_in_room and not object_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Get object data
+            game_object = self.world.get_object(object_id)
+            
+            # Check if object has something hidden under it
+            hidden_under = game_object.state.get('hidden_under', None)
+            reveals_under = game_object.state.get('reveals_under', [])
+            under_description = game_object.state.get('under_description', None)
+            
+            notifications = []
+            sanity_change = 0
+            
+            # If there are items to reveal
+            if reveals_under:
+                for item_id in reveals_under:
+                    if item_id not in current_room.items:
+                        current_room.items.append(item_id)
+                        try:
+                            revealed_obj = self.world.get_object(item_id)
+                            notifications.append(f"You discover {revealed_obj.name_spooky} hidden beneath!")
+                        except ValueError:
+                            notifications.append(f"You discover something hidden beneath!")
+                
+                # Mark as revealed so it doesn't happen again
+                game_object.state['reveals_under'] = []
+                
+                message = f"You look under the {object_id}."
+                if under_description:
+                    message = under_description
+                
+                return ActionResult(
+                    success=True,
+                    message=message,
+                    notifications=notifications,
+                    sanity_change=sanity_change
+                )
+            
+            # If there's a custom description
+            if under_description:
+                return ActionResult(
+                    success=True,
+                    message=under_description,
+                    sanity_change=sanity_change
+                )
+            
+            # If there's hidden information
+            if hidden_under:
+                return ActionResult(
+                    success=True,
+                    message=hidden_under,
+                    sanity_change=sanity_change
+                )
+            
+            # Default: nothing there
+            default_messages = [
+                f"You peer beneath the {object_id}. Nothing but shadows and dust.",
+                f"There's nothing under the {object_id} but darkness.",
+                f"You find nothing of interest beneath the {object_id}.",
+                f"The space under the {object_id} is empty, save for cobwebs."
+            ]
+            
+            # Use a consistent message based on object_id hash for consistency
+            message_idx = hash(object_id) % len(default_messages)
+            
+            return ActionResult(
+                success=True,
+                message=default_messages[message_idx],
+                sanity_change=sanity_change
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while looking under that."
+            )
+    
+    def handle_look_inside(
+        self,
+        container_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle looking inside containers.
+        
+        Lists all container contents if container is open or transparent.
+        Handles open/closed and transparent states. Formats contents list clearly.
+        
+        Args:
+            container_id: The container to look inside
+            state: Current game state
+            
+        Returns:
+            ActionResult with container contents description
+            
+        Requirements: 4.3
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if container is in current room or inventory
+            container_in_room = container_id in current_room.items
+            container_in_inventory = container_id in state.inventory
+            
+            if not container_in_room and not container_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {container_id} here."
+                )
+            
+            # Get container object
+            container = self.world.get_object(container_id)
+            
+            # Check if object is actually a container
+            if container.type != "container":
+                return ActionResult(
+                    success=False,
+                    message=f"You can't look inside the {container_id}."
+                )
+            
+            # Check if container is open or transparent
+            is_transparent = container.state.get('is_transparent', False)
+            is_open = container.state.get('is_open', False)
+            
+            if not is_open and not is_transparent:
+                return ActionResult(
+                    success=False,
+                    message=f"The {container_id} is closed. You can't see inside."
+                )
+            
+            # Get contents
+            contents = container.state.get('contents', [])
+            
+            if not contents:
+                return ActionResult(
+                    success=True,
+                    message=f"The {container_id} is empty. Nothing but shadows within."
+                )
+            
+            # Build contents list
+            contents_names = []
+            for obj_id in contents:
+                try:
+                    obj = self.world.get_object(obj_id)
+                    display_name = obj.name_spooky if obj.name_spooky else obj.name
+                    contents_names.append(display_name)
+                except ValueError:
+                    # Object doesn't exist, skip it
+                    continue
+            
+            if not contents_names:
+                return ActionResult(
+                    success=True,
+                    message=f"The {container_id} appears empty."
+                )
+            
+            # Format contents list
+            if len(contents_names) == 1:
+                contents_str = contents_names[0]
+            elif len(contents_names) == 2:
+                contents_str = f"{contents_names[0]} and {contents_names[1]}"
+            else:
+                contents_str = ", ".join(contents_names[:-1]) + f", and {contents_names[-1]}"
+            
+            message = f"Inside the {container_id}, you see: {contents_str}."
+            
+            return ActionResult(
+                success=True,
+                message=message
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {container_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while looking inside that."
+            )
+    
+    def handle_look_behind(
+        self,
+        object_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle looking behind objects.
+        
+        Reveals hidden items or information behind objects. Returns "nothing there"
+        message if appropriate. Uses haunted theme descriptions.
+        
+        Args:
+            object_id: The object to look behind
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 4.2
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if object is in current room or inventory
+            object_in_room = object_id in current_room.items
+            object_in_inventory = object_id in state.inventory
+            
+            if not object_in_room and not object_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Get object data
+            game_object = self.world.get_object(object_id)
+            
+            # Check if object has something hidden behind it
+            hidden_behind = game_object.state.get('hidden_behind', None)
+            reveals_behind = game_object.state.get('reveals_behind', [])
+            behind_description = game_object.state.get('behind_description', None)
+            
+            notifications = []
+            sanity_change = 0
+            
+            # If there are items to reveal
+            if reveals_behind:
+                for item_id in reveals_behind:
+                    if item_id not in current_room.items:
+                        current_room.items.append(item_id)
+                        try:
+                            revealed_obj = self.world.get_object(item_id)
+                            notifications.append(f"You discover {revealed_obj.name_spooky} concealed behind it!")
+                        except ValueError:
+                            notifications.append(f"You discover something concealed behind it!")
+                
+                # Mark as revealed so it doesn't happen again
+                game_object.state['reveals_behind'] = []
+                
+                message = f"You look behind the {object_id}."
+                if behind_description:
+                    message = behind_description
+                
+                return ActionResult(
+                    success=True,
+                    message=message,
+                    notifications=notifications,
+                    sanity_change=sanity_change
+                )
+            
+            # If there's a custom description
+            if behind_description:
+                return ActionResult(
+                    success=True,
+                    message=behind_description,
+                    sanity_change=sanity_change
+                )
+            
+            # If there's hidden information
+            if hidden_behind:
+                return ActionResult(
+                    success=True,
+                    message=hidden_behind,
+                    sanity_change=sanity_change
+                )
+            
+            # Default: nothing there
+            default_messages = [
+                f"You peer behind the {object_id}. Nothing but empty space.",
+                f"There's nothing behind the {object_id} but cold air.",
+                f"You find nothing of interest behind the {object_id}.",
+                f"The space behind the {object_id} is empty and foreboding."
+            ]
+            
+            # Use a consistent message based on object_id hash for consistency
+            message_idx = hash(object_id) % len(default_messages)
+            
+            return ActionResult(
+                success=True,
+                message=default_messages[message_idx],
+                sanity_change=sanity_change
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while looking behind that."
+            )
+    
+    def handle_search(
+        self,
+        object_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle searching objects and locations.
+        
+        Reveals hidden details or items through thorough searching. Returns
+        appropriate "found" or "nothing" messages. Uses thematic descriptions.
+        
+        Args:
+            object_id: The object to search
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 4.4
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if object is in current room or inventory
+            object_in_room = object_id in current_room.items
+            object_in_inventory = object_id in state.inventory
+            
+            if not object_in_room and not object_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Get object data
+            game_object = self.world.get_object(object_id)
+            
+            # Check if object has searchable properties
+            search_reveals = game_object.state.get('search_reveals', [])
+            search_description = game_object.state.get('search_description', None)
+            hidden_details = game_object.state.get('hidden_details', None)
+            
+            notifications = []
+            sanity_change = 0
+            
+            # If there are items to reveal through searching
+            if search_reveals:
+                for item_id in search_reveals:
+                    if item_id not in current_room.items:
+                        current_room.items.append(item_id)
+                        try:
+                            revealed_obj = self.world.get_object(item_id)
+                            notifications.append(f"Your search reveals {revealed_obj.name_spooky}!")
+                        except ValueError:
+                            notifications.append(f"Your search reveals something hidden!")
+                
+                # Mark as searched so it doesn't happen again
+                game_object.state['search_reveals'] = []
+                
+                message = f"You search the {object_id} thoroughly."
+                if search_description:
+                    message = search_description
+                
+                return ActionResult(
+                    success=True,
+                    message=message,
+                    notifications=notifications,
+                    sanity_change=sanity_change
+                )
+            
+            # If there's a custom search description
+            if search_description:
+                return ActionResult(
+                    success=True,
+                    message=search_description,
+                    sanity_change=sanity_change
+                )
+            
+            # If there are hidden details to discover
+            if hidden_details:
+                return ActionResult(
+                    success=True,
+                    message=hidden_details,
+                    sanity_change=sanity_change
+                )
+            
+            # Default: nothing found
+            default_messages = [
+                f"You search the {object_id} carefully but find nothing of interest.",
+                f"Your thorough search of the {object_id} reveals nothing unusual.",
+                f"Despite your careful examination, the {object_id} yields no secrets.",
+                f"You find nothing hidden in or on the {object_id}.",
+                f"The {object_id} holds no hidden surprises, only shadows and dust."
+            ]
+            
+            # Use a consistent message based on object_id hash for consistency
+            message_idx = hash(object_id) % len(default_messages)
+            
+            return ActionResult(
+                success=True,
+                message=default_messages[message_idx],
+                sanity_change=sanity_change
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while searching."
+            )
+    
+    def handle_read(
+        self,
+        object_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle reading readable objects (books, signs, notes).
+        
+        Supports reading readable objects and displays their text content.
+        Returns "nothing to read" if the object is not readable.
+        
+        Args:
+            object_id: The object to read
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 4.5
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if object is in current room or inventory
+            object_in_room = object_id in current_room.items
+            object_in_inventory = object_id in state.inventory
+            
+            if not object_in_room and not object_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Get object data
+            game_object = self.world.get_object(object_id)
+            
+            # Check if object has a READ interaction
+            read_interaction = None
+            for interaction in game_object.interactions:
+                if interaction.verb == "READ":
+                    # Check if interaction has conditions
+                    if interaction.condition:
+                        # Check if all conditions are met
+                        conditions_met = True
+                        for key, required_value in interaction.condition.items():
+                            current_value = game_object.state.get(key, None)
+                            if current_value != required_value:
+                                conditions_met = False
+                                break
+                        if not conditions_met:
+                            continue
+                    read_interaction = interaction
+                    break
+            
+            if not read_interaction:
+                # No READ interaction defined - object is not readable
+                return ActionResult(
+                    success=False,
+                    message=f"There's nothing to read on the {object_id}."
+                )
+            
+            # Get the text content (always use spooky version)
+            text_content = read_interaction.response_spooky
+            
+            # Apply state changes to object if any
+            if read_interaction.state_change:
+                for key, value in read_interaction.state_change.items():
+                    game_object.state[key] = value
+            
+            # Apply flag changes to game state if any
+            if read_interaction.flag_change:
+                for flag_name, flag_value in read_interaction.flag_change.items():
+                    state.set_flag(flag_name, flag_value)
+            
+            # Apply sanity effects if any
+            sanity_change = read_interaction.sanity_effect
+            notifications = []
+            
+            if sanity_change != 0:
+                state.sanity = max(0, min(100, state.sanity + sanity_change))
+                if sanity_change < 0:
+                    notifications.append("The words disturb you deeply...")
+                elif sanity_change > 0:
+                    notifications.append("The text brings a strange comfort...")
+            
+            return ActionResult(
+                success=True,
+                message=text_content,
+                state_changes={
+                    'sanity': state.sanity
+                } if sanity_change != 0 else {},
+                notifications=notifications,
+                sanity_change=sanity_change
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while reading."
+            )
+    
+    def handle_listen(
+        self,
+        object_id: Optional[str],
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle listening to objects and rooms.
+        
+        Supports listening to specific objects or the current room. Returns
+        audible information or silence message. Uses atmospheric descriptions.
+        
+        Args:
+            object_id: The object to listen to (optional, defaults to room)
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 4.6
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # If no object specified, listen to the room
+            if not object_id:
+                # Check if room has audio_description (rooms don't have state dict, so we'd need to add it as a property)
+                # For now, rooms don't have audio descriptions, so we'll use default messages
+                audio_description = None
+                
+                if audio_description:
+                    return ActionResult(
+                        success=True,
+                        message=audio_description
+                    )
+                
+                # Default room listening messages based on sanity
+                if state.sanity < 30:
+                    default_messages = [
+                        "You hear whispers in the darkness, speaking words you cannot understand...",
+                        "The silence is broken by distant screams that echo through your mind.",
+                        "Phantom footsteps circle around you, growing closer with each passing moment.",
+                        "You hear the sound of something breathing, heavy and labored, just out of sight."
+                    ]
+                elif state.sanity < 60:
+                    default_messages = [
+                        "You hear unsettling creaks and groans from the old structure.",
+                        "The wind howls mournfully through unseen cracks and crevices.",
+                        "Faint scratching sounds emanate from within the walls.",
+                        "You hear distant sounds that might be voices... or something else."
+                    ]
+                else:
+                    default_messages = [
+                        "You hear nothing unusual, just the ambient sounds of this eerie place.",
+                        "The silence is oppressive, broken only by your own breathing.",
+                        "You hear the faint creaking of old wood settling.",
+                        "Nothing but an eerie quiet fills your ears."
+                    ]
+                
+                # Use a consistent message based on room hash for consistency
+                message_idx = hash(state.current_room) % len(default_messages)
+                
+                return ActionResult(
+                    success=True,
+                    message=default_messages[message_idx]
+                )
+            
+            # Listening to a specific object
+            # Check if object is in current room or inventory
+            object_in_room = object_id in current_room.items
+            object_in_inventory = object_id in state.inventory
+            
+            if not object_in_room and not object_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Get object data
+            game_object = self.world.get_object(object_id)
+            
+            # Check if object has audio_description property
+            audio_description = game_object.state.get('audio_description', None)
+            
+            if audio_description:
+                # Apply sanity effects if any
+                sanity_change = game_object.state.get('listen_sanity_effect', 0)
+                notifications = []
+                
+                if sanity_change != 0:
+                    state.sanity = max(0, min(100, state.sanity + sanity_change))
+                    if sanity_change < 0:
+                        notifications.append("The sounds disturb you deeply...")
+                    elif sanity_change > 0:
+                        notifications.append("The sounds bring a strange comfort...")
+                
+                return ActionResult(
+                    success=True,
+                    message=audio_description,
+                    state_changes={
+                        'sanity': state.sanity
+                    } if sanity_change != 0 else {},
+                    notifications=notifications,
+                    sanity_change=sanity_change
+                )
+            
+            # Check if object has a LISTEN interaction
+            listen_interaction = None
+            for interaction in game_object.interactions:
+                if interaction.verb == "LISTEN":
+                    # Check if interaction has conditions
+                    if interaction.condition:
+                        # Check if all conditions are met
+                        conditions_met = True
+                        for key, required_value in interaction.condition.items():
+                            current_value = game_object.state.get(key, None)
+                            if current_value != required_value:
+                                conditions_met = False
+                                break
+                        if not conditions_met:
+                            continue
+                    listen_interaction = interaction
+                    break
+            
+            if listen_interaction:
+                # Get the audio information (always use spooky version)
+                audio_info = listen_interaction.response_spooky
+                
+                # Apply state changes to object if any
+                if listen_interaction.state_change:
+                    for key, value in listen_interaction.state_change.items():
+                        game_object.state[key] = value
+                
+                # Apply flag changes to game state if any
+                if listen_interaction.flag_change:
+                    for flag_name, flag_value in listen_interaction.flag_change.items():
+                        state.set_flag(flag_name, flag_value)
+                
+                # Apply sanity effects if any
+                sanity_change = listen_interaction.sanity_effect
+                notifications = []
+                
+                if sanity_change != 0:
+                    state.sanity = max(0, min(100, state.sanity + sanity_change))
+                    if sanity_change < 0:
+                        notifications.append("The sounds disturb you deeply...")
+                    elif sanity_change > 0:
+                        notifications.append("The sounds bring a strange comfort...")
+                
+                return ActionResult(
+                    success=True,
+                    message=audio_info,
+                    state_changes={
+                        'sanity': state.sanity
+                    } if sanity_change != 0 else {},
+                    notifications=notifications,
+                    sanity_change=sanity_change
+                )
+            
+            # Default: nothing to hear
+            default_messages = [
+                f"You listen carefully to the {object_id}, but hear nothing unusual.",
+                f"The {object_id} is silent, revealing no audible secrets.",
+                f"You press your ear close to the {object_id}, but it makes no sound.",
+                f"The {object_id} offers no sounds, only an eerie silence.",
+                f"Listening to the {object_id} yields nothing but the ambient sounds of this place."
+            ]
+            
+            # Use a consistent message based on object_id hash for consistency
+            message_idx = hash(object_id) % len(default_messages)
+            
+            return ActionResult(
+                success=True,
+                message=default_messages[message_idx]
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while listening."
+            )
+    
+    def handle_smell(
+        self,
+        object_id: Optional[str],
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle smelling objects and rooms.
+        
+        Supports smelling specific objects or the current room. Returns
+        olfactory information or neutral message. Uses thematic descriptions.
+        
+        Args:
+            object_id: The object to smell (optional, defaults to room)
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 4.7
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # If no object specified, smell the room
+            if not object_id:
+                # Check if room has smell_description (rooms don't have state dict, so we'd need to add it as a property)
+                # For now, rooms don't have smell descriptions, so we'll use default messages
+                smell_description = None
+                
+                if smell_description:
+                    return ActionResult(
+                        success=True,
+                        message=smell_description
+                    )
+                
+                # Default room smelling messages based on sanity
+                if state.sanity < 30:
+                    default_messages = [
+                        "The air reeks of decay and something far worse—a smell that shouldn't exist in this world.",
+                        "You smell burning flesh and sulfur, though you see no fire.",
+                        "The stench of rotting meat fills your nostrils, making you gag.",
+                        "An overwhelming smell of blood and death permeates the air, thick and cloying."
+                    ]
+                elif state.sanity < 60:
+                    default_messages = [
+                        "The air smells musty and old, with an underlying hint of something unpleasant.",
+                        "You detect the scent of mold and dampness, mixed with something you can't quite identify.",
+                        "A faint smell of decay lingers in the air, barely noticeable but persistent.",
+                        "The air carries an earthy, stale odor that makes you slightly uncomfortable."
+                    ]
+                else:
+                    default_messages = [
+                        "The air smells stale and dusty, as if this place has been closed for years.",
+                        "You smell nothing unusual, just the musty scent of an old building.",
+                        "The air is thick with dust and the smell of aged wood.",
+                        "A faint smell of mildew and old stone fills your nostrils."
+                    ]
+                
+                # Use a consistent message based on room hash for consistency
+                message_idx = hash(state.current_room) % len(default_messages)
+                
+                return ActionResult(
+                    success=True,
+                    message=default_messages[message_idx]
+                )
+            
+            # Smelling a specific object
+            # Check if object is in current room or inventory
+            object_in_room = object_id in current_room.items
+            object_in_inventory = object_id in state.inventory
+            
+            if not object_in_room and not object_in_inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Get object data
+            game_object = self.world.get_object(object_id)
+            
+            # Check if object has smell_description property
+            smell_description = game_object.state.get('smell_description', None)
+            
+            if smell_description:
+                # Apply sanity effects if any
+                sanity_change = game_object.state.get('smell_sanity_effect', 0)
+                notifications = []
+                
+                if sanity_change != 0:
+                    state.sanity = max(0, min(100, state.sanity + sanity_change))
+                    if sanity_change < 0:
+                        notifications.append("The smell disturbs you deeply...")
+                    elif sanity_change > 0:
+                        notifications.append("The smell brings a strange comfort...")
+                
+                return ActionResult(
+                    success=True,
+                    message=smell_description,
+                    state_changes={
+                        'sanity': state.sanity
+                    } if sanity_change != 0 else {},
+                    notifications=notifications,
+                    sanity_change=sanity_change
+                )
+            
+            # Check if object has a SMELL interaction
+            smell_interaction = None
+            for interaction in game_object.interactions:
+                if interaction.verb == "SMELL":
+                    # Check if interaction has conditions
+                    if interaction.condition:
+                        # Check if all conditions are met
+                        conditions_met = True
+                        for key, required_value in interaction.condition.items():
+                            current_value = game_object.state.get(key, None)
+                            if current_value != required_value:
+                                conditions_met = False
+                                break
+                        if not conditions_met:
+                            continue
+                    smell_interaction = interaction
+                    break
+            
+            if smell_interaction:
+                # Get the olfactory information (always use spooky version)
+                smell_info = smell_interaction.response_spooky
+                
+                # Apply state changes to object if any
+                if smell_interaction.state_change:
+                    for key, value in smell_interaction.state_change.items():
+                        game_object.state[key] = value
+                
+                # Apply flag changes to game state if any
+                if smell_interaction.flag_change:
+                    for flag_name, flag_value in smell_interaction.flag_change.items():
+                        state.set_flag(flag_name, flag_value)
+                
+                # Apply sanity effects if any
+                sanity_change = smell_interaction.sanity_effect
+                notifications = []
+                
+                if sanity_change != 0:
+                    state.sanity = max(0, min(100, state.sanity + sanity_change))
+                    if sanity_change < 0:
+                        notifications.append("The smell disturbs you deeply...")
+                    elif sanity_change > 0:
+                        notifications.append("The smell brings a strange comfort...")
+                
+                return ActionResult(
+                    success=True,
+                    message=smell_info,
+                    state_changes={
+                        'sanity': state.sanity
+                    } if sanity_change != 0 else {},
+                    notifications=notifications,
+                    sanity_change=sanity_change
+                )
+            
+            # Default: nothing to smell
+            default_messages = [
+                f"You smell the {object_id}, but detect nothing unusual.",
+                f"The {object_id} has no particular scent.",
+                f"You sniff the {object_id}, but it smells unremarkable.",
+                f"The {object_id} offers no distinctive odor.",
+                f"Smelling the {object_id} reveals nothing but the ambient scents of this place."
+            ]
+            
+            # Use a consistent message based on object_id hash for consistency
+            message_idx = hash(object_id) % len(default_messages)
+            
+            return ActionResult(
+                success=True,
+                message=default_messages[message_idx]
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while smelling."
+            )
+    
     def handle_place_treasure(
         self,
         object_id: str,
@@ -1990,8 +3943,69 @@ class GameEngine:
                 return self.handle_place_treasure(command.object, command.target, state)
             return self.handle_put(command.object, command.target, state)
         
-        # Handle object interaction commands (OPEN, CLOSE, READ, MOVE)
-        if command.verb in ["OPEN", "CLOSE", "READ", "MOVE"] and command.object:
+        # Handle lock commands (format: "lock object with key")
+        if command.verb == "LOCK" and command.object:
+            if not command.target:
+                return ActionResult(
+                    success=False,
+                    message=f"What do you want to lock the {command.object} with?"
+                )
+            return self.handle_lock(command.object, command.target, state)
+        
+        # Handle unlock commands (format: "unlock object with key")
+        if command.verb == "UNLOCK" and command.object:
+            if not command.target:
+                return ActionResult(
+                    success=False,
+                    message=f"What do you want to unlock the {command.object} with?"
+                )
+            return self.handle_unlock(command.object, command.target, state)
+        
+        # Handle turn commands
+        if command.verb == "TURN" and command.object:
+            return self.handle_turn(command.object, state)
+        
+        # Handle push commands
+        if command.verb == "PUSH" and command.object:
+            return self.handle_push(command.object, state)
+        
+        # Handle pull commands
+        if command.verb == "PULL" and command.object:
+            return self.handle_pull(command.object, state)
+        
+        # Handle tie commands (format: "tie object to target")
+        if command.verb == "TIE" and command.object:
+            if not command.target:
+                return ActionResult(
+                    success=False,
+                    message=f"What do you want to tie the {command.object} to?"
+                )
+            return self.handle_tie(command.object, command.target, state)
+        
+        # Handle untie commands
+        if command.verb == "UNTIE" and command.object:
+            return self.handle_untie(command.object, state)
+        
+        # Handle fill commands (format: "fill object from source")
+        if command.verb == "FILL" and command.object:
+            if not command.target:
+                return ActionResult(
+                    success=False,
+                    message=f"What do you want to fill the {command.object} from?"
+                )
+            return self.handle_fill(command.object, command.target, state)
+        
+        # Handle pour commands (format: "pour object" or "pour object into target")
+        if command.verb == "POUR" and command.object:
+            # Target is optional for pour (can pour onto ground)
+            return self.handle_pour(command.object, command.target, state)
+        
+        # Handle read commands
+        if command.verb == "READ" and command.object:
+            return self.handle_read(command.object, state)
+        
+        # Handle object interaction commands (OPEN, CLOSE, MOVE)
+        if command.verb in ["OPEN", "CLOSE", "MOVE"] and command.object:
             return self.handle_object_interaction(command.verb, command.object, state)
         
         # Handle lamp commands (LIGHT, TURN ON)
@@ -2001,6 +4015,30 @@ class GameEngine:
         # Handle lamp off commands (EXTINGUISH, TURN OFF)
         if command.verb in ["EXTINGUISH", "TURN_OFF"] and command.object == "lamp":
             return self.handle_lamp_off(state)
+        
+        # Handle look under commands
+        if command.verb == "LOOK_UNDER" and command.object:
+            return self.handle_look_under(command.object, state)
+        
+        # Handle look behind commands
+        if command.verb == "LOOK_BEHIND" and command.object:
+            return self.handle_look_behind(command.object, state)
+        
+        # Handle look inside commands
+        if command.verb == "LOOK_INSIDE" and command.object:
+            return self.handle_look_inside(command.object, state)
+        
+        # Handle search commands
+        if command.verb == "SEARCH" and command.object:
+            return self.handle_search(command.object, state)
+        
+        # Handle listen commands (can listen to object or room)
+        if command.verb == "LISTEN":
+            return self.handle_listen(command.object, state)
+        
+        # Handle smell commands (can smell object or room)
+        if command.verb == "SMELL":
+            return self.handle_smell(command.object, state)
         
         # Handle unknown commands
         if command.verb == "UNKNOWN":

@@ -531,8 +531,7 @@ def test_container_capacity_never_exceeded(data):
     2. Objects cannot be added when capacity would be exceeded
     3. Container state remains consistent
     """
-    # Load world data (fresh instance for each test)
-    WorldData.clear_cache()  # Clear cache to ensure fresh data
+    # Load world data - use cached version for consistency with generator
     world = WorldData()
     data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
     world.load_from_json(data_dir)
@@ -613,8 +612,7 @@ def test_container_open_state_enforced(data):
     2. Open containers allow put/take operations
     3. Transparent containers allow operations regardless of open state
     """
-    # Load world data (fresh instance for each test)
-    WorldData.clear_cache()  # Clear cache to ensure fresh data
+    # Load world data - use cached version for consistency with generator
     world = WorldData()
     data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
     world.load_from_json(data_dir)
@@ -1301,3 +1299,491 @@ def test_check_win_condition_method(data):
     expected = (score >= 350)
     assert result == expected, \
         f"check_win_condition should return {expected} for score {score}, got {result}"
+
+
+@st.composite
+def moveable_object_in_room(draw, world_data):
+    """
+    Generate a room ID and a moveable object that exists in that room.
+    
+    Returns tuple of (room_id, object_id) where object is moveable.
+    """
+    # Pick a random room
+    room_ids = list(world_data.rooms.keys())
+    room_id = draw(st.sampled_from(room_ids))
+    
+    # Create a moveable object ID
+    object_id = draw(st.sampled_from(['rug', 'table', 'chair', 'statue', 'bookshelf']))
+    
+    return (room_id, object_id)
+
+
+# Feature: complete-zork-commands, Property 7: Push/Pull object relocation
+@settings(max_examples=100)
+@given(st.data())
+def test_push_pull_changes_object_state(data):
+    """
+    For any moveable object, executing PUSH or PULL should change the object's
+    state (is_pushed or is_pulled flag).
+    
+    **Validates: Requirements 3.5**
+    
+    This property ensures that:
+    1. Push operation sets is_pushed flag to True
+    2. Pull operation sets is_pulled flag to True
+    3. Object state is updated correctly after push/pull
+    """
+    # Load world data (fresh instance for each test)
+    WorldData.clear_cache()
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    # Get a moveable object in a room
+    room_id, object_id = data.draw(moveable_object_in_room(world))
+    
+    # Create game state in that room
+    state = GameState.create_new_game()
+    state.current_room = room_id
+    
+    # Get current room
+    current_room = world.get_room(room_id)
+    
+    # Create or get the moveable object
+    try:
+        game_object = world.get_object(object_id)
+    except ValueError:
+        # Object doesn't exist, create a mock moveable object
+        from world_loader import GameObject, Interaction
+        game_object = GameObject(
+            id=object_id,
+            name=object_id,
+            name_spooky=f"cursed {object_id}",
+            type="furniture",
+            state={
+                'is_moveable': True,
+                'is_pushed': False,
+                'is_pulled': False
+            },
+            interactions=[
+                Interaction(
+                    verb="PUSH",
+                    condition=None,
+                    response_original=f"You push the {object_id}.",
+                    response_spooky=f"You push the cursed {object_id}.",
+                    state_change=None,
+                    flag_change=None,
+                    sanity_effect=0,
+                    curse_trigger=False
+                ),
+                Interaction(
+                    verb="PULL",
+                    condition=None,
+                    response_original=f"You pull the {object_id}.",
+                    response_spooky=f"You pull the cursed {object_id}.",
+                    state_change=None,
+                    flag_change=None,
+                    sanity_effect=0,
+                    curse_trigger=False
+                )
+            ],
+            is_takeable=False,
+            is_treasure=False,
+            treasure_value=0,
+            size=10,
+            capacity=0,
+            soul_value=0
+        )
+        world.objects[object_id] = game_object
+    
+    # Ensure object is moveable and in room
+    game_object.state['is_moveable'] = True
+    game_object.state['is_pushed'] = False
+    game_object.state['is_pulled'] = False
+    
+    if object_id not in current_room.items:
+        current_room.items.append(object_id)
+    
+    # Decide whether to test push or pull
+    operation = data.draw(st.sampled_from(['push', 'pull']))
+    
+    if operation == 'push':
+        # Verify initial state
+        assert game_object.state.get('is_pushed', False) is False, \
+            "Object should not be pushed initially"
+        
+        # Push the object
+        result = engine.handle_push(object_id, state)
+        
+        # Push should succeed
+        assert result.success is True, f"Pushing {object_id} should succeed"
+        
+        # Verify state changed
+        assert game_object.state.get('is_pushed', False) is True, \
+            "Object should be marked as pushed after push operation"
+        
+        # Verify object is still in room
+        assert object_id in current_room.items, \
+            "Object should still be in room after push"
+    
+    elif operation == 'pull':
+        # Verify initial state
+        assert game_object.state.get('is_pulled', False) is False, \
+            "Object should not be pulled initially"
+        
+        # Pull the object
+        result = engine.handle_pull(object_id, state)
+        
+        # Pull should succeed
+        assert result.success is True, f"Pulling {object_id} should succeed"
+        
+        # Verify state changed
+        assert game_object.state.get('is_pulled', False) is True, \
+            "Object should be marked as pulled after pull operation"
+        
+        # Verify object is still in room
+        assert object_id in current_room.items, \
+            "Object should still be in room after pull"
+
+
+@settings(max_examples=100)
+@given(st.data())
+def test_push_pull_reveals_hidden_items(data):
+    """
+    For any moveable object with reveals_items property, executing PUSH or PULL
+    should add those items to the current room.
+    
+    **Validates: Requirements 3.5**
+    
+    This property ensures that:
+    1. Push/pull operations can reveal hidden items
+    2. Revealed items are added to the room
+    3. Items are only revealed once
+    """
+    # Load world data (fresh instance for each test)
+    WorldData.clear_cache()
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    # Get a moveable object in a room
+    room_id, object_id = data.draw(moveable_object_in_room(world))
+    
+    # Create game state in that room
+    state = GameState.create_new_game()
+    state.current_room = room_id
+    
+    # Get current room
+    current_room = world.get_room(room_id)
+    
+    # Create a hidden item to be revealed
+    hidden_item_id = "hidden_key"
+    
+    # Create or get the moveable object
+    try:
+        game_object = world.get_object(object_id)
+    except ValueError:
+        # Object doesn't exist, create a mock moveable object
+        from world_loader import GameObject, Interaction
+        game_object = GameObject(
+            id=object_id,
+            name=object_id,
+            name_spooky=f"cursed {object_id}",
+            type="furniture",
+            state={
+                'is_moveable': True,
+                'is_pushed': False,
+                'is_pulled': False,
+                'reveals_items': [hidden_item_id]
+            },
+            interactions=[
+                Interaction(
+                    verb="PUSH",
+                    condition=None,
+                    response_original=f"You push the {object_id}.",
+                    response_spooky=f"You push the cursed {object_id}.",
+                    state_change=None,
+                    flag_change=None,
+                    sanity_effect=0,
+                    curse_trigger=False
+                ),
+                Interaction(
+                    verb="PULL",
+                    condition=None,
+                    response_original=f"You pull the {object_id}.",
+                    response_spooky=f"You pull the cursed {object_id}.",
+                    state_change=None,
+                    flag_change=None,
+                    sanity_effect=0,
+                    curse_trigger=False
+                )
+            ],
+            is_takeable=False,
+            is_treasure=False,
+            treasure_value=0,
+            size=10,
+            capacity=0,
+            soul_value=0
+        )
+        world.objects[object_id] = game_object
+    
+    # Ensure object is moveable, in room, and has reveals_items
+    game_object.state['is_moveable'] = True
+    game_object.state['is_pushed'] = False
+    game_object.state['is_pulled'] = False
+    game_object.state['reveals_items'] = [hidden_item_id]
+    
+    if object_id not in current_room.items:
+        current_room.items.append(object_id)
+    
+    # Create the hidden item
+    try:
+        hidden_item = world.get_object(hidden_item_id)
+    except ValueError:
+        from world_loader import GameObject, Interaction
+        hidden_item = GameObject(
+            id=hidden_item_id,
+            name="key",
+            name_spooky="cursed key",
+            type="item",
+            state={},
+            interactions=[],
+            is_takeable=True,
+            is_treasure=False,
+            treasure_value=0,
+            size=1,
+            capacity=0,
+            soul_value=0
+        )
+        world.objects[hidden_item_id] = hidden_item
+    
+    # Verify hidden item is not in room initially
+    assert hidden_item_id not in current_room.items, \
+        "Hidden item should not be in room initially"
+    
+    # Decide whether to test push or pull
+    operation = data.draw(st.sampled_from(['push', 'pull']))
+    
+    if operation == 'push':
+        # Push the object
+        result = engine.handle_push(object_id, state)
+        
+        # Push should succeed
+        assert result.success is True, f"Pushing {object_id} should succeed"
+        
+        # Verify hidden item is now in room
+        assert hidden_item_id in current_room.items, \
+            "Hidden item should be revealed and added to room after push"
+        
+        # Verify notification about revealed item
+        assert len(result.notifications) > 0, \
+            "Should have notification about revealed item"
+    
+    elif operation == 'pull':
+        # Pull the object
+        result = engine.handle_pull(object_id, state)
+        
+        # Pull should succeed
+        assert result.success is True, f"Pulling {object_id} should succeed"
+        
+        # Verify hidden item is now in room
+        assert hidden_item_id in current_room.items, \
+            "Hidden item should be revealed and added to room after pull"
+        
+        # Verify notification about revealed item
+        assert len(result.notifications) > 0, \
+            "Should have notification about revealed item"
+
+
+@settings(max_examples=100)
+@given(st.data())
+def test_push_pull_non_moveable_objects_fail(data):
+    """
+    For any non-moveable object, executing PUSH or PULL should fail and
+    return an appropriate error message.
+    
+    **Validates: Requirements 3.5**
+    
+    This property ensures that:
+    1. Non-moveable objects cannot be pushed
+    2. Non-moveable objects cannot be pulled
+    3. Appropriate error messages are returned
+    """
+    # Load world data (fresh instance for each test)
+    WorldData.clear_cache()
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    # Get a room and object
+    room_id, object_id = data.draw(moveable_object_in_room(world))
+    
+    # Create game state in that room
+    state = GameState.create_new_game()
+    state.current_room = room_id
+    
+    # Get current room
+    current_room = world.get_room(room_id)
+    
+    # Create or get the object
+    try:
+        game_object = world.get_object(object_id)
+    except ValueError:
+        # Object doesn't exist, create a mock non-moveable object
+        from world_loader import GameObject, Interaction
+        game_object = GameObject(
+            id=object_id,
+            name=object_id,
+            name_spooky=f"cursed {object_id}",
+            type="furniture",
+            state={
+                'is_moveable': False  # NOT moveable
+            },
+            interactions=[],
+            is_takeable=False,
+            is_treasure=False,
+            treasure_value=0,
+            size=10,
+            capacity=0,
+            soul_value=0
+        )
+        world.objects[object_id] = game_object
+    
+    # Ensure object is NOT moveable and is in room
+    game_object.state['is_moveable'] = False
+    
+    if object_id not in current_room.items:
+        current_room.items.append(object_id)
+    
+    # Decide whether to test push or pull
+    operation = data.draw(st.sampled_from(['push', 'pull']))
+    
+    if operation == 'push':
+        # Try to push the non-moveable object
+        result = engine.handle_push(object_id, state)
+        
+        # Push should fail
+        assert result.success is False, \
+            f"Pushing non-moveable {object_id} should fail"
+        
+        # Should have appropriate error message
+        assert "won't budge" in result.message.lower() or "can't" in result.message.lower(), \
+            "Error message should indicate object cannot be moved"
+    
+    elif operation == 'pull':
+        # Try to pull the non-moveable object
+        result = engine.handle_pull(object_id, state)
+        
+        # Pull should fail
+        assert result.success is False, \
+            f"Pulling non-moveable {object_id} should fail"
+        
+        # Should have appropriate error message
+        assert "won't budge" in result.message.lower() or "can't" in result.message.lower(), \
+            "Error message should indicate object cannot be moved"
+
+
+@settings(max_examples=100)
+@given(st.data())
+def test_push_pull_twice_fails_second_time(data):
+    """
+    For any moveable object, executing PUSH or PULL twice should succeed the first
+    time but fail the second time with an appropriate message.
+    
+    **Validates: Requirements 3.5**
+    
+    This property ensures that:
+    1. Objects can only be pushed once
+    2. Objects can only be pulled once
+    3. Appropriate messages are returned on second attempt
+    """
+    # Load world data (fresh instance for each test)
+    WorldData.clear_cache()
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    # Get a moveable object in a room
+    room_id, object_id = data.draw(moveable_object_in_room(world))
+    
+    # Create game state in that room
+    state = GameState.create_new_game()
+    state.current_room = room_id
+    
+    # Get current room
+    current_room = world.get_room(room_id)
+    
+    # Create or get the moveable object
+    try:
+        game_object = world.get_object(object_id)
+    except ValueError:
+        # Object doesn't exist, create a mock moveable object
+        from world_loader import GameObject, Interaction
+        game_object = GameObject(
+            id=object_id,
+            name=object_id,
+            name_spooky=f"cursed {object_id}",
+            type="furniture",
+            state={
+                'is_moveable': True,
+                'is_pushed': False,
+                'is_pulled': False
+            },
+            interactions=[],
+            is_takeable=False,
+            is_treasure=False,
+            treasure_value=0,
+            size=10,
+            capacity=0,
+            soul_value=0
+        )
+        world.objects[object_id] = game_object
+    
+    # Ensure object is moveable and in room
+    game_object.state['is_moveable'] = True
+    game_object.state['is_pushed'] = False
+    game_object.state['is_pulled'] = False
+    
+    if object_id not in current_room.items:
+        current_room.items.append(object_id)
+    
+    # Decide whether to test push or pull
+    operation = data.draw(st.sampled_from(['push', 'pull']))
+    
+    if operation == 'push':
+        # First push should succeed
+        result1 = engine.handle_push(object_id, state)
+        assert result1.success is True, \
+            f"First push of {object_id} should succeed"
+        
+        # Second push should fail
+        result2 = engine.handle_push(object_id, state)
+        assert result2.success is False, \
+            f"Second push of {object_id} should fail"
+        
+        # Should have appropriate error message
+        assert "already" in result2.message.lower(), \
+            "Error message should indicate object has already been pushed"
+    
+    elif operation == 'pull':
+        # First pull should succeed
+        result1 = engine.handle_pull(object_id, state)
+        assert result1.success is True, \
+            f"First pull of {object_id} should succeed"
+        
+        # Second pull should fail
+        result2 = engine.handle_pull(object_id, state)
+        assert result2.success is False, \
+            f"Second pull of {object_id} should fail"
+        
+        # Should have appropriate error message
+        assert "already" in result2.message.lower(), \
+            "Error message should indicate object has already been pulled"

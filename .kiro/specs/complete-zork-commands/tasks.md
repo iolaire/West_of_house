@@ -46,12 +46,12 @@
   - Return appropriate messages
   - _Requirements: 2.3, 2.4_
 
-- [ ] 2.6 Write property test for board/disembark round-trip
+- [x] 2.6 Write property test for board/disembark round-trip
   - **Property 3: Board/Disembark inverse operations**
   - **Validates: Requirements 2.3, 2.4**
 
-- [ ] 3. Implement object manipulation commands
-- [ ] 3.1 Implement LOCK and UNLOCK commands
+- [-] 3. Implement object manipulation commands
+- [x] 3.1 Implement LOCK and UNLOCK commands
   - Add handle_lock and handle_unlock methods to GameEngine
   - Support locking/unlocking with appropriate keys
   - Add lockable and key properties to objects
@@ -60,11 +60,11 @@
   - Return success/failure messages with haunted theme
   - _Requirements: 3.3_
 
-- [ ] 3.2 Write property test for lock/unlock round-trip
+- [x] 3.2 Write property test for lock/unlock round-trip
   - **Property 5: Lock/Unlock inverse operations**
   - **Validates: Requirements 3.3**
 
-- [ ] 3.3 Implement TURN command
+- [x] 3.3 Implement TURN command
   - Add handle_turn method to GameEngine
   - Support turning turnable objects (dials, valves, etc.)
   - Add turnable property to objects
@@ -73,11 +73,11 @@
   - Return thematic descriptions
   - _Requirements: 3.4_
 
-- [ ] 3.4 Write property test for turn state changes
+- [x] 3.4 Write property test for turn state changes
   - **Property 6: Turn command state changes**
   - **Validates: Requirements 3.4**
 
-- [ ] 3.5 Implement PUSH and PULL commands
+- [x] 3.5 Implement PUSH and PULL commands
   - Add handle_push and handle_pull methods to GameEngine
   - Support pushing/pulling moveable objects
   - Add moveable property to objects
@@ -86,11 +86,11 @@
   - Return appropriate messages
   - _Requirements: 3.5_
 
-- [ ] 3.6 Write property test for push/pull relocation
+- [x] 3.6 Write property test for push/pull relocation
   - **Property 7: Push/Pull object relocation**
   - **Validates: Requirements 3.5**
 
-- [ ] 3.7 Implement TIE and UNTIE commands
+- [x] 3.7 Implement TIE and UNTIE commands
   - Add handle_tie and handle_untie methods to GameEngine
   - Support tying rope-like objects to targets
   - Add rope and tie_target properties to objects
@@ -99,11 +99,11 @@
   - Return thematic descriptions
   - _Requirements: 3.6_
 
-- [ ] 3.8 Write property test for tie/untie round-trip
+- [x] 3.8 Write property test for tie/untie round-trip
   - **Property 8: Tie/Untie inverse operations**
   - **Validates: Requirements 3.6**
 
-- [ ] 3.9 Implement FILL and POUR commands
+- [x] 3.9 Implement FILL and POUR commands
   - Add handle_fill and handle_pour methods to GameEngine
   - Support filling containers from liquid sources
   - Support pouring liquids from containers
@@ -113,15 +113,15 @@
   - Return appropriate messages
   - _Requirements: 3.7, 3.8_
 
-- [ ] 3.10 Write property test for fill/pour round-trip
+- [x] 3.10 Write property test for fill/pour round-trip
   - **Property 9: Fill/Pour inverse operations**
   - **Validates: Requirements 3.7, 3.8**
 
-- [ ] 4. Checkpoint - Ensure all tests pass
+- [x] 4. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Implement examination commands
-- [ ] 5.1 Implement LOOK UNDER and LOOK BEHIND commands
+- [-] 5. Implement examination commands
+- [x] 5.1 Implement LOOK UNDER and LOOK BEHIND commands
   - Add handle_look_under and handle_look_behind methods to GameEngine
   - Support looking under/behind objects
   - Reveal hidden items or information
@@ -129,22 +129,22 @@
   - Use haunted theme descriptions
   - _Requirements: 4.2_
 
-- [ ] 5.2 Write property test for look under/behind
+- [x] 5.2 Write property test for look under/behind
   - **Property 11: Look under/behind reveals information**
   - **Validates: Requirements 4.2**
 
-- [ ] 5.3 Enhance LOOK INSIDE for containers
+- [x] 5.3 Enhance LOOK INSIDE for containers
   - Update handle_examine_container method
   - Ensure it lists all container contents
   - Handle open/closed and transparent states
   - Format contents list clearly
   - _Requirements: 4.3_
 
-- [ ] 5.4 Write property test for look inside contents
+- [x] 5.4 Write property test for look inside contents
   - **Property 12: Look inside container contents**
   - **Validates: Requirements 4.3**
 
-- [ ] 5.5 Implement SEARCH command
+- [x] 5.5 Implement SEARCH command
   - Add handle_search method to GameEngine
   - Support searching objects and locations
   - Reveal hidden details or items
@@ -152,11 +152,11 @@
   - Use thematic descriptions
   - _Requirements: 4.4_
 
-- [ ] 5.6 Write property test for search reveals
+- [x] 5.6 Write property test for search reveals
   - **Property 13: Search reveals details**
   - **Validates: Requirements 4.4**
 
-- [ ] 5.7 Implement READ command
+- [x] 5.7 Implement READ command
   - Add handle_read method to GameEngine
   - Support reading readable objects (books, signs, notes)
   - Add readable property and text content to objects
@@ -164,11 +164,11 @@
   - Return "nothing to read" if not readable
   - _Requirements: 4.5_
 
-- [ ] 5.8 Write property test for read displays text
+- [x] 5.8 Write property test for read displays text
   - **Property 14: Read displays text**
   - **Validates: Requirements 4.5**
 
-- [ ] 5.9 Implement LISTEN command
+- [x] 5.9 Implement LISTEN command
   - Add handle_listen method to GameEngine
   - Support listening to objects and rooms
   - Add audio_description property to objects/rooms
@@ -176,11 +176,11 @@
   - Use atmospheric descriptions
   - _Requirements: 4.6_
 
-- [ ] 5.10 Write property test for listen audio info
+- [x] 5.10 Write property test for listen audio info
   - **Property 15: Listen provides audio information**
   - **Validates: Requirements 4.6**
 
-- [ ] 5.11 Implement SMELL command
+- [x] 5.11 Implement SMELL command
   - Add handle_smell method to GameEngine
   - Support smelling objects and rooms
   - Add smell_description property to objects/rooms
@@ -188,11 +188,11 @@
   - Use thematic descriptions
   - _Requirements: 4.7_
 
-- [ ] 5.12 Write property test for smell olfactory info
+- [x] 5.12 Write property test for smell olfactory info
   - **Property 16: Smell provides olfactory information**
   - **Validates: Requirements 4.7**
 
-- [ ] 6. Implement combat and interaction commands
+- [-] 6. Implement combat and interaction commands
 - [ ] 6.1 Implement ATTACK command
   - Add handle_attack method to GameEngine
   - Support attacking creatures with weapons

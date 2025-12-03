@@ -203,12 +203,12 @@ class TestObjectCommands:
         """Test synonyms for MOVE."""
         parser = CommandParser()
         
-        synonyms = ["move", "push", "pull"]
-        
-        for synonym in synonyms:
-            result = parser.parse(f"{synonym} rug")
-            assert result.verb == "MOVE"
-            assert result.object == "rug"
+        # Note: PUSH and PULL are their own commands in Zork, not synonyms of MOVE
+        # MOVE is for general object movement, PUSH/PULL are specific actions
+        # Currently MOVE only has itself as a synonym
+        result = parser.parse("move rug")
+        assert result.verb == "MOVE"
+        assert result.object == "rug"
     
     def test_multi_word_object(self):
         """Test objects with multiple words."""

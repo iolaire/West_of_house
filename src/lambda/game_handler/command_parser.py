@@ -102,12 +102,28 @@ class CommandParser:
             'shut': 'CLOSE',
             'read': 'READ',
             'move': 'MOVE',
-            'push': 'MOVE',
-            'pull': 'MOVE',
+            'push': 'PUSH',
+            'pull': 'PULL',
             'light': 'LIGHT',
             'ignite': 'LIGHT',
             'extinguish': 'EXTINGUISH',
             'douse': 'EXTINGUISH',
+            'lock': 'LOCK',
+            'unlock': 'UNLOCK',
+            'turn': 'TURN',
+            'rotate': 'TURN',
+            'tie': 'TIE',
+            'bind': 'TIE',
+            'untie': 'UNTIE',
+            'unbind': 'UNTIE',
+            'fill': 'FILL',
+            'pour': 'POUR',
+            'empty': 'POUR',
+            'search': 'SEARCH',
+            'listen': 'LISTEN',
+            'hear': 'LISTEN',
+            'smell': 'SMELL',
+            'sniff': 'SMELL',
         }
         
         # Utility verbs
@@ -182,6 +198,18 @@ class CommandParser:
             elif two_word == "get out":
                 obj = " ".join(words[2:]) if len(words) > 2 else None
                 return ParsedCommand(verb="GET_OUT", object=obj)
+            elif two_word == "look under":
+                obj = " ".join(words[2:]) if len(words) > 2 else None
+                return ParsedCommand(verb="LOOK_UNDER", object=obj)
+            elif two_word == "look behind":
+                obj = " ".join(words[2:]) if len(words) > 2 else None
+                return ParsedCommand(verb="LOOK_BEHIND", object=obj)
+            elif two_word == "look inside":
+                obj = " ".join(words[2:]) if len(words) > 2 else None
+                return ParsedCommand(verb="LOOK_INSIDE", object=obj)
+            elif two_word == "look in":
+                obj = " ".join(words[2:]) if len(words) > 2 else None
+                return ParsedCommand(verb="LOOK_INSIDE", object=obj)
         
         first_word = words[0]
         

@@ -114,7 +114,7 @@ def test_direction_recognition(direction):
         ("examine sword", "inspect sword"),
         ("drop keys", "release keys"),
         ("inventory", "i"),
-        ("quit", "exit"),
+        # Note: "quit" and "exit" are NOT synonyms - QUIT ends game, EXIT is movement
     ])
 )
 def test_synonyms_produce_same_verb(synonym_pair):

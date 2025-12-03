@@ -47,6 +47,9 @@ class CommandParser:
             'enter': 'ENTER',
             'exit': 'EXIT',
             'leave': 'EXIT',
+            'board': 'BOARD',
+            'embark': 'BOARD',
+            'disembark': 'DISEMBARK',
         }
         
         # Direction words (can be used alone or with GO)
@@ -99,12 +102,28 @@ class CommandParser:
             'shut': 'CLOSE',
             'read': 'READ',
             'move': 'MOVE',
-            'push': 'MOVE',
-            'pull': 'MOVE',
+            'push': 'PUSH',
+            'pull': 'PULL',
             'light': 'LIGHT',
             'ignite': 'LIGHT',
             'extinguish': 'EXTINGUISH',
             'douse': 'EXTINGUISH',
+            'lock': 'LOCK',
+            'unlock': 'UNLOCK',
+            'turn': 'TURN',
+            'rotate': 'TURN',
+            'tie': 'TIE',
+            'bind': 'TIE',
+            'untie': 'UNTIE',
+            'unbind': 'UNTIE',
+            'fill': 'FILL',
+            'pour': 'POUR',
+            'empty': 'POUR',
+            'search': 'SEARCH',
+            'listen': 'LISTEN',
+            'hear': 'LISTEN',
+            'smell': 'SMELL',
+            'sniff': 'SMELL',
         }
         
         # Utility verbs
@@ -176,6 +195,21 @@ class CommandParser:
             elif two_word == "switch off":
                 obj = " ".join(words[2:]) if len(words) > 2 else None
                 return ParsedCommand(verb="TURN_OFF", object=obj)
+            elif two_word == "get out":
+                obj = " ".join(words[2:]) if len(words) > 2 else None
+                return ParsedCommand(verb="GET_OUT", object=obj)
+            elif two_word == "look under":
+                obj = " ".join(words[2:]) if len(words) > 2 else None
+                return ParsedCommand(verb="LOOK_UNDER", object=obj)
+            elif two_word == "look behind":
+                obj = " ".join(words[2:]) if len(words) > 2 else None
+                return ParsedCommand(verb="LOOK_BEHIND", object=obj)
+            elif two_word == "look inside":
+                obj = " ".join(words[2:]) if len(words) > 2 else None
+                return ParsedCommand(verb="LOOK_INSIDE", object=obj)
+            elif two_word == "look in":
+                obj = " ".join(words[2:]) if len(words) > 2 else None
+                return ParsedCommand(verb="LOOK_INSIDE", object=obj)
         
         first_word = words[0]
         
@@ -249,6 +283,30 @@ class CommandParser:
             # Special handling for EXIT command
             if verb == "EXIT":
                 # Get object to exit from (if specified)
+                obj = None
+                if len(words) > 1:
+                    obj = " ".join(words[1:])
+                
+                return ParsedCommand(
+                    verb=verb,
+                    object=obj
+                )
+            
+            # Special handling for BOARD command
+            if verb == "BOARD":
+                # Get vehicle to board
+                obj = None
+                if len(words) > 1:
+                    obj = " ".join(words[1:])
+                
+                return ParsedCommand(
+                    verb=verb,
+                    object=obj
+                )
+            
+            # Special handling for DISEMBARK command
+            if verb == "DISEMBARK":
+                # Get vehicle to disembark from (if specified)
                 obj = None
                 if len(words) > 1:
                     obj = " ".join(words[1:])

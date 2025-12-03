@@ -2,6 +2,7 @@
   "mailbox": {
     "name": "rusted mailbox",
     "type": "container",
+    "capacity": 5,
     "state": {
       "is_open": false,
       "is_locked": false
