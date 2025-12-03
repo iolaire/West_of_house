@@ -88,7 +88,7 @@ const CommandInput: React.FC<CommandInputProps> = ({ onSubmit, disabled }) => {
           : Math.max(0, historyIndex - 1);
         
         setHistoryIndex(newIndex);
-        setInputValue(commandHistory[newIndex]);
+        setInputValue(commandHistory[newIndex] || '');
       }
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
@@ -102,7 +102,7 @@ const CommandInput: React.FC<CommandInputProps> = ({ onSubmit, disabled }) => {
           setInputValue('');
         } else {
           setHistoryIndex(newIndex);
-          setInputValue(commandHistory[newIndex]);
+          setInputValue(commandHistory[newIndex] || '');
         }
       }
     }

@@ -106,14 +106,9 @@ export class GraphQLApiClient {
       return {
         room: data.room,
         description_spooky: data.description_spooky,
-        exits: data.exits,
-        objects: data.objects,
-        inventory: data.inventory,
-        sanity: data.sanity,
+        response_spooky: data.message || '',
+        inventory: (data.inventory || []).filter((item): item is string => item !== null),
         score: data.score,
-        moves: data.moves,
-        lampBattery: data.lampBattery,
-        message: data.message,
       };
     } catch (error) {
       if (error instanceof SessionExpiredError) {
@@ -149,14 +144,9 @@ export class GraphQLApiClient {
       return {
         room: session.currentRoom,
         description_spooky: 'You are standing in an open field west of a white house, with a boarded front door.',
-        exits: ['north', 'south', 'east', 'west'],
-        objects: [],
-        inventory: session.inventory || [],
-        sanity: session.sanity,
+        response_spooky: '',
+        inventory: (session.inventory || []).filter((item): item is string => item !== null),
         score: session.score,
-        moves: session.moves,
-        lampBattery: session.lampBattery,
-        message: '',
       };
     } catch (error) {
       if (error instanceof SessionExpiredError) {

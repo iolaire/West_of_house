@@ -11,7 +11,6 @@ import {
   SessionResponse,
   SessionExpiredError,
   ApiError,
-  API_TIMEOUT,
   API_RETRY_ATTEMPTS,
   RETRY_BASE_DELAY,
 } from '../types';
