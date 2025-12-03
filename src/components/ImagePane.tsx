@@ -48,6 +48,9 @@ const ImagePane: React.FC<ImagePaneProps> = ({
   
   // Ref to track if currently transitioning (avoids stale closure issues)
   const isTransitioningRef = useRef<boolean>(false);
+  
+  // Ref to track the current room name
+  const currentRoomNameRef = useRef<string>(roomName);
 
   /**
    * Starts a transition to a new room image
@@ -55,6 +58,11 @@ const ImagePane: React.FC<ImagePaneProps> = ({
    */
   const startTransition = useCallback(
     (newRoomName: string, skipPreload: boolean = false) => {
+      // Skip if already showing this room
+      if (currentRoomNameRef.current === newRoomName && !isTransitioningRef.current) {
+        return;
+      }
+
       // Map room name to image path
       const newImagePath = mapRoomToImage(newRoomName);
 
@@ -89,6 +97,7 @@ const ImagePane: React.FC<ImagePaneProps> = ({
             setNextImage(null);
             isTransitioningRef.current = false;
             setIsTransitioning(false);
+            currentRoomNameRef.current = newRoomName;
 
             // Process next item in queue
             setTransitionQueue((prev) => {
@@ -124,6 +133,7 @@ const ImagePane: React.FC<ImagePaneProps> = ({
             setNextImage(null);
             isTransitioningRef.current = false;
             setIsTransitioning(false);
+            currentRoomNameRef.current = newRoomName;
 
             // Process next item in queue
             setTransitionQueue((prev) => {

@@ -41,7 +41,7 @@ const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({ isVisible }) => {
         <div className="loading-indicator__dot loading-indicator__dot--3"></div>
       </div>
       <span className="loading-indicator__text" aria-hidden="true">Processing...</span>
-      <span className="visually-hidden">Command is being processed, please wait</span>
+      <span className="loading-indicator__sr-only visually-hidden">Command is being processed</span>
     </div>
   );
 };

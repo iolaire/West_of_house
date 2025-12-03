@@ -6,53 +6,51 @@
  * and spooky variant display
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, waitFor, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as fc from 'fast-check';
 import GrimoireContainer from '../components/GrimoireContainer';
 import { SessionProvider } from '../contexts/SessionContext';
 import { GameResponse } from '../types';
-import * as GameApiClientModule from '../services/GameApiClient';
 
-// Mock the GameApiClient
-vi.mock('../services/GameApiClient', () => {
+// Mock the GraphQL API client
+vi.mock('../services/GraphQLApiClient', () => {
   const mockClient = {
     createSession: vi.fn(),
     sendCommand: vi.fn(),
   };
   
   return {
-    GameApiClient: vi.fn(() => mockClient),
-    gameApiClient: mockClient,
+    GraphQLApiClient: vi.fn(() => mockClient),
+    graphQLApiClient: mockClient,
   };
 });
 
 describe('GrimoireContainer Command Submission Property Tests', () => {
-  const mockGameApiClient = GameApiClientModule.gameApiClient as any;
+  // Import the mocked client
+  let mockGraphQLApiClient: any;
+  
+  beforeAll(async () => {
+    const { graphQLApiClient } = await import('../services/GraphQLApiClient');
+    mockGraphQLApiClient = graphQLApiClient;
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
     
     // Default mock implementations
-    mockGameApiClient.createSession.mockResolvedValue('test-session-id');
-    mockGameApiClient.sendCommand.mockResolvedValue({
-      room: 'Test Room',
-      description_spooky: 'A spooky test room',
-      response_spooky: 'Test response',
-    });
+    if (mockGraphQLApiClient) {
+      mockGraphQLApiClient.createSession.mockResolvedValue('test-session-id');
+      mockGraphQLApiClient.sendCommand.mockResolvedValue({
+        room: 'Test Room',
+        description_spooky: 'A spooky test room',
+        response_spooky: 'Test response',
+      });
+    }
     
-    // Mock localStorage
-    const localStorageMock = {
-      getItem: vi.fn(),
-      setItem: vi.fn(),
-      removeItem: vi.fn(),
-      clear: vi.fn(),
-    };
-    Object.defineProperty(window, 'localStorage', {
-      value: localStorageMock,
-      writable: true,
-    });
+    // Clear localStorage
+    localStorage.clear();
   });
 
   afterEach(() => {
@@ -66,7 +64,7 @@ describe('GrimoireContainer Command Submission Property Tests', () => {
   async function renderAndSubmitCommand(command: string) {
     // Reset mocks for this iteration
     vi.clearAllMocks();
-    mockGameApiClient.createSession.mockResolvedValue('test-session-id');
+    mockGraphQLApiClient.createSession.mockResolvedValue('test-session-id');
     
     const user = userEvent.setup();
     const { container } = render(
@@ -77,11 +75,11 @@ describe('GrimoireContainer Command Submission Property Tests', () => {
 
     // Wait for session initialization
     await waitFor(() => {
-      expect(mockGameApiClient.createSession).toHaveBeenCalled();
+      expect(mockGraphQLApiClient.createSession).toHaveBeenCalled();
     }, { timeout: 5000 });
 
     // Find and interact with command input within this specific container
-    const input = container.querySelector('input[aria-label="Game command input"]') as HTMLInputElement;
+    const input = container.querySelector('input[aria-label*="Game command input"]') as HTMLInputElement;
     expect(input).toBeTruthy();
     
     await user.type(input, command);
@@ -89,7 +87,7 @@ describe('GrimoireContainer Command Submission Property Tests', () => {
 
     // Wait for API call - just check it was called, not with specific args
     await waitFor(() => {
-      expect(mockGameApiClient.sendCommand).toHaveBeenCalled();
+      expect(mockGraphQLApiClient.sendCommand).toHaveBeenCalled();
     }, { timeout: 5000 });
 
     return container;
@@ -121,7 +119,7 @@ describe('GrimoireContainer Command Submission Property Tests', () => {
     );
 
     for (const testCase of testCases) {
-      mockGameApiClient.sendCommand.mockResolvedValue({
+      mockGraphQLApiClient.sendCommand.mockResolvedValue({
         room: testCase.room,
         description_spooky: testCase.description_spooky,
         response_spooky: testCase.response_spooky,
@@ -166,7 +164,7 @@ describe('GrimoireContainer Command Submission Property Tests', () => {
 
     for (const testCase of testCases) {
       // Setup mock to throw an error
-      mockGameApiClient.sendCommand.mockRejectedValue(new Error(testCase.errorMessage));
+      mockGraphQLApiClient.sendCommand.mockRejectedValue(new Error(testCase.errorMessage));
 
       // Render and submit command
       const container = await renderAndSubmitCommand(testCase.command);
@@ -210,7 +208,7 @@ describe('GrimoireContainer Command Submission Property Tests', () => {
     );
 
     for (const testCase of testCases) {
-      mockGameApiClient.sendCommand.mockResolvedValue({
+      mockGraphQLApiClient.sendCommand.mockResolvedValue({
         room: testCase.room,
         description_spooky: testCase.description_spooky,
         response_spooky: testCase.response_spooky,
@@ -254,7 +252,7 @@ describe('GrimoireContainer Command Submission Property Tests', () => {
     );
 
     for (const testCase of testCases) {
-      mockGameApiClient.sendCommand.mockResolvedValue({
+      mockGraphQLApiClient.sendCommand.mockResolvedValue({
         room: testCase.room,
         description_spooky: testCase.description_spooky,
         response_spooky: testCase.response_spooky,
@@ -291,7 +289,7 @@ describe('GrimoireContainer Command Submission Property Tests', () => {
     );
 
     for (const testCase of testCases) {
-      mockGameApiClient.sendCommand.mockResolvedValue({
+      mockGraphQLApiClient.sendCommand.mockResolvedValue({
         room: testCase.room,
         description_spooky: testCase.description_spooky,
         response_spooky: testCase.response_spooky,
@@ -336,7 +334,7 @@ describe('GrimoireContainer Command Submission Property Tests', () => {
     );
 
     for (const testCase of testCases) {
-      mockGameApiClient.sendCommand.mockResolvedValue({
+      mockGraphQLApiClient.sendCommand.mockResolvedValue({
         room: testCase.room,
         description_spooky: testCase.description_spooky,
         response_spooky: testCase.response_spooky,
@@ -379,7 +377,7 @@ describe('GrimoireContainer Command Submission Property Tests', () => {
     );
 
     for (const testCase of testCases) {
-      mockGameApiClient.sendCommand.mockResolvedValue({
+      mockGraphQLApiClient.sendCommand.mockResolvedValue({
         room: 'Test Room',
         description_spooky: 'Test description',
         response_spooky: testCase.responseText,

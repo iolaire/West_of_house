@@ -227,7 +227,7 @@
   - Test deployment to sandbox environment
   - _Requirements: 9.4_
 
-- [ ] 18. Checkpoint - Ensure all tests pass
+- [x] 18. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 19. Deploy to production

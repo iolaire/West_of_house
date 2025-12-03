@@ -25,6 +25,7 @@
 
 ## Development Environment
 
+- **Node.js Version**: 24.x (latest LTS, supported until April 2028)
 - **Virtual Environment**: Python venv for dependency isolation
 - **Location**: `venv/` directory (gitignored)
 - **Python Version**: 3.12

@@ -4,6 +4,7 @@
  */
 
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
 // Mock environment variables for tests
 process.env.VITE_API_BASE_URL = 'http://localhost:3001';
@@ -40,4 +41,19 @@ class LocalStorageMock {
 }
 
 global.localStorage = new LocalStorageMock() as Storage;
+
+// Mock AWS Amplify generateClient to avoid requiring Amplify.configure()
+vi.mock('aws-amplify/data', () => ({
+  generateClient: vi.fn(() => ({
+    models: {
+      GameSession: {
+        create: vi.fn(),
+        get: vi.fn(),
+        update: vi.fn(),
+        delete: vi.fn(),
+      },
+    },
+    graphql: vi.fn(),
+  })),
+}));
 
