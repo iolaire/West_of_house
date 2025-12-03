@@ -28,7 +28,7 @@
   - **Property 18: Response Parsing**
   - **Validates: Requirements 9.2**
 
-- [ ] 4. Implement session management with localStorage
+- [x] 4. Implement session management with localStorage
   - Create SessionManager context provider
   - Implement session creation and storage in localStorage
   - Implement session retrieval on app load
@@ -36,22 +36,24 @@
   - Provide session context to child components
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 4.1 Write property test for session storage
+- [x] 4.1 Write property test for session storage
   - **Property 12: Session Storage**
   - **Validates: Requirements 5.2**
 
-- [ ] 5. Create room image mapping utility
+- [x] 5. Create room image mapping utility
   - Implement mapRoomToImage() function (room name → filename)
   - Handle special characters and spaces in room names
   - Add fallback to default_haunted.png for missing images
   - Create image preloading utility function
+  - Log non-mappable rooms (rooms without matching images) to a text file for debugging
+  - Maintain a list of unmapped rooms to help identify missing images
   - _Requirements: 6.1, 6.2, 6.3_
 
-- [ ] 5.1 Write property test for room name mapping
+- [x] 5.1 Write property test for room name mapping
   - **Property 13: Room Name to Image Mapping**
   - **Validates: Requirements 6.1**
 
-- [ ] 6. Implement ImagePane component with dissolve transitions
+- [x] 6. Implement ImagePane component with dissolve transitions
   - Create ImagePane component with state management
   - Implement 3-second dissolve transition logic
   - Add transition queue for rapid room changes
@@ -60,27 +62,27 @@
   - Add error handling for failed image loads
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 6.2, 6.4_
 
-- [ ] 6.1 Write property test for transition duration
+- [x] 6.1 Write property test for transition duration
   - **Property 1: Transition Duration Consistency**
   - **Validates: Requirements 2.1**
 
-- [ ] 6.2 Write property test for transition atomicity
+- [x] 6.2 Write property test for transition atomicity
   - **Property 2: Transition Atomicity**
   - **Validates: Requirements 2.2**
 
-- [ ] 6.3 Write property test for transition completion
+- [x] 6.3 Write property test for transition completion
   - **Property 3: Transition Completion State**
   - **Validates: Requirements 2.3**
 
-- [ ] 6.4 Write property test for transition queue ordering
+- [x] 6.4 Write property test for transition queue ordering
   - **Property 4: Transition Queue Ordering**
   - **Validates: Requirements 2.4**
 
-- [ ] 6.5 Write property test for image preloading
+- [x] 6.5 Write property test for image preloading
   - **Property 14: Image Preloading**
   - **Validates: Requirements 6.2**
 
-- [ ] 6.6 Write property test for image update synchronization
+- [x] 6.6 Write property test for image update synchronization
   - **Property 15: Image Update Synchronization**
   - **Validates: Requirements 6.4**
 
