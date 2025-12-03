@@ -37,7 +37,12 @@ MVP subset of haunted theme data:
 - Objects: `response_original` + `response_spooky`
 - Always use spooky variants in gameplay
 
-## Backend Source (`src/` - to be created)
+## Backend Source (`src/` - Development Location)
+
+**Development Workflow:**
+- All backend development happens in `src/lambda/game_handler/`
+- Deployment scripts copy code to `amplify/functions/game-handler/`
+- Never edit files directly in `amplify/functions/` - they will be overwritten
 
 ```
 src/
@@ -86,7 +91,9 @@ tests/
 - `tech.md`: Technology stack and commands
 - `structure.md`: This file
 
-## AWS Amplify Gen 2 (TypeScript-based)
+## AWS Amplify Gen 2 (TypeScript-based - Deployment Target)
+
+**Important:** Files in `amplify/functions/game-handler/` are copied from `src/lambda/game_handler/` during deployment. Do not edit them directly.
 
 ```
 amplify/
@@ -96,9 +103,9 @@ amplify/
 ├── functions/
 │   └── game-handler/
 │       ├── resource.ts           # Lambda function definition (TypeScript)
-│       ├── handler.py            # Python Lambda handler
-│       ├── requirements.txt      # Python dependencies
-│       └── data/                 # Game data bundled with function
+│       ├── handler.py            # Python Lambda handler (copied from src/)
+│       ├── requirements.txt      # Python dependencies (copied from src/)
+│       └── data/                 # Game data bundled with function (copied from src/)
 │           ├── rooms_haunted.json
 │           ├── objects_haunted.json
 │           └── flags_haunted.json
@@ -111,7 +118,7 @@ amplify/
 - `backend.ts`: Main entry point that imports and configures all resources
 - `data/resource.ts`: DynamoDB table schema and configuration
 - `functions/*/resource.ts`: Lambda function definitions with CDK
-- `functions/*/handler.py`: Actual Python Lambda code
+- `functions/*/handler.py`: Actual Python Lambda code (copied from `src/` during deployment)
 
 **Gen 1 (Legacy - for reference):**
 ```

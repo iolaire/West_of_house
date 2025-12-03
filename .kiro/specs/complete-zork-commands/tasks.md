@@ -192,8 +192,8 @@
   - **Property 16: Smell provides olfactory information**
   - **Validates: Requirements 4.7**
 
-- [-] 6. Implement combat and interaction commands
-- [ ] 6.1 Implement ATTACK command
+- [x] 6. Implement combat and interaction commands
+- [x] 6.1 Implement ATTACK command
   - Add handle_attack method to GameEngine
   - Support attacking creatures with weapons
   - Add combat properties to creatures (health, strength)
@@ -203,11 +203,11 @@
   - Return combat descriptions with haunted theme
   - _Requirements: 5.1_
 
-- [ ] 6.2 Write property test for attack combat initiation
+- [x] 6.2 Write property test for attack combat initiation
   - **Property 17: Attack initiates combat**
   - **Validates: Requirements 5.1**
 
-- [ ] 6.3 Implement THROW command
+- [x] 6.3 Implement THROW command
   - Add handle_throw method to GameEngine
   - Support throwing objects at targets
   - Validate object is in inventory
@@ -216,11 +216,11 @@
   - Return thematic descriptions
   - _Requirements: 5.2_
 
-- [ ] 6.4 Write property test for throw relocation
+- [x] 6.4 Write property test for throw relocation
   - **Property 18: Throw relocates object**
   - **Validates: Requirements 5.2**
 
-- [ ] 6.5 Implement GIVE command
+- [x] 6.5 Implement GIVE command
   - Add handle_give method to GameEngine
   - Support giving objects to NPCs
   - Validate object is in inventory
@@ -229,11 +229,11 @@
   - Return appropriate messages
   - _Requirements: 5.3_
 
-- [ ] 6.6 Write property test for give ownership transfer
+- [x] 6.6 Write property test for give ownership transfer
   - **Property 19: Give transfers ownership**
   - **Validates: Requirements 5.3**
 
-- [ ] 6.7 Implement TELL and ASK commands
+- [x] 6.7 Implement TELL and ASK commands
   - Add handle_tell method to GameEngine
   - Support dialogue with NPCs
   - Add dialogue responses to NPC data
@@ -242,11 +242,11 @@
   - Use thematic dialogue
   - _Requirements: 5.4_
 
-- [ ] 6.8 Write property test for tell/ask dialogue
+- [x] 6.8 Write property test for tell/ask dialogue
   - **Property 20: Tell/Ask generates dialogue**
   - **Validates: Requirements 5.4**
 
-- [ ] 6.9 Implement WAKE command
+- [x] 6.9 Implement WAKE command
   - Add handle_wake method to GameEngine
   - Support waking sleeping creatures
   - Add sleeping state to creatures
@@ -255,26 +255,26 @@
   - Return appropriate messages
   - _Requirements: 5.5_
 
-- [ ] 6.10 Write property test for wake state change
+- [x] 6.10 Write property test for wake state change
   - **Property 21: Wake changes creature state**
   - **Validates: Requirements 5.5**
 
-- [ ] 6.11 Implement KISS command
+- [x] 6.11 Implement KISS command
   - Add handle_kiss method to GameEngine
   - Support kissing NPCs
   - Return humorous or thematic responses
   - No state changes (just flavor)
   - _Requirements: 5.6_
 
-- [ ] 6.12 Write property test for kiss response
+- [x] 6.12 Write property test for kiss response
   - **Property 22: Kiss generates response**
   - **Validates: Requirements 5.6**
 
-- [ ] 7. Checkpoint - Ensure all tests pass
+- [x] 7. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 8. Implement utility commands
-- [ ] 8.1 Implement BURN command
+- [-] 8. Implement utility commands
+- [x] 8.1 Implement BURN command
   - Add handle_burn method to GameEngine
   - Support burning flammable objects with fire sources
   - Add flammable property to objects
@@ -283,11 +283,11 @@
   - Return thematic descriptions
   - _Requirements: 6.1_
 
-- [ ] 8.2 Write property test for burn destruction
+- [x] 8.2 Write property test for burn destruction
   - **Property 23: Burn destroys flammable objects**
   - **Validates: Requirements 6.1**
 
-- [ ] 8.3 Implement CUT command
+- [x] 8.3 Implement CUT command
   - Add handle_cut method to GameEngine
   - Support cutting objects with cutting tools
   - Add cuttable property to objects
@@ -295,11 +295,11 @@
   - Return appropriate messages
   - _Requirements: 6.2_
 
-- [ ] 8.4 Write property test for cut modification
+- [x] 8.4 Write property test for cut modification
   - **Property 24: Cut modifies objects**
   - **Validates: Requirements 6.2**
 
-- [ ] 8.5 Implement DIG command
+- [x] 8.5 Implement DIG command
   - Add handle_dig method to GameEngine
   - Support digging at locations with tools
   - Add diggable property to locations
@@ -307,11 +307,11 @@
   - Return appropriate messages
   - _Requirements: 6.3_
 
-- [ ] 8.6 Write property test for dig reveals
+- [x] 8.6 Write property test for dig reveals
   - **Property 25: Dig reveals or modifies**
   - **Validates: Requirements 6.3**
 
-- [ ] 8.7 Implement INFLATE and DEFLATE commands
+- [x] 8.7 Implement INFLATE and DEFLATE commands
   - Add handle_inflate and handle_deflate methods to GameEngine
   - Support inflating/deflating inflatable objects
   - Add inflatable property to objects
@@ -319,7 +319,7 @@
   - Return appropriate messages
   - _Requirements: 6.4_
 
-- [ ] 8.8 Write property test for inflate/deflate round-trip
+- [x] 8.8 Write property test for inflate/deflate round-trip
   - **Property 26: Inflate/Deflate inverse operations**
   - **Validates: Requirements 6.4**
 
@@ -337,8 +337,8 @@
   - **Property 30: Squeeze generates response or state change**
   - **Validates: Requirements 6.5, 6.6, 6.7, 6.8**
 
-- [ ] 9. Implement meta-game commands
-- [ ] 9.1 Implement SAVE command
+- [-] 9. Implement meta-game commands
+- [-] 9.1 Implement SAVE command
   - Add handle_save method to GameEngine
   - Serialize current game state to JSON
   - Store in DynamoDB with unique save ID

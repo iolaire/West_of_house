@@ -3762,6 +3762,130 @@ class GameEngine:
                 message="Something went wrong while smelling."
             )
     
+    def handle_burn(
+        self,
+        object_id: str,
+        fire_source_id: Optional[str],
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle burning a flammable object with a fire source.
+        
+        Args:
+            object_id: The object to burn
+            fire_source_id: The fire source (lamp, matches, etc.) - optional
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 6.1
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if object exists and is accessible
+            if object_id not in current_room.items and object_id not in state.inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            # Get the object
+            game_object = self.world.get_object(object_id)
+            
+            # Check if object is flammable
+            if not game_object.state.get('is_flammable', False):
+                return ActionResult(
+                    success=False,
+                    message=f"The {object_id} won't burn."
+                )
+            
+            # If fire source specified, validate it
+            if fire_source_id:
+                # Check if fire source is in inventory or room
+                if fire_source_id not in state.inventory and fire_source_id not in current_room.items:
+                    return ActionResult(
+                        success=False,
+                        message=f"You don't have any {fire_source_id}."
+                    )
+                
+                # Get fire source object
+                fire_source = self.world.get_object(fire_source_id)
+                
+                # Check if it's actually a fire source
+                if not fire_source.state.get('is_fire_source', False):
+                    return ActionResult(
+                        success=False,
+                        message=f"You can't burn things with the {fire_source_id}."
+                    )
+                
+                # Check if fire source is lit (for lamp)
+                if fire_source_id == "lamp" and not state.get_flag("lamp_on", False):
+                    return ActionResult(
+                        success=False,
+                        message="The lamp isn't lit."
+                    )
+            
+            # Burn the object
+            notifications = []
+            
+            # Remove object from room or inventory
+            if object_id in current_room.items:
+                current_room.items.remove(object_id)
+            if object_id in state.inventory:
+                state.remove_from_inventory(object_id)
+            
+            # Mark object as burned
+            game_object.state['is_burned'] = True
+            game_object.state['is_destroyed'] = True
+            
+            # Get burn message
+            burn_message = f"The {object_id} catches fire and burns to ashes, leaving nothing but a faint smell of smoke and decay."
+            
+            # Check for BURN interaction with custom message
+            for interaction in game_object.interactions:
+                if interaction.verb == "BURN":
+                    burn_message = interaction.response_spooky
+                    
+                    # Apply state changes
+                    if interaction.state_change:
+                        for key, value in interaction.state_change.items():
+                            game_object.state[key] = value
+                    
+                    # Apply flag changes
+                    if interaction.flag_change:
+                        for flag_name, flag_value in interaction.flag_change.items():
+                            state.set_flag(flag_name, flag_value)
+                    
+                    # Apply sanity effects
+                    if interaction.sanity_effect != 0:
+                        state.sanity = max(0, min(100, state.sanity + interaction.sanity_effect))
+                        if interaction.sanity_effect < 0:
+                            notifications.append("The flames dance with an unnatural hunger...")
+                    
+                    break
+            
+            return ActionResult(
+                success=True,
+                message=burn_message,
+                inventory_changed=(object_id in state.inventory),
+                state_changes={'sanity': state.sanity} if notifications else {},
+                notifications=notifications
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while burning that."
+            )
+    
     def handle_place_treasure(
         self,
         object_id: str,
@@ -3872,6 +3996,763 @@ class GameEngine:
         Requirements: 13.4, 13.5
         """
         return state.score >= 350
+    
+    def handle_attack(
+        self,
+        target_id: str,
+        weapon_id: Optional[str],
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle attacking creatures with weapons.
+        
+        Supports attacking creatures with weapons, implements basic combat
+        resolution, and updates creature and player states. Returns combat
+        descriptions with haunted theme.
+        
+        Args:
+            target_id: The creature to attack
+            weapon_id: The weapon to use (optional, can use bare hands)
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status, message, and state updates
+            
+        Requirements: 5.1
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if target is in current room
+            if target_id not in current_room.items:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {target_id} here."
+                )
+            
+            # Get target object
+            target = self.world.get_object(target_id)
+            
+            # Check if target is a creature
+            is_creature = target.state.get('is_creature', False)
+            
+            if not is_creature:
+                return ActionResult(
+                    success=False,
+                    message=f"You can't attack the {target_id}."
+                )
+            
+            # Check if weapon is specified and in inventory
+            weapon = None
+            weapon_damage = 1  # Base damage for bare hands
+            weapon_name = "your bare hands"
+            
+            if weapon_id:
+                if weapon_id not in state.inventory:
+                    return ActionResult(
+                        success=False,
+                        message=f"You don't have the {weapon_id}."
+                    )
+                
+                weapon = self.world.get_object(weapon_id)
+                
+                # Check if object is actually a weapon
+                is_weapon = weapon.state.get('is_weapon', False)
+                
+                if not is_weapon:
+                    return ActionResult(
+                        success=False,
+                        message=f"The {weapon_id} is not a weapon."
+                    )
+                
+                weapon_damage = weapon.state.get('damage', 5)
+                weapon_name = weapon.name_spooky if weapon.name_spooky else weapon.name
+            
+            # Get creature health
+            creature_health = target.state.get('health', 10)
+            creature_strength = target.state.get('strength', 5)
+            creature_name = target.name_spooky if target.name_spooky else target.name
+            
+            # Calculate damage dealt to creature
+            damage_dealt = weapon_damage
+            
+            # Apply damage to creature
+            new_health = creature_health - damage_dealt
+            target.state['health'] = max(0, new_health)
+            
+            notifications = []
+            sanity_change = -2  # Attacking is disturbing
+            
+            # Check if creature is dead
+            if new_health <= 0:
+                # Creature is dead
+                target.state['is_alive'] = False
+                target.state['is_dead'] = True
+                
+                # Remove creature from room
+                current_room.items.remove(target_id)
+                
+                # Check if creature drops items
+                drops_items = target.state.get('drops_items', [])
+                for item_id in drops_items:
+                    if item_id not in current_room.items:
+                        current_room.items.append(item_id)
+                
+                # Apply sanity effects
+                state.sanity = max(0, min(100, state.sanity + sanity_change))
+                notifications.append("The violence weighs on your mind...")
+                
+                # Create death message
+                death_message = target.state.get('death_message', 
+                    f"The {creature_name} collapses in a heap, its life force extinguished.")
+                
+                attack_message = f"You strike the {creature_name} with {weapon_name}!\n\n{death_message}"
+                
+                # Check for victory flag
+                victory_flag = target.state.get('victory_flag', None)
+                if victory_flag:
+                    state.set_flag(victory_flag, True)
+                    notifications.append("You have overcome a great challenge!")
+                
+                return ActionResult(
+                    success=True,
+                    message=attack_message,
+                    state_changes={
+                        'sanity': state.sanity,
+                        'flags': state.flags
+                    },
+                    notifications=notifications,
+                    sanity_change=sanity_change
+                )
+            
+            # Creature is still alive, it counterattacks
+            player_damage = creature_strength
+            
+            # Check if player has armor
+            armor_reduction = 0
+            for item_id in state.inventory:
+                try:
+                    item = self.world.get_object(item_id)
+                    if item.state.get('is_armor', False):
+                        armor_reduction += item.state.get('armor_value', 0)
+                except ValueError:
+                    pass
+            
+            actual_damage = max(1, player_damage - armor_reduction)
+            
+            # Apply damage to player (tracked via sanity for now)
+            state.sanity = max(0, state.sanity - actual_damage)
+            sanity_change -= actual_damage
+            
+            # Create combat message
+            attack_message = f"You strike the {creature_name} with {weapon_name}, dealing {damage_dealt} damage!\n\n"
+            attack_message += f"The {creature_name} retaliates, striking you for {actual_damage} damage!"
+            
+            notifications.append(f"The {creature_name} has {new_health} health remaining.")
+            
+            # Check if player died
+            if state.sanity <= 0:
+                state.set_flag("player_dead", True)
+                notifications.append("You have been slain! The darkness claims you...")
+            
+            return ActionResult(
+                success=True,
+                message=attack_message,
+                state_changes={
+                    'sanity': state.sanity,
+                    'flags': state.flags
+                },
+                notifications=notifications,
+                sanity_change=sanity_change
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {target_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong during combat."
+            )
+    
+    def handle_throw(
+        self,
+        object_id: str,
+        target_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle throwing objects at targets.
+        
+        Validates object is in inventory, moves object to target location,
+        and applies any throw effects (damage, activation). Returns thematic
+        descriptions.
+        
+        Args:
+            object_id: The object to throw
+            target_id: The target to throw at
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status, message, and state updates
+            
+        Requirements: 5.2
+        """
+        try:
+            # Check if object is in inventory
+            if object_id not in state.inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have the {object_id}."
+                )
+            
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if target is in current room
+            if target_id not in current_room.items:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {target_id} here."
+                )
+            
+            # Get object and target
+            game_object = self.world.get_object(object_id)
+            target = self.world.get_object(target_id)
+            
+            # Check if object is throwable
+            is_throwable = game_object.state.get('is_throwable', True)  # Most objects can be thrown
+            
+            if not is_throwable:
+                return ActionResult(
+                    success=False,
+                    message=f"You can't throw the {object_id}."
+                )
+            
+            # Remove from inventory
+            state.remove_from_inventory(object_id)
+            
+            # Add to current room (object lands here)
+            current_room.items.append(object_id)
+            
+            notifications = []
+            sanity_change = 0
+            
+            # Check if throwing at a creature
+            is_creature = target.state.get('is_creature', False)
+            
+            if is_creature:
+                # Calculate throw damage
+                throw_damage = game_object.state.get('throw_damage', 2)
+                
+                # Apply damage to creature
+                creature_health = target.state.get('health', 10)
+                new_health = creature_health - throw_damage
+                target.state['health'] = max(0, new_health)
+                
+                creature_name = target.name_spooky if target.name_spooky else target.name
+                object_name = game_object.name_spooky if game_object.name_spooky else game_object.name
+                
+                # Check if creature is dead
+                if new_health <= 0:
+                    target.state['is_alive'] = False
+                    target.state['is_dead'] = True
+                    current_room.items.remove(target_id)
+                    
+                    # Check if creature drops items
+                    drops_items = target.state.get('drops_items', [])
+                    for item_id in drops_items:
+                        if item_id not in current_room.items:
+                            current_room.items.append(item_id)
+                    
+                    throw_message = f"You hurl the {object_name} at the {creature_name}!\n\n"
+                    throw_message += f"The {creature_name} is struck down and collapses!"
+                    
+                    sanity_change = -2
+                    notifications.append("The violence disturbs you...")
+                else:
+                    throw_message = f"You hurl the {object_name} at the {creature_name}!\n\n"
+                    throw_message += f"The {creature_name} is hit for {throw_damage} damage!"
+                    notifications.append(f"The {creature_name} has {new_health} health remaining.")
+            else:
+                # Throwing at non-creature
+                object_name = game_object.name_spooky if game_object.name_spooky else game_object.name
+                target_name = target.name_spooky if target.name_spooky else target.name
+                
+                throw_message = f"You throw the {object_name} at the {target_name}. It bounces off harmlessly."
+                
+                # Check for special throw effects
+                throw_effect = game_object.state.get('throw_effect', None)
+                if throw_effect:
+                    # Apply custom throw effect
+                    if throw_effect == 'break':
+                        game_object.state['is_broken'] = True
+                        throw_message += f"\n\nThe {object_name} shatters on impact!"
+                    elif throw_effect == 'activate':
+                        target.state['is_activated'] = True
+                        throw_message += f"\n\nThe impact activates the {target_name}!"
+            
+            # Apply sanity effects
+            if sanity_change != 0:
+                state.sanity = max(0, min(100, state.sanity + sanity_change))
+            
+            return ActionResult(
+                success=True,
+                message=throw_message,
+                inventory_changed=True,
+                state_changes={
+                    'inventory': state.inventory,
+                    'sanity': state.sanity
+                },
+                notifications=notifications,
+                sanity_change=sanity_change
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {target_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while throwing."
+            )
+    
+    def handle_give(
+        self,
+        object_id: str,
+        npc_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle giving objects to NPCs.
+        
+        Validates object is in inventory, transfers object to NPC possession,
+        and triggers NPC reactions if defined. Returns appropriate messages.
+        
+        Args:
+            object_id: The object to give
+            npc_id: The NPC to give the object to
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status, message, and state updates
+            
+        Requirements: 5.3
+        """
+        try:
+            # Check if object is in inventory
+            if object_id not in state.inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have the {object_id}."
+                )
+            
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if NPC is in current room
+            if npc_id not in current_room.items:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {npc_id} here."
+                )
+            
+            # Get object and NPC
+            game_object = self.world.get_object(object_id)
+            npc = self.world.get_object(npc_id)
+            
+            # Check if target is an NPC
+            is_npc = npc.state.get('is_npc', False)
+            is_creature = npc.state.get('is_creature', False)
+            
+            if not is_npc and not is_creature:
+                return ActionResult(
+                    success=False,
+                    message=f"You can't give things to the {npc_id}."
+                )
+            
+            # Remove from player inventory
+            state.remove_from_inventory(object_id)
+            
+            # Add to NPC's inventory
+            if 'inventory' not in npc.state:
+                npc.state['inventory'] = []
+            npc.state['inventory'].append(object_id)
+            
+            notifications = []
+            sanity_change = 0
+            
+            # Check for NPC reactions to this specific object
+            reactions = npc.state.get('gift_reactions', {})
+            
+            object_name = game_object.name_spooky if game_object.name_spooky else game_object.name
+            npc_name = npc.name_spooky if npc.name_spooky else npc.name
+            
+            if object_id in reactions:
+                # NPC has a specific reaction to this object
+                reaction = reactions[object_id]
+                give_message = f"You give the {object_name} to the {npc_name}.\n\n{reaction['message']}"
+                
+                # Apply reaction effects
+                if 'flag_change' in reaction:
+                    for flag_name, flag_value in reaction['flag_change'].items():
+                        state.set_flag(flag_name, flag_value)
+                
+                if 'sanity_effect' in reaction:
+                    sanity_change = reaction['sanity_effect']
+                
+                if 'gives_item' in reaction:
+                    # NPC gives something in return
+                    return_item = reaction['gives_item']
+                    state.add_to_inventory(return_item)
+                    try:
+                        return_obj = self.world.get_object(return_item)
+                        return_name = return_obj.name_spooky if return_obj.name_spooky else return_obj.name
+                        notifications.append(f"The {npc_name} gives you {return_name} in return!")
+                    except ValueError:
+                        notifications.append(f"The {npc_name} gives you something in return!")
+                
+                if 'npc_leaves' in reaction and reaction['npc_leaves']:
+                    # NPC leaves the room
+                    current_room.items.remove(npc_id)
+                    notifications.append(f"The {npc_name} departs, satisfied.")
+            else:
+                # Default reaction
+                default_reaction = npc.state.get('default_gift_reaction', 
+                    f"The {npc_name} accepts the {object_name} with a cold, unreadable expression.")
+                give_message = f"You give the {object_name} to the {npc_name}.\n\n{default_reaction}"
+            
+            # Apply sanity effects
+            if sanity_change != 0:
+                state.sanity = max(0, min(100, state.sanity + sanity_change))
+            
+            return ActionResult(
+                success=True,
+                message=give_message,
+                inventory_changed=True,
+                state_changes={
+                    'inventory': state.inventory,
+                    'sanity': state.sanity,
+                    'flags': state.flags
+                },
+                notifications=notifications,
+                sanity_change=sanity_change
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {npc_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while giving that."
+            )
+    
+    def handle_tell(
+        self,
+        npc_id: str,
+        message: Optional[str],
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle dialogue with NPCs (TELL and ASK commands).
+        
+        Supports dialogue with NPCs, returns NPC responses, and tracks
+        conversation state if needed. Uses thematic dialogue.
+        
+        Args:
+            npc_id: The NPC to talk to
+            message: The message or topic (optional)
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and dialogue response
+            
+        Requirements: 5.4
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if NPC is in current room
+            if npc_id not in current_room.items:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {npc_id} here."
+                )
+            
+            # Get NPC
+            npc = self.world.get_object(npc_id)
+            
+            # Check if target is an NPC or creature
+            is_npc = npc.state.get('is_npc', False)
+            is_creature = npc.state.get('is_creature', False)
+            
+            if not is_npc and not is_creature:
+                return ActionResult(
+                    success=False,
+                    message=f"The {npc_id} doesn't respond to your words."
+                )
+            
+            npc_name = npc.name_spooky if npc.name_spooky else npc.name
+            
+            # Check if NPC has dialogue responses
+            dialogue_responses = npc.state.get('dialogue_responses', {})
+            
+            if message and message.lower() in dialogue_responses:
+                # NPC has a specific response to this topic
+                response = dialogue_responses[message.lower()]
+                
+                # Check if response has conditions
+                if isinstance(response, dict):
+                    # Complex response with conditions
+                    if 'condition_flag' in response:
+                        condition_met = state.get_flag(response['condition_flag'], False)
+                        if condition_met:
+                            dialogue_message = response.get('response_if_true', response.get('response', ''))
+                        else:
+                            dialogue_message = response.get('response_if_false', response.get('response', ''))
+                    else:
+                        dialogue_message = response.get('response', '')
+                    
+                    # Apply any flag changes
+                    if 'flag_change' in response:
+                        for flag_name, flag_value in response['flag_change'].items():
+                            state.set_flag(flag_name, flag_value)
+                else:
+                    # Simple string response
+                    dialogue_message = response
+            else:
+                # Default response
+                default_response = npc.state.get('default_dialogue', 
+                    f"The {npc_name} stares at you with hollow eyes but says nothing.")
+                dialogue_message = default_response
+            
+            # Track conversation state
+            if 'conversation_count' not in npc.state:
+                npc.state['conversation_count'] = 0
+            npc.state['conversation_count'] += 1
+            
+            return ActionResult(
+                success=True,
+                message=dialogue_message,
+                state_changes={
+                    'flags': state.flags
+                }
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {npc_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong during conversation."
+            )
+    
+    def handle_wake(
+        self,
+        creature_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle waking sleeping creatures.
+        
+        Supports waking sleeping creatures, changes creature state from
+        sleeping to awake, and triggers wake-up reactions. Returns
+        appropriate messages.
+        
+        Args:
+            creature_id: The creature to wake
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status, message, and state updates
+            
+        Requirements: 5.5
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if creature is in current room
+            if creature_id not in current_room.items:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {creature_id} here."
+                )
+            
+            # Get creature
+            creature = self.world.get_object(creature_id)
+            
+            # Check if target is a creature or NPC
+            is_creature = creature.state.get('is_creature', False)
+            is_npc = creature.state.get('is_npc', False)
+            
+            if not is_creature and not is_npc:
+                return ActionResult(
+                    success=False,
+                    message=f"You can't wake the {creature_id}."
+                )
+            
+            # Check if creature is sleeping
+            is_sleeping = creature.state.get('is_sleeping', False)
+            
+            if not is_sleeping:
+                creature_name = creature.name_spooky if creature.name_spooky else creature.name
+                return ActionResult(
+                    success=False,
+                    message=f"The {creature_name} is not sleeping."
+                )
+            
+            # Wake the creature
+            creature.state['is_sleeping'] = False
+            creature.state['is_awake'] = True
+            
+            notifications = []
+            sanity_change = 0
+            
+            creature_name = creature.name_spooky if creature.name_spooky else creature.name
+            
+            # Check for wake-up reaction
+            wake_reaction = creature.state.get('wake_reaction', None)
+            
+            if wake_reaction:
+                wake_message = f"You wake the {creature_name}.\n\n{wake_reaction}"
+                
+                # Check if waking triggers hostility
+                becomes_hostile = creature.state.get('hostile_when_woken', False)
+                if becomes_hostile:
+                    creature.state['is_hostile'] = True
+                    notifications.append(f"The {creature_name} looks angry at being disturbed!")
+                    sanity_change = -3
+            else:
+                # Default wake message
+                wake_message = f"You wake the {creature_name}. It stirs and opens its eyes, regarding you with an unsettling gaze."
+            
+            # Apply any flag changes
+            wake_flag = creature.state.get('wake_flag', None)
+            if wake_flag:
+                state.set_flag(wake_flag, True)
+            
+            # Apply sanity effects
+            if sanity_change != 0:
+                state.sanity = max(0, min(100, state.sanity + sanity_change))
+                notifications.append("The encounter disturbs you...")
+            
+            return ActionResult(
+                success=True,
+                message=wake_message,
+                state_changes={
+                    'sanity': state.sanity,
+                    'flags': state.flags
+                },
+                notifications=notifications,
+                sanity_change=sanity_change
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {creature_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while waking that."
+            )
+    
+    def handle_kiss(
+        self,
+        npc_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle kissing NPCs.
+        
+        Supports kissing NPCs and returns humorous or thematic responses.
+        No state changes (just flavor).
+        
+        Args:
+            npc_id: The NPC to kiss
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and response message
+            
+        Requirements: 5.6
+        """
+        try:
+            # Get current room
+            current_room = self.world.get_room(state.current_room)
+            
+            # Check if NPC is in current room
+            if npc_id not in current_room.items:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {npc_id} here."
+                )
+            
+            # Get NPC
+            npc = self.world.get_object(npc_id)
+            
+            # Check if target is an NPC or creature
+            is_npc = npc.state.get('is_npc', False)
+            is_creature = npc.state.get('is_creature', False)
+            
+            if not is_npc and not is_creature:
+                return ActionResult(
+                    success=False,
+                    message=f"Kissing the {npc_id} seems like a bad idea."
+                )
+            
+            npc_name = npc.name_spooky if npc.name_spooky else npc.name
+            
+            # Check for custom kiss response
+            kiss_response = npc.state.get('kiss_response', None)
+            
+            if kiss_response:
+                kiss_message = kiss_response
+            else:
+                # Default humorous/thematic responses
+                default_responses = [
+                    f"You kiss the {npc_name}. Its cold, lifeless lips send a shiver down your spine.",
+                    f"The {npc_name} recoils from your advance, looking deeply offended.",
+                    f"You lean in to kiss the {npc_name}, but it vanishes in a puff of smoke before you can make contact.",
+                    f"The {npc_name} accepts your kiss with an eerie smile that makes your blood run cold.",
+                    f"You kiss the {npc_name}. Nothing happens, but you feel foolish.",
+                    f"The {npc_name} turns its head away. Perhaps romance is not in the cards today.",
+                    f"Your lips meet the {npc_name}'s cold flesh. You immediately regret this decision."
+                ]
+                
+                # Use a consistent response based on npc_id hash
+                response_idx = hash(npc_id) % len(default_responses)
+                kiss_message = default_responses[response_idx]
+            
+            return ActionResult(
+                success=True,
+                message=kiss_message
+            )
+            
+        except ValueError as e:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {npc_id} here."
+            )
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message="Something went wrong during that awkward moment."
+            )
     
     def execute_command(
         self,
@@ -4039,6 +4920,47 @@ class GameEngine:
         # Handle smell commands (can smell object or room)
         if command.verb == "SMELL":
             return self.handle_smell(command.object, state)
+        
+        # Handle burn commands (format: "burn object" or "burn object with fire_source")
+        if command.verb == "BURN" and command.object:
+            # Target is the fire source (if specified with WITH preposition)
+            return self.handle_burn(command.object, command.target, state)
+        
+        # Handle attack commands (format: "attack creature" or "attack creature with weapon")
+        if command.verb in ["ATTACK", "KILL"] and command.object:
+            # Target is the weapon (if specified with WITH preposition)
+            return self.handle_attack(command.object, command.target, state)
+        
+        # Handle throw commands (format: "throw object at target")
+        if command.verb == "THROW" and command.object:
+            if not command.target:
+                return ActionResult(
+                    success=False,
+                    message=f"What do you want to throw the {command.object} at?"
+                )
+            return self.handle_throw(command.object, command.target, state)
+        
+        # Handle give commands (format: "give object to npc")
+        if command.verb == "GIVE" and command.object:
+            if not command.target:
+                return ActionResult(
+                    success=False,
+                    message=f"Who do you want to give the {command.object} to?"
+                )
+            return self.handle_give(command.object, command.target, state)
+        
+        # Handle tell/ask commands (format: "tell npc about topic" or "ask npc about topic")
+        if command.verb in ["TELL", "ASK"] and command.object:
+            # Target is the topic (optional)
+            return self.handle_tell(command.object, command.target, state)
+        
+        # Handle wake commands
+        if command.verb == "WAKE" and command.object:
+            return self.handle_wake(command.object, state)
+        
+        # Handle kiss commands
+        if command.verb == "KISS" and command.object:
+            return self.handle_kiss(command.object, state)
         
         # Handle unknown commands
         if command.verb == "UNKNOWN":

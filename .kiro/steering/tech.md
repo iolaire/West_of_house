@@ -31,6 +31,15 @@
 - **Python Version**: 3.12
 - **Activation**: `source venv/bin/activate` (macOS/Linux) or `venv\Scripts\activate` (Windows)
 
+## Development Workflow
+
+**Backend Development:**
+1. Work in `src/lambda/game_handler/` for all Python code
+2. Deployment scripts copy code to `amplify/functions/game-handler/`
+3. Never edit files directly in `amplify/functions/` - they will be overwritten
+4. Test locally from `src/lambda/game_handler/` directory
+5. Deploy using Git workflow (push to `production` branch)
+
 ## Testing
 
 **Backend (Python):**
@@ -254,13 +263,20 @@ aws dynamodb list-tags-of-resource --resource-arn <table-arn> --output json
 
 **Important**: Always use `--output json` with AWS CLI commands to prevent terminal overflow from table formatting.
 
-### Lambda Packaging
+### Lambda Development and Deployment
 
 ```bash
-# Package Lambda function with dependencies
-cd amplify/backend/function/gameHandler/src
-pip install -r requirements.txt -t .
-zip -r ../function.zip .
+# Work in source directory
+cd src/lambda/game_handler/
+
+# Install dependencies for local testing
+pip install -r requirements.txt
+
+# Run tests from project root
+pytest tests/
+
+# Deployment copies files to amplify/functions/game-handler/
+# This happens automatically via deployment scripts or Git push to production
 ```
 
 ### Testing
@@ -301,10 +317,14 @@ python3.12 -m venv venv
 # Activate virtual environment
 source venv/bin/activate
 
-# Install dependencies
+# Install dependencies (from project root)
 pip install -r requirements.txt
 
-# Run tests
+# Work in source directory
+cd src/lambda/game_handler/
+
+# Run tests (from project root)
+cd ../../..
 pytest tests/
 
 # Run with coverage
@@ -313,6 +333,8 @@ pytest --cov=src tests/
 # Deactivate when done
 deactivate
 ```
+
+**Important:** Always develop in `src/lambda/game_handler/`, not in `amplify/functions/game-handler/`
 
 ## Key Libraries
 

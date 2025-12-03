@@ -124,6 +124,20 @@ class CommandParser:
             'hear': 'LISTEN',
             'smell': 'SMELL',
             'sniff': 'SMELL',
+            'burn': 'BURN',
+            'ignite': 'BURN',
+            'cut': 'CUT',
+            'slice': 'CUT',
+            'dig': 'DIG',
+            'excavate': 'DIG',
+            'inflate': 'INFLATE',
+            'blow': 'INFLATE',
+            'deflate': 'DEFLATE',
+            'wave': 'WAVE',
+            'rub': 'RUB',
+            'touch': 'RUB',
+            'shake': 'SHAKE',
+            'squeeze': 'SQUEEZE',
         }
         
         # Utility verbs
