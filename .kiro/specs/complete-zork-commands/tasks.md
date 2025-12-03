@@ -389,15 +389,15 @@
   - Return confirmation messages
   - _Requirements: 7.6, 7.7, 7.8_
 
-- [ ] 10. Implement special and easter egg commands
-- [ ] 10.1 Implement easter egg commands (XYZZY, PLUGH)
+- [-] 10. Implement special and easter egg commands
+- [x] 10.1 Implement easter egg commands (XYZZY, PLUGH)
   - Add handle_easter_egg method to GameEngine
   - Recognize XYZZY, PLUGH, and other magic words
   - Return humorous or thematic responses
   - Optionally trigger special effects
   - _Requirements: 8.1_
 
-- [ ] 10.2 Implement HELLO command
+- [x] 10.2 Implement HELLO command
   - Add handle_hello method to GameEngine
   - Return greeting response
   - Vary response based on context
@@ -415,19 +415,19 @@
   - **Property 33: Profanity handling**
   - **Validates: Requirements 8.3**
 
-- [ ] 10.5 Implement PRAY, JUMP, YELL commands
+- [x] 10.5 Implement PRAY, JUMP, YELL commands
   - Add handle_pray, handle_jump, handle_yell methods
   - Return thematic responses
   - Apply any special effects if appropriate
   - _Requirements: 8.4, 8.5, 8.6_
 
-- [ ] 10.6 Implement ECHO command
+- [x] 10.6 Implement ECHO command
   - Add handle_echo method to GameEngine
   - Echo back player's words
   - Format echo appropriately
   - _Requirements: 8.7_
 
-- [ ] 10.7 Write property test for echo
+- [x] 10.7 Write property test for echo
   - **Property 34: Echo repeats input**
   - **Validates: Requirements 8.7**
 
