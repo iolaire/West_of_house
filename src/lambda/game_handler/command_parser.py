@@ -44,6 +44,12 @@ class CommandParser:
             'scale': 'CLIMB',
             'ascend': 'CLIMB',
             'descend': 'CLIMB',
+            'enter': 'ENTER',
+            'exit': 'EXIT',
+            'leave': 'EXIT',
+            'board': 'BOARD',
+            'embark': 'BOARD',
+            'disembark': 'DISEMBARK',
         }
         
         # Direction words (can be used alone or with GO)
@@ -113,7 +119,6 @@ class CommandParser:
             'look': 'LOOK',
             'l': 'LOOK',
             'quit': 'QUIT',
-            'exit': 'QUIT',
             'q': 'QUIT',
         }
         
@@ -174,6 +179,9 @@ class CommandParser:
             elif two_word == "switch off":
                 obj = " ".join(words[2:]) if len(words) > 2 else None
                 return ParsedCommand(verb="TURN_OFF", object=obj)
+            elif two_word == "get out":
+                obj = " ".join(words[2:]) if len(words) > 2 else None
+                return ParsedCommand(verb="GET_OUT", object=obj)
         
         first_word = words[0]
         
@@ -229,6 +237,54 @@ class CommandParser:
                 return ParsedCommand(
                     verb=verb,
                     direction=direction,
+                    object=obj
+                )
+            
+            # Special handling for ENTER command
+            if verb == "ENTER":
+                # Get object to enter (if specified)
+                obj = None
+                if len(words) > 1:
+                    obj = " ".join(words[1:])
+                
+                return ParsedCommand(
+                    verb=verb,
+                    object=obj
+                )
+            
+            # Special handling for EXIT command
+            if verb == "EXIT":
+                # Get object to exit from (if specified)
+                obj = None
+                if len(words) > 1:
+                    obj = " ".join(words[1:])
+                
+                return ParsedCommand(
+                    verb=verb,
+                    object=obj
+                )
+            
+            # Special handling for BOARD command
+            if verb == "BOARD":
+                # Get vehicle to board
+                obj = None
+                if len(words) > 1:
+                    obj = " ".join(words[1:])
+                
+                return ParsedCommand(
+                    verb=verb,
+                    object=obj
+                )
+            
+            # Special handling for DISEMBARK command
+            if verb == "DISEMBARK":
+                # Get vehicle to disembark from (if specified)
+                obj = None
+                if len(words) > 1:
+                    obj = " ".join(words[1:])
+                
+                return ParsedCommand(
+                    verb=verb,
                     object=obj
                 )
             

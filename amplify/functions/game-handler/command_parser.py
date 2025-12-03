@@ -44,6 +44,9 @@ class CommandParser:
             'scale': 'CLIMB',
             'ascend': 'CLIMB',
             'descend': 'CLIMB',
+            'enter': 'ENTER',
+            'exit': 'EXIT',
+            'leave': 'EXIT',
         }
         
         # Direction words (can be used alone or with GO)
@@ -113,7 +116,6 @@ class CommandParser:
             'look': 'LOOK',
             'l': 'LOOK',
             'quit': 'QUIT',
-            'exit': 'QUIT',
             'q': 'QUIT',
         }
         
@@ -229,6 +231,30 @@ class CommandParser:
                 return ParsedCommand(
                     verb=verb,
                     direction=direction,
+                    object=obj
+                )
+            
+            # Special handling for ENTER command
+            if verb == "ENTER":
+                # Get object to enter (if specified)
+                obj = None
+                if len(words) > 1:
+                    obj = " ".join(words[1:])
+                
+                return ParsedCommand(
+                    verb=verb,
+                    object=obj
+                )
+            
+            # Special handling for EXIT command
+            if verb == "EXIT":
+                # Get object to exit from (if specified)
+                obj = None
+                if len(words) > 1:
+                    obj = " ".join(words[1:])
+                
+                return ParsedCommand(
+                    verb=verb,
                     object=obj
                 )
             

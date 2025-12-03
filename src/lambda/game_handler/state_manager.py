@@ -28,6 +28,7 @@ class GameState:
     # Player location and inventory
     current_room: str
     inventory: List[str] = field(default_factory=list)
+    current_vehicle: Optional[str] = None  # Track which vehicle player is in
     
     # Game flags (boolean and numeric state variables)
     flags: Dict[str, Union[bool, int]] = field(default_factory=dict)

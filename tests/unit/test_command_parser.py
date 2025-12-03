@@ -264,7 +264,8 @@ class TestUtilityCommands:
         """Test synonyms for QUIT."""
         parser = CommandParser()
         
-        synonyms = ["quit", "exit", "q"]
+        # Note: "exit" is now a movement command (EXIT), not a quit synonym
+        synonyms = ["quit", "q"]
         
         for synonym in synonyms:
             result = parser.parse(synonym)

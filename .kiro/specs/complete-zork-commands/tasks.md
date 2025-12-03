@@ -19,11 +19,11 @@
   - Return appropriate success/failure messages with haunted theme
   - _Requirements: 2.1_
 
-- [ ] 2.2 Write property test for climb movement
+- [x] 2.2 Write property test for climb movement
   - **Property 1: Climb movement consistency**
   - **Validates: Requirements 2.1**
 
-- [ ] 2.3 Implement ENTER and EXIT commands
+- [x] 2.3 Implement ENTER and EXIT commands
   - Add handle_enter and handle_exit methods to GameEngine
   - Support entering objects (vehicles, buildings, passages)
   - Support exiting current location or object
@@ -32,11 +32,11 @@
   - Return thematic descriptions
   - _Requirements: 2.2_
 
-- [ ] 2.4 Write property test for enter/exit round-trip
+- [x] 2.4 Write property test for enter/exit round-trip
   - **Property 2: Enter/Exit inverse operations**
   - **Validates: Requirements 2.2**
 
-- [ ] 2.5 Implement BOARD and DISEMBARK commands
+- [x] 2.5 Implement BOARD and DISEMBARK commands
   - Add handle_board and handle_disembark methods to GameEngine
   - Add vehicle support to world data (is_vehicle property)
   - Support boarding vehicles (boat, basket, etc.)
