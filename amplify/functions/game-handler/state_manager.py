@@ -10,7 +10,7 @@ import json
 import uuid
 from dataclasses import dataclass, field, asdict
 from typing import Dict, List, Set, Union, Any, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 
 @dataclass
@@ -20,16 +20,15 @@ class GameState:
     
     Includes player location, inventory, game flags, Halloween mechanics
     (sanity, curse, blood moon, souls), and original Zork statistics.
-    
-    Note: Uses camelCase for field names to match DynamoDB schema.
     """
     
     # Session identification
-    sessionId: str
+    session_id: str
     
     # Player location and inventory
     current_room: str
     inventory: List[str] = field(default_factory=list)
+    current_vehicle: Optional[str] = None  # Track which vehicle player is in
     
     # Game flags (boolean and numeric state variables)
     flags: Dict[str, Union[bool, int]] = field(default_factory=dict)
@@ -62,9 +61,9 @@ class GameState:
     def __post_init__(self):
         """Initialize timestamps if not provided."""
         if self.created_at is None:
-            self.created_at = datetime.utcnow().isoformat()
+            self.created_at = datetime.now(UTC).isoformat()
         if self.last_accessed is None:
-            self.last_accessed = datetime.utcnow().isoformat()
+            self.last_accessed = datetime.now(UTC).isoformat()
     
     def move_to_room(self, room_id: str) -> None:
         """
@@ -75,7 +74,7 @@ class GameState:
         """
         self.current_room = room_id
         self.rooms_visited.add(room_id)
-        self.last_accessed = datetime.utcnow().isoformat()
+        self.last_accessed = datetime.now(UTC).isoformat()
     
     def add_to_inventory(self, object_id: str) -> bool:
         """
@@ -90,7 +89,7 @@ class GameState:
         if object_id in self.inventory:
             return False
         self.inventory.append(object_id)
-        self.last_accessed = datetime.utcnow().isoformat()
+        self.last_accessed = datetime.now(UTC).isoformat()
         return True
     
     def remove_from_inventory(self, object_id: str) -> bool:
@@ -106,7 +105,7 @@ class GameState:
         if object_id not in self.inventory:
             return False
         self.inventory.remove(object_id)
-        self.last_accessed = datetime.utcnow().isoformat()
+        self.last_accessed = datetime.now(UTC).isoformat()
         return True
     
     def set_flag(self, flag_name: str, value: Union[bool, int]) -> None:
@@ -118,7 +117,7 @@ class GameState:
             value: The new flag value (boolean or integer)
         """
         self.flags[flag_name] = value
-        self.last_accessed = datetime.utcnow().isoformat()
+        self.last_accessed = datetime.now(UTC).isoformat()
     
     def get_flag(self, flag_name: str, default: Union[bool, int] = False) -> Union[bool, int]:
         """
@@ -141,7 +140,7 @@ class GameState:
         """
         self.turn_count += 1
         self.moves += 1
-        self.last_accessed = datetime.utcnow().isoformat()
+        self.last_accessed = datetime.now(UTC).isoformat()
     
     def to_dict(self) -> Dict[str, Any]:
         """
@@ -170,44 +169,11 @@ class GameState:
         Returns:
             GameState instance
         """
-        # Remove AppSync/Amplify Data metadata fields
-        data = {k: v for k, v in data.items() if not k.startswith('__')}
-        
-        # Map camelCase DynamoDB fields to snake_case Python fields
-        field_mapping = {
-            'currentRoom': 'current_room',
-            'roomsVisited': 'rooms_visited',
-            'turnCount': 'turn_count',
-            'lampBattery': 'lamp_battery',
-            'soulsCollected': 'souls_collected',
-            'curseDuration': 'curse_duration',
-            'thiefHere': 'thief_here',
-            'wonFlag': 'won_flag',
-            'bloodMoonActive': 'blood_moon_active',
-            'createdAt': 'created_at',
-            'lastAccessed': 'last_accessed',
-        }
-        
-        # Apply field name mapping
-        mapped_data = {}
-        for key, value in data.items():
-            mapped_key = field_mapping.get(key, key)
-            mapped_data[mapped_key] = value
-        
         # Convert rooms_visited list back to set
-        if 'rooms_visited' in mapped_data and isinstance(mapped_data['rooms_visited'], list):
-            mapped_data['rooms_visited'] = set(mapped_data['rooms_visited'])
+        if 'rooms_visited' in data and isinstance(data['rooms_visited'], list):
+            data['rooms_visited'] = set(data['rooms_visited'])
         
-        # Remove any fields that don't exist in GameState
-        valid_fields = {
-            'sessionId', 'current_room', 'inventory', 'flags', 'rooms_visited',
-            'turn_count', 'sanity', 'cursed', 'blood_moon_active', 'souls_collected',
-            'curse_duration', 'score', 'moves', 'lamp_battery', 'lucky', 'thief_here',
-            'created_at', 'last_accessed', 'expires'
-        }
-        filtered_data = {k: v for k, v in mapped_data.items() if k in valid_fields}
-        
-        return cls(**filtered_data)
+        return cls(**data)
     
     def to_json(self) -> str:
         """
@@ -243,14 +209,14 @@ class GameState:
         Returns:
             New GameState instance with initial values
         """
-        sessionId = str(uuid.uuid4())
-        now = datetime.utcnow()
+        session_id = str(uuid.uuid4())
+        now = datetime.now(UTC)
         
         # Set TTL to 1 hour from now (3600 seconds)
         expires = int((now + timedelta(hours=1)).timestamp())
         
         return cls(
-            sessionId=sessionId,
+            session_id=session_id,
             current_room=starting_room,
             inventory=[],
             flags={},
@@ -278,7 +244,7 @@ class GameState:
         Args:
             hours: Number of hours until expiration (default: 1)
         """
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         self.expires = int((now + timedelta(hours=hours)).timestamp())
         self.last_accessed = now.isoformat()
 
@@ -323,8 +289,8 @@ class SessionManager:
             # Convert state to dictionary
             item = state.to_dict()
             
-            # Ensure sessionId is the partition key
-            item['sessionId'] = state.sessionId
+            # Ensure session_id is the partition key
+            item['sessionId'] = state.session_id
             
             # Put item in DynamoDB
             self.dynamodb.put_item(
@@ -335,14 +301,14 @@ class SessionManager:
             return True
             
         except Exception as e:
-            raise Exception(f"Failed to save session {state.sessionId}: {str(e)}")
+            raise Exception(f"Failed to save session {state.session_id}: {str(e)}")
     
-    def load_session(self, sessionId: str) -> Optional[GameState]:
+    def load_session(self, session_id: str) -> Optional[GameState]:
         """
         Load game state from DynamoDB.
         
         Args:
-            sessionId: The session identifier to load
+            session_id: The session identifier to load
             
         Returns:
             GameState instance if found, None if not found
@@ -354,7 +320,7 @@ class SessionManager:
             # Get item from DynamoDB
             response = self.dynamodb.get_item(
                 TableName=self.table_name,
-                Key={'sessionId': {'S': sessionId}}
+                Key={'sessionId': {'S': session_id}}
             )
             
             # Check if item exists
@@ -368,19 +334,19 @@ class SessionManager:
             state = GameState.from_dict(item)
             
             # Update last accessed timestamp
-            state.last_accessed = datetime.utcnow().isoformat()
+            state.last_accessed = datetime.now(UTC).isoformat()
             
             return state
             
         except Exception as e:
-            raise Exception(f"Failed to load session {sessionId}: {str(e)}")
+            raise Exception(f"Failed to load session {session_id}: {str(e)}")
     
-    def delete_session(self, sessionId: str) -> bool:
+    def delete_session(self, session_id: str) -> bool:
         """
         Delete a game session from DynamoDB.
         
         Args:
-            sessionId: The session identifier to delete
+            session_id: The session identifier to delete
             
         Returns:
             True if deletion successful, False otherwise
@@ -392,20 +358,20 @@ class SessionManager:
             # Delete item from DynamoDB
             self.dynamodb.delete_item(
                 TableName=self.table_name,
-                Key={'sessionId': {'S': sessionId}}
+                Key={'sessionId': {'S': session_id}}
             )
             
             return True
             
         except Exception as e:
-            raise Exception(f"Failed to delete session {sessionId}: {str(e)}")
+            raise Exception(f"Failed to delete session {session_id}: {str(e)}")
     
-    def session_exists(self, sessionId: str) -> bool:
+    def session_exists(self, session_id: str) -> bool:
         """
         Check if a session exists in DynamoDB.
         
         Args:
-            sessionId: The session identifier to check
+            session_id: The session identifier to check
             
         Returns:
             True if session exists, False otherwise
@@ -413,7 +379,7 @@ class SessionManager:
         try:
             response = self.dynamodb.get_item(
                 TableName=self.table_name,
-                Key={'sessionId': {'S': sessionId}},
+                Key={'sessionId': {'S': session_id}},
                 ProjectionExpression='sessionId'
             )
             

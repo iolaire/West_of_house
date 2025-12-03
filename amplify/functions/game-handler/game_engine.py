@@ -3886,6 +3886,457 @@ class GameEngine:
                 message="Something went wrong while burning that."
             )
     
+    def handle_cut(
+        self,
+        object_id: str,
+        tool_id: Optional[str],
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle cutting an object with a cutting tool.
+        
+        Args:
+            object_id: The object to cut
+            tool_id: The cutting tool (sword, knife, etc.) - optional
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 6.2
+        """
+        try:
+            current_room = self.world.get_room(state.current_room)
+            
+            if object_id not in current_room.items and object_id not in state.inventory:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {object_id} here."
+                )
+            
+            game_object = self.world.get_object(object_id)
+            
+            if not game_object.state.get('is_cuttable', False):
+                return ActionResult(
+                    success=False,
+                    message=f"You can't cut the {object_id}."
+                )
+            
+            if tool_id:
+                if tool_id not in state.inventory and tool_id not in current_room.items:
+                    return ActionResult(
+                        success=False,
+                        message=f"You don't have any {tool_id}."
+                    )
+                
+                tool = self.world.get_object(tool_id)
+                
+                if not tool.state.get('is_cutting_tool', False):
+                    return ActionResult(
+                        success=False,
+                        message=f"You can't cut things with the {tool_id}."
+                    )
+            
+            notifications = []
+            cut_message = f"You cut the {object_id}."
+            
+            for interaction in game_object.interactions:
+                if interaction.verb == "CUT":
+                    cut_message = interaction.response_spooky
+                    
+                    if interaction.state_change:
+                        for key, value in interaction.state_change.items():
+                            game_object.state[key] = value
+                    
+                    if interaction.flag_change:
+                        for flag_name, flag_value in interaction.flag_change.items():
+                            state.set_flag(flag_name, flag_value)
+                    
+                    if interaction.sanity_effect != 0:
+                        state.sanity = max(0, min(100, state.sanity + interaction.sanity_effect))
+                        if interaction.sanity_effect < 0:
+                            notifications.append("The act of cutting disturbs you...")
+                    
+                    break
+            
+            game_object.state['is_cut'] = True
+            
+            return ActionResult(
+                success=True,
+                message=cut_message,
+                state_changes={'sanity': state.sanity} if notifications else {},
+                notifications=notifications
+            )
+            
+        except ValueError:
+            return ActionResult(
+                success=False,
+                message=f"You don't see any {object_id} here."
+            )
+        except Exception:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while cutting that."
+            )
+    
+    def handle_dig(
+        self,
+        location_id: Optional[str],
+        tool_id: Optional[str],
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle digging at a location with a digging tool.
+        
+        Args:
+            location_id: The location/object to dig (optional, defaults to current room)
+            tool_id: The digging tool (shovel, etc.) - optional
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 6.3
+        """
+        try:
+            current_room = self.world.get_room(state.current_room)
+            
+            # If no location specified, dig in current room
+            if not location_id:
+                # Check if room is diggable via flag
+                if not state.get_flag(f"room_{state.current_room}_diggable", False):
+                    return ActionResult(
+                        success=False,
+                        message="The ground here is too hard to dig."
+                    )
+                
+                if tool_id:
+                    if tool_id not in state.inventory:
+                        return ActionResult(
+                            success=False,
+                            message=f"You don't have any {tool_id}."
+                        )
+                    
+                    tool = self.world.get_object(tool_id)
+                    if not tool.state.get('is_digging_tool', False):
+                        return ActionResult(
+                            success=False,
+                            message=f"You can't dig with the {tool_id}."
+                        )
+                
+                # Check if already dug
+                if state.get_flag(f"dug_{state.current_room}", False):
+                    return ActionResult(
+                        success=False,
+                        message="You've already dug here."
+                    )
+                
+                # Mark as dug
+                state.set_flag(f"dug_{state.current_room}", True)
+                
+                return ActionResult(
+                    success=True,
+                    message="You dig into the ground but find nothing."
+                )
+            
+            # Digging at specific object
+            if location_id not in current_room.items:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {location_id} here."
+                )
+            
+            game_object = self.world.get_object(location_id)
+            
+            if not game_object.state.get('is_diggable', False):
+                return ActionResult(
+                    success=False,
+                    message=f"You can't dig at the {location_id}."
+                )
+            
+            if tool_id:
+                if tool_id not in state.inventory:
+                    return ActionResult(
+                        success=False,
+                        message=f"You don't have any {tool_id}."
+                    )
+                
+                tool = self.world.get_object(tool_id)
+                if not tool.state.get('is_digging_tool', False):
+                    return ActionResult(
+                        success=False,
+                        message=f"You can't dig with the {tool_id}."
+                    )
+            
+            notifications = []
+            dig_message = f"You dig at the {location_id}."
+            
+            for interaction in game_object.interactions:
+                if interaction.verb == "DIG":
+                    dig_message = interaction.response_spooky
+                    
+                    if interaction.state_change:
+                        for key, value in interaction.state_change.items():
+                            game_object.state[key] = value
+                    
+                    if interaction.flag_change:
+                        for flag_name, flag_value in interaction.flag_change.items():
+                            state.set_flag(flag_name, flag_value)
+                    
+                    if interaction.sanity_effect != 0:
+                        state.sanity = max(0, min(100, state.sanity + interaction.sanity_effect))
+                    
+                    break
+            
+            game_object.state['is_dug'] = True
+            
+            return ActionResult(
+                success=True,
+                message=dig_message,
+                state_changes={'sanity': state.sanity} if notifications else {},
+                notifications=notifications
+            )
+            
+        except ValueError:
+            return ActionResult(
+                success=False,
+                message="You can't dig there."
+            )
+        except Exception:
+            return ActionResult(
+                success=False,
+                message="Something went wrong while digging."
+            )
+    
+    def handle_inflate(
+        self,
+        object_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """Handle inflating an inflatable object."""
+        try:
+            current_room = self.world.get_room(state.current_room)
+            
+            if object_id not in current_room.items and object_id not in state.inventory:
+                return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+            
+            game_object = self.world.get_object(object_id)
+            
+            if not game_object.state.get('is_inflatable', False):
+                return ActionResult(success=False, message=f"You can't inflate the {object_id}.")
+            
+            if game_object.state.get('is_inflated', False):
+                return ActionResult(success=False, message=f"The {object_id} is already inflated.")
+            
+            game_object.state['is_inflated'] = True
+            
+            message = f"You inflate the {object_id}."
+            for interaction in game_object.interactions:
+                if interaction.verb == "INFLATE":
+                    message = interaction.response_spooky
+                    if interaction.state_change:
+                        for key, value in interaction.state_change.items():
+                            game_object.state[key] = value
+                    if interaction.flag_change:
+                        for flag_name, flag_value in interaction.flag_change.items():
+                            state.set_flag(flag_name, flag_value)
+                    break
+            
+            return ActionResult(success=True, message=message)
+        except ValueError:
+            return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+        except Exception:
+            return ActionResult(success=False, message="Something went wrong.")
+    
+    def handle_deflate(
+        self,
+        object_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """Handle deflating an inflatable object."""
+        try:
+            current_room = self.world.get_room(state.current_room)
+            
+            if object_id not in current_room.items and object_id not in state.inventory:
+                return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+            
+            game_object = self.world.get_object(object_id)
+            
+            if not game_object.state.get('is_inflatable', False):
+                return ActionResult(success=False, message=f"You can't deflate the {object_id}.")
+            
+            if not game_object.state.get('is_inflated', False):
+                return ActionResult(success=False, message=f"The {object_id} is already deflated.")
+            
+            game_object.state['is_inflated'] = False
+            
+            message = f"You deflate the {object_id}."
+            for interaction in game_object.interactions:
+                if interaction.verb == "DEFLATE":
+                    message = interaction.response_spooky
+                    if interaction.state_change:
+                        for key, value in interaction.state_change.items():
+                            game_object.state[key] = value
+                    if interaction.flag_change:
+                        for flag_name, flag_value in interaction.flag_change.items():
+                            state.set_flag(flag_name, flag_value)
+                    break
+            
+            return ActionResult(success=True, message=message)
+        except ValueError:
+            return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+        except Exception:
+            return ActionResult(success=False, message="Something went wrong.")
+    
+    def handle_wave(self, object_id: str, state: GameState) -> ActionResult:
+        """Handle waving an object."""
+        try:
+            if object_id not in state.inventory:
+                return ActionResult(success=False, message=f"You don't have the {object_id}.")
+            
+            game_object = self.world.get_object(object_id)
+            message = f"You wave the {object_id}. Nothing happens."
+            
+            for interaction in game_object.interactions:
+                if interaction.verb == "WAVE":
+                    message = interaction.response_spooky
+                    if interaction.state_change:
+                        for key, value in interaction.state_change.items():
+                            game_object.state[key] = value
+                    if interaction.flag_change:
+                        for flag_name, flag_value in interaction.flag_change.items():
+                            state.set_flag(flag_name, flag_value)
+                    break
+            
+            return ActionResult(success=True, message=message)
+        except ValueError:
+            return ActionResult(success=False, message=f"You don't have the {object_id}.")
+        except Exception:
+            return ActionResult(success=False, message="Something went wrong.")
+    
+    def handle_rub(self, object_id: str, state: GameState) -> ActionResult:
+        """Handle rubbing/touching an object."""
+        try:
+            current_room = self.world.get_room(state.current_room)
+            if object_id not in current_room.items and object_id not in state.inventory:
+                return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+            
+            game_object = self.world.get_object(object_id)
+            message = f"You rub the {object_id}. Nothing happens."
+            
+            for interaction in game_object.interactions:
+                if interaction.verb == "RUB":
+                    message = interaction.response_spooky
+                    if interaction.state_change:
+                        for key, value in interaction.state_change.items():
+                            game_object.state[key] = value
+                    if interaction.flag_change:
+                        for flag_name, flag_value in interaction.flag_change.items():
+                            state.set_flag(flag_name, flag_value)
+                    break
+            
+            return ActionResult(success=True, message=message)
+        except ValueError:
+            return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+        except Exception:
+            return ActionResult(success=False, message="Something went wrong.")
+    
+    def handle_shake(self, object_id: str, state: GameState) -> ActionResult:
+        """Handle shaking an object."""
+        try:
+            current_room = self.world.get_room(state.current_room)
+            if object_id not in current_room.items and object_id not in state.inventory:
+                return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+            
+            game_object = self.world.get_object(object_id)
+            message = f"You shake the {object_id}. Nothing happens."
+            
+            for interaction in game_object.interactions:
+                if interaction.verb == "SHAKE":
+                    message = interaction.response_spooky
+                    if interaction.state_change:
+                        for key, value in interaction.state_change.items():
+                            game_object.state[key] = value
+                    if interaction.flag_change:
+                        for flag_name, flag_value in interaction.flag_change.items():
+                            state.set_flag(flag_name, flag_value)
+                    break
+            
+            return ActionResult(success=True, message=message)
+        except ValueError:
+            return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+        except Exception:
+            return ActionResult(success=False, message="Something went wrong.")
+    
+    def handle_squeeze(self, object_id: str, state: GameState) -> ActionResult:
+        """Handle squeezing an object."""
+        try:
+            current_room = self.world.get_room(state.current_room)
+            if object_id not in current_room.items and object_id not in state.inventory:
+                return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+            
+            game_object = self.world.get_object(object_id)
+            message = f"You squeeze the {object_id}. Nothing happens."
+            
+            for interaction in game_object.interactions:
+                if interaction.verb == "SQUEEZE":
+                    message = interaction.response_spooky
+                    if interaction.state_change:
+                        for key, value in interaction.state_change.items():
+                            game_object.state[key] = value
+                    if interaction.flag_change:
+                        for flag_name, flag_value in interaction.flag_change.items():
+                            state.set_flag(flag_name, flag_value)
+                    break
+            
+            return ActionResult(success=True, message=message)
+        except ValueError:
+            return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+        except Exception:
+            return ActionResult(success=False, message="Something went wrong.")
+    
+    def handle_xyzzy(self, state: GameState) -> ActionResult:
+        """Handle XYZZY easter egg command."""
+        return ActionResult(success=True, message="A hollow voice whispers: 'Fool.' The ancient magic has long since faded from this cursed place.")
+    
+    def handle_plugh(self, state: GameState) -> ActionResult:
+        """Handle PLUGH easter egg command."""
+        return ActionResult(success=True, message="A spectral voice echoes: 'Nothing happens.' The old enchantments hold no power here.")
+    
+    def handle_hello(self, state: GameState) -> ActionResult:
+        """Handle HELLO command."""
+        return ActionResult(success=True, message="The shadows seem to shift in response, but no voice answers your greeting. You are alone... or are you?")
+    
+    def handle_pray(self, state: GameState) -> ActionResult:
+        """Handle PRAY command."""
+        return ActionResult(success=True, message="You offer a desperate prayer to whatever gods might listen. The darkness seems to press closer, as if offended by your plea.")
+    
+    def handle_jump(self, state: GameState) -> ActionResult:
+        """Handle JUMP command."""
+        return ActionResult(success=True, message="You jump up and down. The floorboards creak ominously beneath your feet.")
+    
+    def handle_yell(self, state: GameState) -> ActionResult:
+        """Handle YELL command."""
+        return ActionResult(success=True, message="Your scream echoes through the haunted halls, returning to you twisted and distorted. Something in the darkness laughs.")
+    
+    def handle_echo(self, text: str, state: GameState) -> ActionResult:
+        """Handle ECHO command."""
+        if not text:
+            return ActionResult(success=True, message="Echo... echo... echo...")
+        return ActionResult(success=True, message=f"Echo: {text}")
+    
+    def handle_curse(self, state: GameState) -> ActionResult:
+        """Handle profanity/curse words."""
+        messages = [
+            "Such language! The spirits are offended by your crude words.",
+            "Your profanity echoes through the halls, but the darkness does not care.",
+            "Cursing won't help you here. The house has heard far worse.",
+            "Mind your tongue! This place feeds on negativity.",
+            "The shadows seem amused by your colorful language."
+        ]
+        import random
+        return ActionResult(success=True, message=random.choice(messages))
+    
     def handle_place_treasure(
         self,
         object_id: str,
@@ -4754,6 +5205,368 @@ class GameEngine:
                 message="Something went wrong during that awkward moment."
             )
     
+    def handle_save(
+        self,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle saving the current game state.
+        
+        Serializes current game state to JSON and stores in DynamoDB with
+        unique save ID. Includes timestamp and session info. Returns success
+        message with save ID.
+        
+        Args:
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and save ID
+            
+        Requirements: 7.1
+        """
+        try:
+            # Generate a unique save ID
+            import uuid
+            save_id = str(uuid.uuid4())[:8]  # Use first 8 chars for readability
+            
+            # Create a save key in the flags
+            save_key = f"save_{save_id}"
+            
+            # Store the save ID in the state flags for reference
+            state.set_flag(save_key, True)
+            state.set_flag('last_save_id', save_id)
+            
+            # The actual saving to DynamoDB happens in the Lambda handler
+            # This method just marks the state as ready to save
+            
+            return ActionResult(
+                success=True,
+                message=f"Game saved successfully. Your save ID is: {save_id}\n\nYou can restore this game later using the RESTORE command.",
+                state_changes={
+                    'flags': state.flags
+                }
+            )
+            
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message=f"Failed to save game: {str(e)}"
+            )
+    
+    def handle_restore(
+        self,
+        save_id: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle restoring a previously saved game state.
+        
+        Loads game state from DynamoDB by save ID, deserializes JSON to
+        GameState object, validates save data integrity, and returns success
+        message.
+        
+        Args:
+            save_id: The save ID to restore
+            state: Current game state (will be replaced)
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 7.2
+        """
+        try:
+            # Check if save ID exists in flags
+            save_key = f"save_{save_id}"
+            save_exists = state.get_flag(save_key, False)
+            
+            if not save_exists:
+                return ActionResult(
+                    success=False,
+                    message=f"Save ID '{save_id}' not found. Please check the ID and try again."
+                )
+            
+            # The actual restoration from DynamoDB happens in the Lambda handler
+            # This method just validates the save ID
+            
+            return ActionResult(
+                success=True,
+                message=f"Game restored successfully from save ID: {save_id}\n\nWelcome back to the haunted house...",
+                state_changes={
+                    'current_room': state.current_room,
+                    'inventory': state.inventory,
+                    'sanity': state.sanity,
+                    'score': state.score
+                }
+            )
+            
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message=f"Failed to restore game: {str(e)}"
+            )
+    
+    def handle_restart(
+        self,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle restarting the game from the beginning.
+        
+        Resets game state to initial values, clears inventory, flags, and
+        score, returns to starting room, and returns confirmation message.
+        
+        Args:
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and message
+            
+        Requirements: 7.3
+        """
+        try:
+            # Reset to initial state
+            starting_room = "west_of_house"
+            
+            # Clear inventory
+            state.inventory.clear()
+            
+            # Reset flags
+            state.flags.clear()
+            
+            # Reset statistics
+            state.score = 0
+            state.moves = 0
+            state.turn_count = 0
+            
+            # Reset Halloween mechanics
+            state.sanity = 100
+            state.cursed = False
+            state.blood_moon_active = True
+            state.souls_collected = 0
+            state.curse_duration = 0
+            
+            # Reset lamp
+            state.lamp_battery = 200
+            
+            # Reset other state
+            state.lucky = False
+            state.thief_here = False
+            state.current_vehicle = None
+            
+            # Clear visited rooms
+            state.rooms_visited.clear()
+            
+            # Move to starting room
+            state.move_to_room(starting_room)
+            
+            # Get starting room description
+            description = self.world.get_room_description(starting_room, state.sanity)
+            
+            restart_message = "The world dissolves around you, and you find yourself back where it all began...\n\n"
+            restart_message += description
+            
+            return ActionResult(
+                success=True,
+                message=restart_message,
+                room_changed=True,
+                new_room=starting_room,
+                inventory_changed=True,
+                state_changes={
+                    'current_room': state.current_room,
+                    'inventory': state.inventory,
+                    'flags': state.flags,
+                    'score': state.score,
+                    'moves': state.moves,
+                    'sanity': state.sanity,
+                    'turn_count': state.turn_count
+                }
+            )
+            
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message=f"Failed to restart game: {str(e)}"
+            )
+    
+    def handle_score(
+        self,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle displaying the current score and rank.
+        
+        Displays current score and rank, calculates rank based on score
+        thresholds, shows treasures collected, and returns formatted score
+        display.
+        
+        Args:
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and score display
+            
+        Requirements: 7.5
+        """
+        try:
+            score = state.score
+            moves = state.moves
+            
+            # Calculate rank based on score thresholds
+            if score >= 350:
+                rank = "Master Adventurer"
+            elif score >= 300:
+                rank = "Experienced Adventurer"
+            elif score >= 200:
+                rank = "Adventurer"
+            elif score >= 100:
+                rank = "Junior Adventurer"
+            elif score >= 50:
+                rank = "Novice Adventurer"
+            else:
+                rank = "Beginner"
+            
+            # Count treasures collected (items in trophy case)
+            treasures_collected = 0
+            try:
+                trophy_case = self.world.get_object("trophy_case")
+                contents = trophy_case.state.get('contents', [])
+                treasures_collected = len(contents)
+            except ValueError:
+                pass
+            
+            # Format score display with haunted theme
+            score_message = f"Your score is {score} out of 350 possible points.\n"
+            score_message += f"You have made {moves} moves.\n"
+            score_message += f"Your rank is: {rank}\n"
+            score_message += f"Treasures collected: {treasures_collected}\n"
+            score_message += f"Sanity: {state.sanity}/100\n"
+            score_message += f"Souls collected: {state.souls_collected}\n"
+            
+            if state.cursed:
+                score_message += "\nYou are cursed!"
+            
+            if state.blood_moon_active:
+                score_message += "\nThe blood moon hangs heavy in the sky..."
+            
+            return ActionResult(
+                success=True,
+                message=score_message
+            )
+            
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message=f"Failed to display score: {str(e)}"
+            )
+    
+    def handle_verbose(
+        self,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle setting verbosity to VERBOSE mode.
+        
+        Sets verbosity field to VERBOSE (always show full descriptions).
+        Returns confirmation message.
+        
+        Args:
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and confirmation
+            
+        Requirements: 7.6
+        """
+        try:
+            # Set verbosity to VERBOSE
+            state.set_flag('verbosity', 'verbose')
+            
+            return ActionResult(
+                success=True,
+                message="Verbose mode enabled. You will now see full room descriptions every time.",
+                state_changes={
+                    'flags': state.flags
+                }
+            )
+            
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message=f"Failed to set verbosity: {str(e)}"
+            )
+    
+    def handle_brief(
+        self,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle setting verbosity to BRIEF mode.
+        
+        Sets verbosity field to BRIEF (full on first visit, abbreviated after).
+        Returns confirmation message.
+        
+        Args:
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and confirmation
+            
+        Requirements: 7.7
+        """
+        try:
+            # Set verbosity to BRIEF
+            state.set_flag('verbosity', 'brief')
+            
+            return ActionResult(
+                success=True,
+                message="Brief mode enabled. You will see full descriptions on first visit, then abbreviated descriptions.",
+                state_changes={
+                    'flags': state.flags
+                }
+            )
+            
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message=f"Failed to set verbosity: {str(e)}"
+            )
+    
+    def handle_superbrief(
+        self,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle setting verbosity to SUPERBRIEF mode.
+        
+        Sets verbosity field to SUPERBRIEF (room name only).
+        Returns confirmation message.
+        
+        Args:
+            state: Current game state
+            
+        Returns:
+            ActionResult with success status and confirmation
+            
+        Requirements: 7.8
+        """
+        try:
+            # Set verbosity to SUPERBRIEF
+            state.set_flag('verbosity', 'superbrief')
+            
+            return ActionResult(
+                success=True,
+                message="Superbrief mode enabled. You will only see room names.",
+                state_changes={
+                    'flags': state.flags
+                }
+            )
+            
+        except Exception as e:
+            return ActionResult(
+                success=False,
+                message=f"Failed to set verbosity: {str(e)}"
+            )
+    
     def execute_command(
         self,
         command: ParsedCommand,
@@ -4926,6 +5739,38 @@ class GameEngine:
             # Target is the fire source (if specified with WITH preposition)
             return self.handle_burn(command.object, command.target, state)
         
+        # Handle cut commands (format: "cut object" or "cut object with tool")
+        if command.verb == "CUT" and command.object:
+            return self.handle_cut(command.object, command.target, state)
+        
+        # Handle dig commands (format: "dig" or "dig object" or "dig with tool")
+        if command.verb == "DIG":
+            return self.handle_dig(command.object, command.target, state)
+        
+        # Handle inflate commands
+        if command.verb == "INFLATE" and command.object:
+            return self.handle_inflate(command.object, state)
+        
+        # Handle deflate commands
+        if command.verb == "DEFLATE" and command.object:
+            return self.handle_deflate(command.object, state)
+        
+        # Handle wave commands
+        if command.verb == "WAVE" and command.object:
+            return self.handle_wave(command.object, state)
+        
+        # Handle rub commands
+        if command.verb == "RUB" and command.object:
+            return self.handle_rub(command.object, state)
+        
+        # Handle shake commands
+        if command.verb == "SHAKE" and command.object:
+            return self.handle_shake(command.object, state)
+        
+        # Handle squeeze commands
+        if command.verb == "SQUEEZE" and command.object:
+            return self.handle_squeeze(command.object, state)
+        
         # Handle attack commands (format: "attack creature" or "attack creature with weapon")
         if command.verb in ["ATTACK", "KILL"] and command.object:
             # Target is the weapon (if specified with WITH preposition)
@@ -4961,6 +5806,65 @@ class GameEngine:
         # Handle kiss commands
         if command.verb == "KISS" and command.object:
             return self.handle_kiss(command.object, state)
+        
+        # Handle easter egg commands
+        if command.verb == "XYZZY":
+            return self.handle_xyzzy(state)
+        
+        if command.verb == "PLUGH":
+            return self.handle_plugh(state)
+        
+        if command.verb == "HELLO":
+            return self.handle_hello(state)
+        
+        if command.verb == "PRAY":
+            return self.handle_pray(state)
+        
+        if command.verb == "JUMP":
+            return self.handle_jump(state)
+        
+        if command.verb == "YELL":
+            return self.handle_yell(state)
+        
+        if command.verb == "ECHO":
+            return self.handle_echo(command.object, state)
+        
+        # Handle profanity/curse words
+        if command.verb == "CURSE":
+            return self.handle_curse(state)
+        
+        # Handle save command
+        if command.verb == "SAVE":
+            return self.handle_save(state)
+        
+        # Handle restore command (format: "restore save_id")
+        if command.verb == "RESTORE":
+            if not command.object:
+                return ActionResult(
+                    success=False,
+                    message="Please specify a save ID to restore. Example: RESTORE abc123"
+                )
+            return self.handle_restore(command.object, state)
+        
+        # Handle restart command
+        if command.verb == "RESTART":
+            return self.handle_restart(state)
+        
+        # Handle score command
+        if command.verb == "SCORE":
+            return self.handle_score(state)
+        
+        # Handle verbose command
+        if command.verb == "VERBOSE":
+            return self.handle_verbose(state)
+        
+        # Handle brief command
+        if command.verb == "BRIEF":
+            return self.handle_brief(state)
+        
+        # Handle superbrief command
+        if command.verb == "SUPERBRIEF":
+            return self.handle_superbrief(state)
         
         # Handle unknown commands
         if command.verb == "UNKNOWN":

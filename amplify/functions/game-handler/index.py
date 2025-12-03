@@ -55,8 +55,7 @@ def initialize_game_components():
     if session_manager is None:
         # Initialize DynamoDB client
         dynamodb_client = boto3.client('dynamodb')
-        # Try TABLE_NAME first (Gen 2), fall back to DYNAMODB_TABLE_NAME (legacy)
-        table_name = os.environ.get('TABLE_NAME') or os.environ.get('DYNAMODB_TABLE_NAME', 'GameSessions')
+        table_name = os.environ.get('DYNAMODB_TABLE_NAME', 'GameSessions')
         session_manager = SessionManager(dynamodb_client, table_name)
         print(f"Initialized session manager with table: {table_name}")
 
@@ -113,169 +112,23 @@ def create_error_response(status_code: int, error_code: str, message: str, detai
     return create_response(status_code, error_body)
 
 
-def handle_graphql_request(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[str, Any]:
-    """
-    Handle AppSync GraphQL requests.
-    
-    Routes GraphQL queries/mutations to appropriate handlers based on fieldName.
-    
-    Args:
-        event: AppSync event with 'typeName', 'fieldName' and 'arguments' fields
-        request_id: Request identifier for logging
-        
-    Returns:
-        GraphQL response data (not wrapped in API Gateway format)
-    """
-    try:
-        # Extract GraphQL field name and arguments
-        # AppSync direct Lambda resolver events have fieldName at root level
-        field_name = event['fieldName']
-        arguments = event.get('arguments', {})
-        
-        print(f"[{request_id}] GraphQL field: {field_name}, arguments: {arguments}")
-        
-        # Route to appropriate handler
-        if field_name == 'processCommand':
-            return handle_graphql_process_command(arguments, request_id)
-        else:
-            raise ValueError(f"Unknown GraphQL field: {field_name}")
-    
-    except Exception as e:
-        print(f"[{request_id}] ERROR in GraphQL handler: {str(e)}")
-        print(traceback.format_exc())
-        # For GraphQL, throw the error so AppSync can handle it
-        raise
-
-
-def handle_graphql_process_command(arguments: Dict[str, Any], request_id: str = 'unknown') -> Dict[str, Any]:
-    """
-    Handle GraphQL processCommand query.
-    
-    Processes a game command and returns the updated game state.
-    
-    Args:
-        arguments: GraphQL arguments containing sessionId and command
-        request_id: Request identifier for logging
-        
-    Returns:
-        Game response data
-    """
-    original_state = None
-    state = None
-    
-    try:
-        # Extract arguments
-        sessionId = arguments.get('sessionId')
-        command_text = arguments.get('command')
-        
-        # Validate required fields
-        if not sessionId:
-            raise ValueError('sessionId is required')
-        
-        if not command_text:
-            raise ValueError('command is required')
-        
-        if not isinstance(command_text, str) or not command_text.strip():
-            raise ValueError('command must be a non-empty string')
-        
-        print(f"[{request_id}] Processing GraphQL command for session {sessionId}: {command_text}")
-        
-        # Load session from DynamoDB
-        state = session_manager.load_session(sessionId)
-        
-        if state is None:
-            raise ValueError(f'Session not found or expired: {sessionId}')
-        
-        # Create a backup of the original state for rollback
-        import copy
-        original_state = copy.deepcopy(state)
-        
-        # Parse command
-        parsed_command = command_parser.parse(command_text)
-        print(f"[{request_id}] Parsed command: {parsed_command}")
-        
-        # Execute command via game engine
-        result = game_engine.execute_command(parsed_command, state)
-        print(f"[{request_id}] Command result: success={result.success}")
-        
-        # Save updated state to DynamoDB
-        session_manager.save_session(state)
-        print(f"[{request_id}] Saved updated session {sessionId}")
-        
-        # Get current room information
-        room = world_data.get_room(state.current_room)
-        description = result.message if result.success else result.message
-        
-        # Get visible items in room
-        items_visible = []
-        for item_id in room.items:
-            try:
-                obj = world_data.get_object(item_id)
-                if obj.state.get('is_visible', True):
-                    display_name = obj.name_spooky if obj.name_spooky else obj.name
-                    items_visible.append(display_name)
-            except Exception as e:
-                print(f"[{request_id}] WARNING: Error processing object {item_id} - {str(e)}")
-                continue
-        
-        # Get inventory display names
-        inventory_display = []
-        for item_id in state.inventory:
-            try:
-                obj = world_data.get_object(item_id)
-                display_name = obj.name_spooky if obj.name_spooky else obj.name
-                inventory_display.append(display_name)
-            except Exception as e:
-                print(f"[{request_id}] WARNING: Error processing inventory object {item_id} - {str(e)}")
-                inventory_display.append(item_id)
-        
-        # Return GraphQL response (matches the custom type schema)
-        return {
-            'room': state.current_room,
-            'description_spooky': world_data.get_room_description(state.current_room, state.sanity) if result.room_changed else description,
-            'exits': list(room.exits.keys()),
-            'objects': items_visible,
-            'inventory': inventory_display,
-            'sanity': state.sanity,
-            'score': state.score,
-            'moves': state.moves,
-            'lampBattery': state.lamp_battery,
-            'message': result.message
-        }
-    
-    except Exception as e:
-        print(f"[{request_id}] ERROR in GraphQL processCommand: {str(e)}")
-        print(traceback.format_exc())
-        
-        # Try to restore original state on error
-        if original_state and state and original_state != state:
-            try:
-                session_manager.save_session(original_state)
-                print(f"[{request_id}] Restored original state after error")
-            except Exception as restore_error:
-                print(f"[{request_id}] WARNING: Failed to restore original state - {str(restore_error)}")
-        
-        # Re-raise for AppSync to handle
-        raise
-
-
 def handler(event, context):
     """
     Main Lambda handler function.
     
-    Processes both API Gateway (REST) and AppSync (GraphQL) events,
-    routes to appropriate handlers, and returns formatted responses.
+    Processes API Gateway events, routes to appropriate handlers,
+    and returns formatted JSON responses.
     
     Args:
-        event: API Gateway or AppSync event
+        event: API Gateway event
         context: Lambda context
         
     Returns:
-        API Gateway response or GraphQL result
+        API Gateway response
         
     Requirements: 11.1, 11.2, 11.3, 2.1, 2.3, 2.4, 16.1, 16.2, 16.3, 16.5
     """
-    request_id = getattr(context, 'aws_request_id', 'unknown') if context else 'unknown'
+    request_id = context.request_id if context else 'unknown'
     
     try:
         # Initialize game components
@@ -293,13 +146,6 @@ def handler(event, context):
                 'Invalid request format'
             )
         
-        # Check if this is an AppSync GraphQL request
-        # AppSync direct Lambda resolver events have 'typeName' and 'fieldName' at root level
-        if 'typeName' in event and 'fieldName' in event:
-            print(f"[{request_id}] Detected AppSync GraphQL request")
-            return handle_graphql_request(event, request_id)
-        
-        # Otherwise, handle as API Gateway REST request
         # Extract HTTP method and path
         http_method = event.get('httpMethod', '')
         path = event.get('path', '')
@@ -318,24 +164,23 @@ def handler(event, context):
             return create_response(200, {'message': 'OK'})
         
         # Route to appropriate handler based on path and method
-        # Support both /api/game/* (legacy) and /game/* (API Gateway) paths
-        if (path == '/api/game/new' or path == '/game/new') and http_method == 'POST':
+        if path == '/api/game/new' and http_method == 'POST':
             return handle_new_game(event, request_id)
         
-        elif (path == '/api/game/command' or path == '/game/command') and http_method == 'POST':
+        elif path == '/api/game/command' and http_method == 'POST':
             return handle_command(event, request_id)
         
-        elif (path.startswith('/api/game/state/') or path.startswith('/game/state/')) and http_method == 'GET':
-            # Extract sessionId from path
-            sessionId = path.split('/')[-1]
-            if not sessionId:
-                print(f"[{request_id}] ERROR: Missing sessionId in path")
+        elif path.startswith('/api/game/state/') and http_method == 'GET':
+            # Extract session_id from path
+            session_id = path.split('/')[-1]
+            if not session_id:
+                print(f"[{request_id}] ERROR: Missing session_id in path")
                 return create_error_response(
                     400,
                     'MISSING_SESSION_ID',
                     'Session ID is required in path'
                 )
-            return handle_get_state(sessionId, request_id)
+            return handle_get_state(session_id, request_id)
         
         else:
             # Unknown endpoint
@@ -395,10 +240,10 @@ def handle_new_game(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[
         # Create new game state with default starting values
         state = GameState.create_new_game(starting_room="west_of_house")
         
-        print(f"[{request_id}] Created new game session: {state.sessionId}")
+        print(f"[{request_id}] Created new game session: {state.session_id}")
         
         # Validate state was created correctly
-        if not state.sessionId:
+        if not state.session_id:
             raise ValueError("Failed to generate session ID")
         
         if not state.current_room:
@@ -414,7 +259,7 @@ def handle_new_game(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[
         # Save to DynamoDB
         try:
             session_manager.save_session(state)
-            print(f"[{request_id}] Saved session {state.sessionId} to DynamoDB")
+            print(f"[{request_id}] Saved session {state.session_id} to DynamoDB")
         except Exception as e:
             print(f"[{request_id}] ERROR: Failed to save session to DynamoDB - {str(e)}")
             raise Exception(f"Database error: Failed to save session")
@@ -446,7 +291,7 @@ def handle_new_game(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[
         # Build response
         response_body = {
             'success': True,
-            'sessionId': state.sessionId,
+            'session_id': state.session_id,
             'room': state.current_room,
             'description': description,
             'exits': list(room.exits.keys()),
@@ -463,7 +308,7 @@ def handle_new_game(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[
             }
         }
         
-        print(f"[{request_id}] Successfully created new game session {state.sessionId}")
+        print(f"[{request_id}] Successfully created new game session {state.session_id}")
         return create_response(200, response_body)
     
     except ValueError as e:
@@ -483,10 +328,10 @@ def handle_new_game(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[
         print(traceback.format_exc())
         
         # If we created a state but failed later, try to clean up
-        if state and state.sessionId:
+        if state and state.session_id:
             try:
-                session_manager.delete_session(state.sessionId)
-                print(f"[{request_id}] Cleaned up failed session {state.sessionId}")
+                session_manager.delete_session(state.session_id)
+                print(f"[{request_id}] Cleaned up failed session {state.session_id}")
             except Exception as cleanup_error:
                 print(f"[{request_id}] WARNING: Failed to clean up session - {str(cleanup_error)}")
         
@@ -540,17 +385,17 @@ def handle_command(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[s
                 'Request body must be a JSON object'
             )
         
-        # Extract sessionId and command
-        sessionId = body.get('sessionId')
+        # Extract session_id and command
+        session_id = body.get('session_id')
         command_text = body.get('command')
         
         # Validate required fields
-        if not sessionId:
-            print(f"[{request_id}] ERROR: Missing sessionId in request")
+        if not session_id:
+            print(f"[{request_id}] ERROR: Missing session_id in request")
             return create_error_response(
                 400,
                 'MISSING_SESSION_ID',
-                'sessionId is required'
+                'session_id is required'
             )
         
         if not command_text:
@@ -579,11 +424,11 @@ def handle_command(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[s
                 'command cannot be empty'
             )
         
-        print(f"[{request_id}] Processing command for session {sessionId}: {command_text}")
+        print(f"[{request_id}] Processing command for session {session_id}: {command_text}")
         
         # Load session from DynamoDB
         try:
-            state = session_manager.load_session(sessionId)
+            state = session_manager.load_session(session_id)
         except Exception as e:
             print(f"[{request_id}] ERROR: Failed to load session from DynamoDB - {str(e)}")
             return create_error_response(
@@ -593,11 +438,11 @@ def handle_command(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[s
             )
         
         if state is None:
-            print(f"[{request_id}] ERROR: Session not found - {sessionId}")
+            print(f"[{request_id}] ERROR: Session not found - {session_id}")
             return create_error_response(
                 404,
                 'SESSION_NOT_FOUND',
-                f'Session not found or expired: {sessionId}'
+                f'Session not found or expired: {session_id}'
             )
         
         # Create a backup of the original state for rollback
@@ -638,7 +483,7 @@ def handle_command(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[s
         # Save updated state to DynamoDB
         try:
             session_manager.save_session(state)
-            print(f"[{request_id}] Saved updated session {sessionId}")
+            print(f"[{request_id}] Saved updated session {session_id}")
         except Exception as e:
             print(f"[{request_id}] ERROR: Failed to save session to DynamoDB - {str(e)}")
             
@@ -716,7 +561,7 @@ def handle_command(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[s
             'notifications': result.notifications
         }
         
-        print(f"[{request_id}] Successfully executed command for session {sessionId}")
+        print(f"[{request_id}] Successfully executed command for session {session_id}")
         return create_response(200, response_body)
     
     except json.JSONDecodeError as e:
@@ -747,14 +592,14 @@ def handle_command(event: Dict[str, Any], request_id: str = 'unknown') -> Dict[s
         )
 
 
-def handle_get_state(sessionId: str, request_id: str = 'unknown') -> Dict[str, Any]:
+def handle_get_state(session_id: str, request_id: str = 'unknown') -> Dict[str, Any]:
     """
-    Handle GET /api/game/state/{sessionId} - Get current game state.
+    Handle GET /api/game/state/{session_id} - Get current game state.
     
     Loads session from DynamoDB and returns complete game state.
     
     Args:
-        sessionId: The session identifier
+        session_id: The session identifier
         request_id: Request identifier for logging
         
     Returns:
@@ -763,11 +608,11 @@ def handle_get_state(sessionId: str, request_id: str = 'unknown') -> Dict[str, A
     Requirements: 19.1, 19.2, 19.3, 16.1, 16.2, 16.3
     """
     try:
-        print(f"[{request_id}] Retrieving state for session {sessionId}")
+        print(f"[{request_id}] Retrieving state for session {session_id}")
         
-        # Validate sessionId format
-        if not sessionId or not isinstance(sessionId, str):
-            print(f"[{request_id}] ERROR: Invalid sessionId format")
+        # Validate session_id format
+        if not session_id or not isinstance(session_id, str):
+            print(f"[{request_id}] ERROR: Invalid session_id format")
             return create_error_response(
                 400,
                 'INVALID_SESSION_ID',
@@ -776,7 +621,7 @@ def handle_get_state(sessionId: str, request_id: str = 'unknown') -> Dict[str, A
         
         # Load session from DynamoDB
         try:
-            state = session_manager.load_session(sessionId)
+            state = session_manager.load_session(session_id)
         except Exception as e:
             print(f"[{request_id}] ERROR: Failed to load session from DynamoDB - {str(e)}")
             return create_error_response(
@@ -786,11 +631,11 @@ def handle_get_state(sessionId: str, request_id: str = 'unknown') -> Dict[str, A
             )
         
         if state is None:
-            print(f"[{request_id}] ERROR: Session not found - {sessionId}")
+            print(f"[{request_id}] ERROR: Session not found - {session_id}")
             return create_error_response(
                 404,
                 'SESSION_NOT_FOUND',
-                f'Session not found or expired: {sessionId}'
+                f'Session not found or expired: {session_id}'
             )
         
         # Update last accessed timestamp and TTL
@@ -799,7 +644,7 @@ def handle_get_state(sessionId: str, request_id: str = 'unknown') -> Dict[str, A
         # Save updated session to extend TTL
         try:
             session_manager.save_session(state)
-            print(f"[{request_id}] Updated TTL for session {sessionId}")
+            print(f"[{request_id}] Updated TTL for session {session_id}")
         except Exception as e:
             print(f"[{request_id}] WARNING: Failed to update session TTL - {str(e)}")
             # Continue anyway - this is not critical for read operations
@@ -854,7 +699,7 @@ def handle_get_state(sessionId: str, request_id: str = 'unknown') -> Dict[str, A
         # Build response with complete game state
         response_body = {
             'success': True,
-            'sessionId': state.sessionId,
+            'session_id': state.session_id,
             'current_room': state.current_room,
             'description': description,
             'exits': list(room.exits.keys()),
@@ -879,7 +724,7 @@ def handle_get_state(sessionId: str, request_id: str = 'unknown') -> Dict[str, A
             'last_accessed': state.last_accessed
         }
         
-        print(f"[{request_id}] Successfully retrieved state for session {sessionId}")
+        print(f"[{request_id}] Successfully retrieved state for session {session_id}")
         return create_response(200, response_body)
     
     except Exception as e:

@@ -138,6 +138,37 @@ class CommandParser:
             'touch': 'RUB',
             'shake': 'SHAKE',
             'squeeze': 'SQUEEZE',
+            'attack': 'ATTACK',
+            'kill': 'ATTACK',
+            'fight': 'ATTACK',
+            'throw': 'THROW',
+            'hurl': 'THROW',
+            'toss': 'THROW',
+            'give': 'GIVE',
+            'offer': 'GIVE',
+            'tell': 'TELL',
+            'ask': 'ASK',
+            'wake': 'WAKE',
+            'awaken': 'WAKE',
+            'kiss': 'KISS',
+            'xyzzy': 'XYZZY',
+            'plugh': 'PLUGH',
+            'hello': 'HELLO',
+            'hi': 'HELLO',
+            'pray': 'PRAY',
+            'jump': 'JUMP',
+            'leap': 'JUMP',
+            'yell': 'YELL',
+            'scream': 'YELL',
+            'shout': 'YELL',
+            'echo': 'ECHO',
+            'damn': 'CURSE',
+            'dammit': 'CURSE',
+            'hell': 'CURSE',
+            'crap': 'CURSE',
+            'shit': 'CURSE',
+            'fuck': 'CURSE',
+            'bastard': 'CURSE',
         }
         
         # Utility verbs
@@ -150,11 +181,19 @@ class CommandParser:
             'l': 'LOOK',
             'quit': 'QUIT',
             'q': 'QUIT',
+            'save': 'SAVE',
+            'restore': 'RESTORE',
+            'restart': 'RESTART',
+            'score': 'SCORE',
+            'verbose': 'VERBOSE',
+            'brief': 'BRIEF',
+            'superbrief': 'SUPERBRIEF',
         }
         
         # Prepositions to recognize
         self.prepositions: Set[str] = {
-            'with', 'using', 'at', 'to', 'in', 'into', 'on', 'onto', 'from'
+            'with', 'using', 'at', 'to', 'in', 'into', 'on', 'onto', 'from',
+            'under', 'behind', 'inside', 'through', 'across', 'over', 'about'
         }
         
         # Words to ignore (articles, etc.)
@@ -249,6 +288,13 @@ class CommandParser:
                 return ParsedCommand(
                     verb="EXAMINE",
                     object=" ".join(words[1:])
+                )
+            
+            # Special case: "restore <save_id>" takes an argument
+            if verb == "RESTORE" and len(words) > 1:
+                return ParsedCommand(
+                    verb=verb,
+                    object=words[1]  # Save ID
                 )
             
             return ParsedCommand(verb=verb)
