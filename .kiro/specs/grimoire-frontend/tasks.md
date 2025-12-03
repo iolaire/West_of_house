@@ -219,7 +219,7 @@
   - Add responsive images with srcset
   - _Requirements: 6.2_
 
-- [ ] 17. Configure Amplify deployment
+- [x] 17. Configure Amplify deployment
   - Create amplify.yml configuration file
   - Set up environment variables for API endpoints
   - Configure build commands and artifact paths

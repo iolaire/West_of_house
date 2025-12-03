@@ -29,19 +29,44 @@ frontend:
       - node_modules/**/*
       - amplify/node_modules/**/*
   customHeaders:
+    # Cache static images for 1 year (immutable)
     - pattern: '/images/**'
       headers:
         - key: 'Cache-Control'
           value: 'public, max-age=31536000, immutable'
+    # Cache JavaScript bundles for 1 year (immutable with content hash)
     - pattern: '**/*.js'
       headers:
         - key: 'Cache-Control'
           value: 'public, max-age=31536000, immutable'
+    # Cache CSS files for 1 year (immutable with content hash)
     - pattern: '**/*.css'
       headers:
         - key: 'Cache-Control'
           value: 'public, max-age=31536000, immutable'
+    # Cache WebP images for 1 year (immutable)
+    - pattern: '**/*.webp'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=31536000, immutable'
+    # Cache PNG images for 1 year (immutable)
+    - pattern: '**/*.png'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=31536000, immutable'
+    # HTML files should always be revalidated
     - pattern: '**/*.html'
       headers:
         - key: 'Cache-Control'
           value: 'public, max-age=0, must-revalidate'
+    # Security headers for all responses
+    - pattern: '**/*'
+      headers:
+        - key: 'X-Content-Type-Options'
+          value: 'nosniff'
+        - key: 'X-Frame-Options'
+          value: 'DENY'
+        - key: 'X-XSS-Protection'
+          value: '1; mode=block'
+        - key: 'Referrer-Policy'
+          value: 'strict-origin-when-cross-origin'
