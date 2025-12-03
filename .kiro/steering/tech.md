@@ -231,15 +231,18 @@ amplify push
 # List all project resources by tags
 aws resourcegroupstaggingapi get-resources \
   --tag-filters Key=Project,Values=west-of-haunted-house \
-                Key=ManagedBy,Values=vedfolnir
+                Key=ManagedBy,Values=vedfolnir \
+  --output json
 
 # Cleanup all project resources (use with caution!)
 ./scripts/cleanup-aws-resources.sh
 
 # Verify resource tags
-aws lambda list-tags --resource <function-arn>
-aws dynamodb list-tags-of-resource --resource-arn <table-arn>
+aws lambda list-tags --resource <function-arn> --output json
+aws dynamodb list-tags-of-resource --resource-arn <table-arn> --output json
 ```
+
+**Important**: Always use `--output json` with AWS CLI commands to prevent terminal overflow from table formatting.
 
 ### Lambda Packaging
 

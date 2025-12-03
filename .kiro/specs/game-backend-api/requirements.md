@@ -307,14 +307,4 @@ This document defines the MVP requirements for the backend API system of "West o
 4. WHEN deployment scripts create resources THEN the Game Engine SHALL ensure all resources receive the required tags
 5. WHEN querying AWS resources THEN the Game Engine SHALL filter by the required tags to identify project resources
 
-### Requirement 25
 
-**User Story:** As a developer, I want a cleanup script to remove all AWS resources, so that I can reset the project to a clean slate or decommission the application.
-
-#### Acceptance Criteria
-
-1. WHEN the cleanup script is executed THEN the Game Engine SHALL identify all AWS resources with the project tags
-2. WHEN resources are identified THEN the Game Engine SHALL delete resources in the correct dependency order
-3. WHEN the cleanup script runs THEN the Game Engine SHALL only delete resources matching all three required tags
-4. WHEN resources are deleted THEN the Game Engine SHALL provide progress feedback and confirmation
-5. WHEN cleanup completes THEN the Game Engine SHALL verify all tagged resources have been removed

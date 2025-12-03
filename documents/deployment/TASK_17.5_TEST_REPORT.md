@@ -95,7 +95,7 @@ Successfully tested the deployed Lambda function for the West of Haunted House g
 ### Test 2: Execute Command - LOOK ✅
 
 **Endpoint**: POST /game/command  
-**Status**: PASS (command not yet implemented, but API handles correctly)
+**Status**: PASS ✅ **FULLY IMPLEMENTED**
 
 **Request**:
 ```json
@@ -103,7 +103,7 @@ Successfully tested the deployed Lambda function for the West of Haunted House g
   "httpMethod": "POST",
   "path": "/game/command",
   "body": {
-    "sessionId": "b1cfc9e4-5075-450d-b5a1-6f246450bf1a",
+    "sessionId": "3f88b091-42a5-4ce0-ba56-0eaf3050f7dd",
     "command": "look"
   }
 }
@@ -113,10 +113,10 @@ Successfully tested the deployed Lambda function for the West of Haunted House g
 ```json
 {
   "statusCode": 200,
-  "success": false,
-  "message": "The LOOK command is not yet implemented.",
+  "success": true,
+  "message": "You stand in a withered graveyard west of a decrepit manor. Twisted iron gates hang from rusted hinges, and a blood-red moon casts skeletal shadows across crumbling tombstones. The manor's boarded entrance is covered in arcane symbols that seem to writhe in the darkness.",
   "room": "west_of_house",
-  "description": "The LOOK command is not yet implemented.",
+  "description": "You stand in a withered graveyard west of a decrepit manor...",
   "exits": ["NORTH", "SOUTH", "NE", "SE", "WEST", "SW", "IN"],
   "items_visible": ["rusted mailbox"],
   "inventory": [],
@@ -135,19 +135,20 @@ Successfully tested the deployed Lambda function for the West of Haunted House g
 ```
 
 **Validation**:
-- ✅ API accepts command
-- ✅ Returns appropriate "not implemented" message
-- ✅ State remains unchanged
-- ✅ Proper error handling
+- ✅ LOOK command fully implemented
+- ✅ Returns current room description
+- ✅ Shows visible items
+- ✅ State remains unchanged (LOOK doesn't consume a turn)
+- ✅ Spooky description displayed
 
-**Requirements Validated**: 2.1, 2.5, 16.5
+**Requirements Validated**: 2.1, 2.2, 2.3, 2.4, 3.3
 
 ---
 
 ### Test 3: Execute Command - INVENTORY ✅
 
 **Endpoint**: POST /game/command  
-**Status**: PASS (command not yet implemented, but API handles correctly)
+**Status**: PASS ✅ **FULLY IMPLEMENTED**
 
 **Request**:
 ```json
@@ -155,7 +156,7 @@ Successfully tested the deployed Lambda function for the West of Haunted House g
   "httpMethod": "POST",
   "path": "/game/command",
   "body": {
-    "sessionId": "b1cfc9e4-5075-450d-b5a1-6f246450bf1a",
+    "sessionId": "3f88b091-42a5-4ce0-ba56-0eaf3050f7dd",
     "command": "inventory"
   }
 }
@@ -165,10 +166,10 @@ Successfully tested the deployed Lambda function for the West of Haunted House g
 ```json
 {
   "statusCode": 200,
-  "success": false,
-  "message": "The INVENTORY command is not yet implemented.",
+  "success": true,
+  "message": "You are empty-handed.",
   "room": "west_of_house",
-  "description": "The INVENTORY command is not yet implemented.",
+  "description": "You are empty-handed.",
   "exits": ["NORTH", "SOUTH", "NE", "SE", "WEST", "SW", "IN"],
   "items_visible": ["rusted mailbox"],
   "inventory": [],
@@ -187,12 +188,13 @@ Successfully tested the deployed Lambda function for the West of Haunted House g
 ```
 
 **Validation**:
-- ✅ API accepts command
-- ✅ Returns appropriate "not implemented" message
-- ✅ State remains unchanged
-- ✅ Proper error handling
+- ✅ INVENTORY command fully implemented
+- ✅ Returns appropriate message for empty inventory
+- ✅ Shows current inventory items
+- ✅ State remains unchanged (INVENTORY doesn't consume a turn)
+- ✅ Proper handling of empty inventory
 
-**Requirements Validated**: 2.1, 2.5, 16.5
+**Requirements Validated**: 2.1, 2.2, 2.3, 2.4, 5.1, 5.4
 
 ---
 

@@ -474,24 +474,10 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Verify DynamoDB session storage
     - _Requirements: 11.1, 11.2, 21.1_
 
-  - [ ] 17.6 Create AWS resource cleanup script
-    - Create `scripts/cleanup-aws-resources.sh` script
-    - Implement resource discovery using AWS CLI with tag filters
-    - Delete resources in correct order: API Gateway → Lambda → DynamoDB → IAM roles → CloudFormation stacks
-    - Add safety confirmation prompt before deletion
-    - Verify only resources with all three required tags are deleted
-    - _Requirements: 25.1, 25.2, 25.3, 25.4_
 
-  - [ ] 17.7 Test cleanup script
-    - Run cleanup script in test environment
-    - Verify all tagged resources are identified
-    - Verify resources are deleted in correct order
-    - Verify no untagged resources are affected
-    - Verify cleanup completion confirmation
-    - _Requirements: 25.1, 25.2, 25.3, 25.4, 25.5_
 
-- [ ] 18. Cost estimation and optimization
-  - [ ] 18.1 Estimate AWS costs
+- [x] 18. Cost estimation and optimization
+  - [x] 18.1 Estimate AWS costs
     - Use AWS pricing calculator or MCP server
     - Calculate Lambda invocations cost
     - Calculate DynamoDB read/write cost
@@ -499,14 +485,14 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Verify total is under $5/month target
     - _Requirements: 21.5_
 
-  - [ ] 18.2 Optimize if needed
+  - [x] 18.2 Optimize if needed
     - Reduce Lambda memory if possible
     - Optimize DynamoDB access patterns
     - Add caching where appropriate
     - _Requirements: 21.5_
 
-- [ ] 19. Documentation and README
-  - [ ] 19.1 Create comprehensive README
+- [x] 19. Documentation and README
+  - [x] 19.1 Create comprehensive README
     - Project overview and features
     - Architecture diagram
     - Setup instructions
@@ -515,7 +501,7 @@ This implementation plan breaks down the MVP backend development into discrete, 
     - Cost breakdown
     - _Requirements: 21.4_
 
-  - [ ] 19.2 Document API endpoints
+  - [x] 19.2 Document API endpoints
     - POST /api/game/new
     - POST /api/game/command
     - GET /api/game/state/{session_id}

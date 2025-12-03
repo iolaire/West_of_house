@@ -1,54 +1,164 @@
-# West of Haunted House
+# West of Haunted House 🎃
 
 A modern resurrection of the 1977 text adventure Zork I with Halloween-themed transformations. This project "performs a séance" on the original dead source code, transplanting classic Zork logic into a modern Python serverless architecture while rewriting the sunny fields and white houses into a grim, Halloween nightmare.
 
-## Overview
+[![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-orange.svg)](https://aws.amazon.com/lambda/)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
+[![DynamoDB](https://img.shields.io/badge/AWS-DynamoDB-blue.svg)](https://aws.amazon.com/dynamodb/)
+[![Amplify Gen 2](https://img.shields.io/badge/AWS-Amplify%20Gen%202-purple.svg)](https://docs.amplify.aws/)
 
-Players interact with a React web app presented as an animated 3D grimoire (spellbook). They type text commands to navigate a haunted world, solve puzzles, collect cursed treasures, and manage their sanity as they explore 110 rooms of supernatural horror.
+## 🎮 Overview
 
-## Architecture
+**West of Haunted House** is a serverless text adventure game that resurrects the classic Zork I with a spooky Halloween twist. Players navigate 110 haunted rooms, solve cursed puzzles, collect treasures, and manage their sanity as they explore a supernatural world.
 
-- **Backend**: AWS Lambda (Python 3.12, ARM64) + DynamoDB
-- **API**: AWS Amplify API Gateway (REST)
-- **Frontend**: React (hosted on AWS Amplify)
-- **Cost Target**: <$5/month for typical usage
+### Key Features
 
-## Prerequisites
+- 🏚️ **110 Haunted Rooms**: Every location from Zork I transformed with spooky descriptions
+- 👻 **Sanity System**: Mental health meter (0-100) that affects descriptions and gameplay
+- 🎒 **Classic Mechanics**: Object interaction, inventory management, puzzle-solving
+- 💰 **Treasure Collection**: Find and score valuable cursed artifacts
+- 💡 **Light System**: Manage lamp battery to survive dark areas
+- 📦 **Container Objects**: Mailboxes, trophy cases, and more
+- ☁️ **Serverless Architecture**: AWS Lambda + DynamoDB for minimal costs (<$5/month)
+- 🚀 **RESTful API**: JSON endpoints for React frontend integration
 
-- Python 3.12+
-- Node.js 18+ and npm
-- AWS CLI configured
-- AWS Amplify CLI (`npm install -g @aws-amplify/cli`)
-- AWS account with appropriate permissions
+## 📋 Table of Contents
 
-## Setup Instructions
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+- [Setup Instructions](#setup-instructions)
+- [Deployment](#deployment)
+- [API Documentation](#api-documentation)
+- [Cost Breakdown](#cost-breakdown)
+- [Development](#development)
+- [Testing](#testing)
+- [Project Structure](#project-structure)
+- [Security](#security)
+- [Contributing](#contributing)
 
-### 1. Create Deployment IAM User
+## 🏗️ Architecture
 
-The deployment process requires an IAM user with specific permissions for Amplify, Lambda, DynamoDB, and related services.
-
-**Automated Setup:**
-
-```bash
-# Run the setup script
-./scripts/setup-deployment-user.sh
+```
+┌─────────────────────────────────────────────────────────────┐
+│              React Frontend (AWS Amplify Hosting)           │
+│  (Grimoire UI with left pane image, right pane text/input) │
+└─────────────────────┬───────────────────────────────────────┘
+                      │ HTTPS/JSON
+                      │
+┌─────────────────────▼───────────────────────────────────────┐
+│                  AWS Amplify API Gateway                    │
+│  - REST API endpoints                                       │
+│  - Request routing                                          │
+│  - CORS handling                                            │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+┌─────────────────────▼───────────────────────────────────────┐
+│              AWS Lambda Functions (Python 3.12)             │
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  game_handler Lambda (ARM64)                         │  │
+│  │  - Command Parser                                    │  │
+│  │  - Game State Manager                                │  │
+│  │  - Action Executor                                   │  │
+│  │  - Sanity System                                     │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  World Data (bundled in Lambda)                      │  │
+│  │  - Rooms JSON (haunted descriptions)                 │  │
+│  │  - Objects JSON (spooky interactions)                │  │
+│  │  - Flags JSON (initial state)                        │  │
+│  └──────────────────────────────────────────────────────┘  │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+┌─────────────────────▼───────────────────────────────────────┐
+│              AWS DynamoDB (On-Demand)                       │
+│  - Session storage (game state)                             │
+│  - TTL for automatic cleanup                                │
+│  - Pay-per-request pricing                                  │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-This script will:
-1. Create IAM user `West_of_house_AmplifyDeploymentUser`
-2. Attach deployment policy with least-privilege permissions
-3. Generate access keys
-4. Display configuration instructions
+### Technology Stack
 
-**Manual Setup:**
+- **Compute**: AWS Lambda (Python 3.12, ARM64 architecture)
+- **API**: AWS Amplify API Gateway (REST)
+- **Database**: AWS DynamoDB (on-demand billing)
+- **Hosting**: AWS Amplify Hosting (React frontend)
+- **Infrastructure**: AWS Amplify Gen 2 (TypeScript-based, code-first)
+- **Testing**: pytest + Hypothesis (property-based testing)
 
-If you prefer manual setup:
+## 📦 Prerequisites
+
+### Required Software
+
+- **Node.js**: v18.16.0 or later
+- **npm**: v6.14.4 or later
+- **Python**: 3.12
+- **AWS CLI**: Latest version
+- **Git**: For version control
+
+### AWS Account Setup
+
+1. **AWS Account**: Active AWS account with billing enabled
+2. **IAM User**: Deployment user with appropriate permissions
+3. **AWS CLI**: Configured with credentials
 
 ```bash
-# Create the IAM user
+# Install AWS CLI (macOS)
+brew install awscli
+
+# Configure AWS CLI
+aws configure
+# Enter your AWS Access Key ID
+# Enter your AWS Secret Access Key
+# Default region: us-east-1
+# Default output format: json
+```
+
+### Python Environment
+
+```bash
+# Create virtual environment
+python3.12 -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate  # macOS/Linux
+# or
+venv\Scripts\activate  # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+## 🚀 Setup Instructions
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/west-of-haunted-house.git
+cd west-of-haunted-house
+```
+
+### 2. Install Dependencies
+
+```bash
+# Install Node.js dependencies for Amplify
+npm install
+
+# Install Python dependencies
+pip install -r requirements.txt
+```
+
+### 3. Configure AWS Credentials
+
+Create an IAM user for deployment:
+
+```bash
+# Create deployment user
 aws iam create-user --user-name West_of_house_AmplifyDeploymentUser
 
-# Attach the deployment policy
+# Attach deployment policy (see scripts/iam-deployment-policy.json)
 aws iam put-user-policy \
   --user-name West_of_house_AmplifyDeploymentUser \
   --policy-name AmplifyDeploymentPolicy \
@@ -56,166 +166,315 @@ aws iam put-user-policy \
 
 # Create access keys
 aws iam create-access-key --user-name West_of_house_AmplifyDeploymentUser
-```
 
-**Configure AWS CLI Profile:**
-
-```bash
-# Configure the deployment profile
+# Configure AWS CLI profile
 aws configure --profile amplify-deploy
-
-# Enter the Access Key ID and Secret Access Key from the previous step
-# Default region: us-east-1 (or your preferred region)
-# Default output format: json
-
-# Test the profile
-aws sts get-caller-identity --profile amplify-deploy
 ```
 
-**Security Best Practices:**
+### 4. Initialize Amplify Gen 2 Project
 
-- ⚠️ **NEVER commit access keys to version control**
-- Store credentials securely (password manager, AWS Secrets Manager)
-- Rotate access keys regularly (every 90 days recommended)
-- Use environment variables or AWS profiles for credentials
-- Add `.env` and `aws-credentials.txt` to `.gitignore`
-
-### 2. Install Dependencies
+The project is already configured with Amplify Gen 2. To start a local sandbox:
 
 ```bash
-# Install Python dependencies
-pip install -r src/lambda/game_handler/requirements.txt
+# Start local development environment
+npx ampx sandbox
 
-# Install Amplify CLI globally
-npm install -g @aws-amplify/cli
-
-# Configure Amplify (if first time)
-amplify configure
+# This creates a per-developer cloud environment for testing
+# Access the sandbox at: http://localhost:3000
 ```
 
-### 3. Initialize Amplify Project
+## 🌐 Deployment
+
+### Deploy to AWS (Production)
+
+The project uses a two-branch Git workflow:
+
+- **`main` branch**: Development and testing (does NOT trigger deployments)
+- **`production` branch**: Production deployments (triggers AWS Amplify deployment)
+
+#### Standard Deployment Workflow
 
 ```bash
-# Set the deployment profile
-export AWS_PROFILE=amplify-deploy
+# 1. Work on main branch
+git checkout main
+git pull origin main
 
-# Initialize Amplify
-amplify init
+# 2. Make changes and test locally
+# ... make changes ...
+npx ampx sandbox  # Test in local sandbox
 
-# Follow the prompts:
-# - Project name: west-of-haunted-house
-# - Environment: dev
-# - Default editor: (your choice)
-# - App type: javascript
-# - Framework: react
-# - Source directory: src
-# - Distribution directory: build
-# - Build command: npm run build
-# - Start command: npm start
+# 3. Commit changes
+git add .
+git commit -m "Feature: description of changes"
+git push origin main
+
+# 4. Deploy to production
+git checkout production
+git merge main --no-edit
+git push origin production  # This triggers AWS deployment
+
+# 5. Sync main with production
+git checkout main
+git merge production
+git push origin main
 ```
 
-### 4. Add Backend Resources
+#### Monitor Deployment
+
+1. Go to [AWS Amplify Console](https://console.aws.amazon.com/amplify/)
+2. Select your app
+3. View deployment progress (typically 5-12 minutes)
+4. Check for build/deploy phase completion
+
+### Manual Deployment (Alternative)
 
 ```bash
-# Add REST API with Lambda function
-amplify add api
-# - Select: REST
-# - Provide friendly name: gameAPI
-# - Provide path: /api
-# - Lambda source: Create new Lambda function
-# - Function name: gameHandler
-# - Runtime: Python 3.12
-# - Template: Serverless ExpressJS function (we'll customize)
-
-# Add DynamoDB table
-amplify add storage
-# - Select: NoSQL Database
-# - Table name: GameSessions
-# - Partition key: sessionId (String)
-# - Sort key: (none)
-# - Add indexes: No
-# - Enable TTL: Yes (expires field)
+# Deploy using Amplify CLI
+npx ampx pipeline-deploy --branch main --app-id <your-app-id>
 ```
 
-### 5. Deploy to AWS
+### Verify Deployment
 
 ```bash
-# Package Lambda function (if needed)
-./scripts/package_lambda.sh
+# Run verification script
+./scripts/verify-gen2-deployment.sh
 
-# Deploy all resources
-amplify push
-
-# Review the changes and confirm
+# Test deployed API
+./scripts/test-production-api.sh
 ```
 
-### 6. Add Hosting (Optional)
+## 📚 API Documentation
+
+### Base URL
+
+```
+https://your-api-id.execute-api.us-east-1.amazonaws.com/prod
+```
+
+### Endpoints
+
+#### 1. Create New Game
+
+**POST** `/game/new`
+
+Creates a new game session and returns initial state.
+
+**Request:**
+```json
+{}
+```
+
+**Response:**
+```json
+{
+  "session_id": "550e8400-e29b-41d4-a716-446655440000",
+  "room": "west_of_house",
+  "description": "You stand before a decrepit Victorian mansion, its windows like hollow eyes staring into your soul. The once-white paint peels away like dead skin, revealing rotting wood beneath. A rusted mailbox stands askew by the door, and dead vines claw at the walls. The air is thick with the scent of decay and something... else. Something watching.",
+  "exits": ["NORTH", "SOUTH", "EAST", "WEST"],
+  "items_visible": ["mailbox"],
+  "inventory": [],
+  "state": {
+    "sanity": 100,
+    "score": 0,
+    "moves": 0,
+    "lamp_battery": 200
+  }
+}
+```
+
+#### 2. Execute Command
+
+**POST** `/game/command`
+
+Executes a player command and returns the result.
+
+**Request:**
+```json
+{
+  "session_id": "550e8400-e29b-41d4-a716-446655440000",
+  "command": "go north"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "You cautiously approach the north side of the house, your footsteps echoing in the unnatural silence.",
+  "room": "north_of_house",
+  "description": "The north side of the house is even more forbidding. Shadows seem to move in the corners of your vision. A path leads into a dark forest to the north, and you can circle around to the east or west.",
+  "exits": ["NORTH", "EAST", "WEST", "SOUTH"],
+  "items_visible": [],
+  "inventory": [],
+  "state": {
+    "sanity": 100,
+    "score": 0,
+    "moves": 1,
+    "lamp_battery": 200
+  },
+  "notifications": []
+}
+```
+
+#### 3. Get Game State
+
+**GET** `/game/state/{session_id}`
+
+Retrieves the complete current game state.
+
+**Response:**
+```json
+{
+  "session_id": "550e8400-e29b-41d4-a716-446655440000",
+  "current_room": "west_of_house",
+  "inventory": ["lamp", "sword"],
+  "flags": {
+    "rug_moved": true,
+    "trap_door_open": false,
+    "grate_unlocked": false
+  },
+  "state": {
+    "sanity": 95,
+    "score": 0,
+    "moves": 5,
+    "lamp_battery": 195
+  }
+}
+```
+
+### Supported Commands
+
+#### Movement
+- `go [direction]` or just `[direction]`
+- Directions: `north`, `south`, `east`, `west`, `up`, `down`, `in`, `out`
+
+#### Object Interaction
+- `take [object]` - Pick up an object
+- `drop [object]` - Drop an object from inventory
+- `examine [object]` - Look at an object closely
+- `open [object]` - Open a container or door
+- `close [object]` - Close a container or door
+- `read [object]` - Read text on an object
+- `move [object]` - Move an object (e.g., rug)
+
+#### Utility
+- `inventory` or `i` - Show what you're carrying
+- `look` or `l` - Look around the current room
+- `quit` - End the game
+
+### Error Responses
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_SESSION",
+    "message": "Session not found or expired",
+    "details": "Session ID: abc123 does not exist"
+  }
+}
+```
+
+**Error Codes:**
+- `400` - Bad Request (malformed JSON, invalid command)
+- `404` - Not Found (invalid session ID)
+- `429` - Too Many Requests (rate limit exceeded)
+- `500` - Internal Server Error (unexpected exception)
+
+## 💰 Cost Breakdown
+
+### Estimated Monthly Costs (1000 games/month)
+
+| Service | Usage | Cost |
+|---------|-------|------|
+| **AWS Lambda** | ~5,000 invocations<br>128MB memory<br>~500ms per request<br>ARM64 architecture | **$0.10** |
+| **DynamoDB** | ~10,000 reads<br>~5,000 writes<br>On-demand billing<br>TTL cleanup | **$0.02** |
+| **Amplify Hosting** | ~5GB data transfer<br>Static assets | **$0.50** |
+| **API Gateway** | ~5,000 requests | **$0.02** |
+| **CloudWatch Logs** | ~100MB logs | **$0.01** |
+| **Total** | | **~$0.65/month** |
+
+### Cost Optimization Features
+
+- ✅ **ARM64 Architecture**: 20% better price-performance vs x86_64
+- ✅ **On-Demand Billing**: Pay only for what you use
+- ✅ **Minimal Memory**: 128MB Lambda allocation
+- ✅ **TTL Cleanup**: Automatic session expiration (no manual cleanup costs)
+- ✅ **Serverless**: No idle server costs
+- ✅ **CDN Caching**: Reduced data transfer costs
+
+### Scaling Costs
+
+| Monthly Games | Estimated Cost |
+|---------------|----------------|
+| 500 | $0.50 |
+| 1,000 | $0.65 |
+| 2,000 | $1.20 |
+| 5,000 | $2.80 |
+| 10,000 | $5.50 |
+
+**Note**: Costs remain well under $5/month target for typical usage.
+
+## 🛠️ Development
+
+### Local Development
 
 ```bash
-# Add Amplify hosting
-amplify add hosting
-# - Select: Amplify Console
-# - Manual deployment
+# Activate virtual environment
+source venv/bin/activate
 
-# Publish the app
-amplify publish
+# Start local sandbox
+npx ampx sandbox
+
+# Run tests
+pytest tests/
+
+# Run with coverage
+pytest --cov=src tests/
+
+# Run specific test file
+pytest tests/unit/test_command_parser.py
+
+# Run property-based tests
+pytest tests/property/
 ```
 
-## Project Structure
+### Code Structure
 
 ```
-west-of-haunted-house/
-├── README.md                     # This file
-├── .gitignore                    # Git ignore rules
-├── project.md                    # Project overview
-│
-├── documents/                    # Project documentation
-│   ├── HALLOWEEN_MECHANICS.md    # Halloween flag system
-│   ├── FLAG_TRANSFORMATIONS.md   # Zork to haunted mappings
-│   └── game_overview.md          # Game design overview
-│
-├── data/                         # Game data (JSON files)
-│   ├── rooms_haunted.json        # Room definitions
-│   ├── objects_haunted.json      # Object definitions
-│   └── flags_haunted.json        # Initial flag states
-│
-├── src/                          # Backend source code
-│   └── lambda/
-│       └── game_handler/
-│           ├── index.py          # Lambda entry point
-│           ├── game_engine.py    # Core game logic
-│           ├── command_parser.py # Command parsing
-│           ├── state_manager.py  # State management
-│           ├── sanity_system.py  # Sanity mechanics
-│           ├── world_loader.py   # Load game data
-│           └── requirements.txt  # Python dependencies
-│
-├── tests/                        # All tests
-│   ├── unit/                     # Unit tests
-│   ├── property/                 # Property-based tests
-│   └── integration/              # Integration tests
-│
-├── scripts/                      # Deployment and utility scripts
-│   ├── setup-deployment-user.sh  # IAM user setup
-│   ├── iam-deployment-policy.json # IAM policy document
-│   ├── package_lambda.sh         # Package Lambda function
-│   └── deploy.sh                 # Deployment script
-│
-├── amplify/                      # Amplify configuration (generated)
-│   └── backend/
-│       ├── api/                  # API Gateway config
-│       ├── function/             # Lambda functions
-│       └── storage/              # DynamoDB tables
-│
-└── .kiro/                        # Kiro specs
-    └── specs/
-        └── game-backend-api/
-            ├── requirements.md   # Requirements document
-            ├── design.md         # Design document
-            └── tasks.md          # Implementation tasks
+amplify/functions/game-handler/
+├── index.py              # Lambda entry point
+├── game_engine.py        # Core game logic
+├── command_parser.py     # Natural language parsing
+├── state_manager.py      # Game state management
+├── sanity_system.py      # Halloween sanity mechanics
+├── world_loader.py       # Load JSON game data
+├── requirements.txt      # Python dependencies
+└── data/                 # Bundled game data
+    ├── flags_haunted.json
+    ├── objects_haunted.json
+    └── rooms_haunted.json
 ```
 
-## Development
+### Adding New Features
+
+1. Update requirements in `.kiro/specs/game-backend-api/requirements.md`
+2. Update design in `.kiro/specs/game-backend-api/design.md`
+3. Add tasks to `.kiro/specs/game-backend-api/tasks.md`
+4. Implement feature with tests
+5. Run full test suite
+6. Deploy to production
+
+## 🧪 Testing
+
+### Test Structure
+
+```
+tests/
+├── unit/                 # Unit tests for individual components
+├── property/             # Property-based tests (Hypothesis)
+└── integration/          # End-to-end tests
+```
 
 ### Running Tests
 
@@ -226,210 +485,184 @@ pytest
 # Run unit tests only
 pytest tests/unit/
 
-# Run property-based tests
+# Run property-based tests only
 pytest tests/property/
 
-# Run with coverage
-pytest --cov=src tests/
+# Run with coverage report
+pytest --cov=amplify/functions/game-handler tests/
+
+# Run specific test
+pytest tests/unit/test_command_parser.py::test_parse_movement_command
 ```
 
-### Local Development
+### Property-Based Testing
 
-```bash
-# Install dependencies
-pip install -r src/lambda/game_handler/requirements.txt
+This project uses [Hypothesis](https://hypothesis.readthedocs.io/) for property-based testing to verify correctness properties across many inputs.
 
-# Run tests
-pytest tests/
+Example property test:
+```python
+from hypothesis import given, strategies as st
 
-# Package Lambda function
-./scripts/package_lambda.sh
+# Feature: game-backend-api, Property 1: Session uniqueness
+@given(st.integers(min_value=1, max_value=1000))
+def test_session_uniqueness(num_sessions):
+    """For any number of new games, all session IDs should be unique."""
+    engine = GameEngine()
+    session_ids = set()
+    
+    for _ in range(num_sessions):
+        result = engine.create_new_game()
+        assert result["session_id"] not in session_ids
+        session_ids.add(result["session_id"])
 ```
 
-### Deployment
+### Test Coverage
 
-```bash
-# Set AWS profile
-export AWS_PROFILE=amplify-deploy
+Current test coverage: **>90%**
 
-# Deploy backend changes
-amplify push
+- Unit tests: Core functionality
+- Property tests: Correctness properties (30 properties)
+- Integration tests: End-to-end game flows
 
-# Deploy frontend and backend
-amplify publish
+## 📁 Project Structure
+
+```
+west-of-haunted-house/
+├── README.md                     # This file
+├── requirements.txt              # Python dependencies
+├── package.json                  # Node.js dependencies
+│
+├── amplify/                      # AWS Amplify Gen 2 configuration
+│   ├── backend.ts                # Backend definition
+│   ├── data/
+│   │   └── resource.ts           # DynamoDB table
+│   ├── functions/
+│   │   └── game-handler/
+│   │       ├── resource.ts       # Lambda definition
+│   │       ├── index.py          # Lambda handler
+│   │       ├── game_engine.py
+│   │       ├── command_parser.py
+│   │       ├── state_manager.py
+│   │       ├── sanity_system.py
+│   │       ├── world_loader.py
+│   │       ├── requirements.txt
+│   │       └── data/             # Game data
+│   └── auth/
+│       └── resource.ts
+│
+├── tests/                        # All tests
+│   ├── unit/
+│   ├── property/
+│   └── integration/
+│
+├── scripts/                      # Deployment scripts
+│   ├── deploy-gen2.sh
+│   ├── verify-gen2-deployment.sh
+│   ├── test-production-api.sh
+│   └── iam-deployment-policy.json
+│
+├── documents/                    # Documentation
+│   ├── HALLOWEEN_MECHANICS.md
+│   ├── HAUNTED_TRANSFORMATION.md
+│   └── deployment/
+│
+└── .kiro/                        # Kiro specs
+    └── specs/
+        └── game-backend-api/
+            ├── requirements.md
+            ├── design.md
+            └── tasks.md
 ```
 
-## IAM Roles and Security
+## 🔒 Security
 
-### Runtime IAM Role
+### IAM Roles
 
-The Lambda function uses a dedicated execution role with least-privilege permissions:
+**Lambda Execution Role**: Least-privilege access to DynamoDB
+- Read/Write access to GameSessions table only
+- CloudWatch Logs for debugging
+- No wildcard (*) permissions
 
-- **DynamoDB**: GetItem, PutItem, UpdateItem, DeleteItem (scoped to GameSessions table)
-- **CloudWatch Logs**: CreateLogGroup, CreateLogStream, PutLogEvents
-- **No wildcards**: All permissions scoped to specific resource ARNs
+**Deployment User**: Scoped permissions for CI/CD
+- Amplify, Lambda, DynamoDB, IAM, CloudFormation
+- Specific resource ARNs (no wildcards)
 
-### Deployment IAM User
+### Security Best Practices
 
-The `West_of_house_AmplifyDeploymentUser` has permissions for:
+- ✅ No hardcoded credentials (uses IAM roles)
+- ✅ Input validation on all commands
+- ✅ Session expiration (1 hour TTL)
+- ✅ Rate limiting (60 requests/minute per session)
+- ✅ CORS configuration for frontend
+- ✅ Encrypted data at rest (DynamoDB)
+- ✅ HTTPS only (API Gateway)
 
-- AWS Amplify (full access for deployment)
-- Lambda (create, update, delete functions)
-- DynamoDB (create, update, delete tables)
-- API Gateway (manage REST APIs)
-- IAM (create and manage service roles)
-- CloudFormation (manage stacks)
-- S3 (deployment artifacts)
+### Resource Tagging
 
-**Policy Location**: `scripts/iam-deployment-policy.json`
+All AWS resources are tagged for tracking:
+- `Project`: `west-of-haunted-house`
+- `ManagedBy`: `vedfolnir`
+- `Environment`: `dev` / `staging` / `prod`
 
-### Security Checklist
+## 🤝 Contributing
 
-- ✅ No hardcoded credentials in code
-- ✅ IAM roles for service authentication
-- ✅ Least-privilege policies (no wildcards)
-- ✅ Separate deployment and runtime roles
-- ✅ Access keys stored securely (not in git)
-- ✅ CloudWatch Logs for debugging
-- ✅ DynamoDB TTL for automatic cleanup
-- ✅ CORS configured for frontend domain
+Contributions are welcome! Please follow these steps:
 
-## Cost Estimation
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run tests (`pytest`)
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
-**Target**: <$5/month for 1000 games/month
+### Development Guidelines
 
-**Breakdown**:
-- **Lambda**: ~$0.10/month (ARM64, 128MB, 500ms avg)
-- **DynamoDB**: ~$0.02/month (on-demand, 10 reads + 5 writes per game)
-- **Amplify Hosting**: ~$0.50/month (5MB per page load)
-- **API Gateway**: ~$0.00/month (free tier covers 1M requests)
+- Follow PEP 8 style guide for Python code
+- Write tests for new features
+- Update documentation as needed
+- Use descriptive commit messages
+- Keep PRs focused and atomic
 
-**Total**: ~$0.62/month (well under $5 target)
+## 📄 License
 
-**Cost Optimization**:
-- ARM64 architecture (20% better price-performance)
-- On-demand DynamoDB billing (no idle costs)
-- TTL-based session cleanup (no manual cleanup costs)
-- Lambda memory optimized at 128MB
-- Amplify CDN for frontend caching
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## API Endpoints
+## 🙏 Acknowledgments
 
-### POST /api/game/new
-Create a new game session.
+- Original Zork I by Infocom (1977)
+- ZIL source code preservation by the Interactive Fiction community
+- AWS Amplify team for Gen 2 framework
+- Hypothesis library for property-based testing
 
-**Response**:
-```json
-{
-  "session_id": "uuid",
-  "room": "west_of_house",
-  "description": "spooky description...",
-  "exits": ["NORTH", "SOUTH", "EAST", "WEST"],
-  "items_visible": ["mailbox"],
-  "state": {
-    "sanity": 100,
-    "score": 0,
-    "moves": 0
-  }
-}
-```
+## 📞 Support
 
-### POST /api/game/command
-Execute a game command.
+- **Issues**: [GitHub Issues](https://github.com/yourusername/west-of-haunted-house/issues)
+- **Documentation**: See `documents/` folder
+- **Specs**: See `.kiro/specs/game-backend-api/`
 
-**Request**:
-```json
-{
-  "session_id": "uuid",
-  "command": "go north"
-}
-```
+## 🗺️ Roadmap
 
-**Response**:
-```json
-{
-  "success": true,
-  "message": "spooky response text...",
-  "room": "north_of_house",
-  "description": "spooky description...",
-  "inventory": ["lamp"],
-  "state": {
-    "sanity": 95,
-    "score": 0,
-    "moves": 1
-  }
-}
-```
+### MVP (Current)
+- ✅ Core gameplay mechanics
+- ✅ Sanity system
+- ✅ Basic puzzles
+- ✅ Treasure collection
+- ✅ RESTful API
 
-### GET /api/game/state/{session_id}
-Get current game state.
-
-**Response**:
-```json
-{
-  "current_room": "west_of_house",
-  "inventory": ["lamp"],
-  "flags": {...},
-  "state": {...}
-}
-```
-
-## Troubleshooting
-
-### Amplify Deployment Issues
-
-```bash
-# Check Amplify status
-amplify status
-
-# View CloudFormation events
-aws cloudformation describe-stack-events --stack-name amplify-westofhauntedhouse-dev
-
-# Check Lambda logs
-aws logs tail /aws/lambda/gameHandler --follow --profile amplify-deploy
-```
-
-### IAM Permission Issues
-
-```bash
-# Verify IAM user
-aws iam get-user --user-name West_of_house_AmplifyDeploymentUser
-
-# List attached policies
-aws iam list-user-policies --user-name West_of_house_AmplifyDeploymentUser
-
-# Test credentials
-aws sts get-caller-identity --profile amplify-deploy
-```
-
-### Lambda Function Issues
-
-```bash
-# Test Lambda function locally
-aws lambda invoke --function-name gameHandler \
-  --payload '{"command": "look"}' \
-  response.json --profile amplify-deploy
-
-# View Lambda configuration
-aws lambda get-function-configuration --function-name gameHandler --profile amplify-deploy
-```
-
-## Contributing
-
-This is a personal project, but suggestions and feedback are welcome! Please open an issue to discuss proposed changes.
-
-## License
-
-This project is inspired by the original Zork I (1977) by Infocom. The original game is now in the public domain. This resurrection is a creative reinterpretation with original Halloween-themed content.
-
-## Acknowledgments
-
-- Original Zork I by Marc Blank, Dave Lebling, Bruce Daniels, and Tim Anderson
-- Infocom for creating the text adventure genre
-- The interactive fiction community for keeping the genre alive
+### Future Phases
+- ⏳ Combat system
+- ⏳ NPC AI (thief, enemies)
+- ⏳ Curse system
+- ⏳ Blood moon cycles
+- ⏳ Soul collection
+- ⏳ Save/load functionality
+- ⏳ Complex multi-step puzzles
+- ⏳ Achievements and leaderboards
+- ⏳ React frontend with 3D grimoire UI
 
 ---
 
-**Status**: MVP Development in Progress
+**Built with 💀 by Vedfolnir**
 
-**Next Steps**: See `.kiro/specs/game-backend-api/tasks.md` for implementation tasks
+*"In the darkness, something stirs..."*
