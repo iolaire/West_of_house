@@ -230,7 +230,7 @@
 - [x] 18. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 19. Deploy to production
+- [x] 19. Deploy to production
   - Merge to production branch
   - Monitor Amplify build pipeline
   - Verify deployment success
