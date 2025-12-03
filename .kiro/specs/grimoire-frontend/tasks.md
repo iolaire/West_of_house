@@ -16,7 +16,7 @@
   - Create constants for transition duration, cache keys, etc.
   - _Requirements: 9.2_
 
-- [ ] 3. Implement API client service
+- [x] 3. Implement API client service
   - Create GameApiClient class with baseUrl configuration
   - Implement createSession() method for new game sessions
   - Implement sendCommand() method for game commands
@@ -24,7 +24,7 @@
   - Add request timeout configuration
   - _Requirements: 3.1, 5.1, 9.1, 9.3, 9.5_
 
-- [ ] 3.1 Write property test for API client
+- [x] 3.1 Write property test for API client
   - **Property 18: Response Parsing**
   - **Validates: Requirements 9.2**
 
