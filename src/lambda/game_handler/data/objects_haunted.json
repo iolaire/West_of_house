@@ -2,7 +2,6 @@
   "mailbox": {
     "name": "rusted mailbox",
     "type": "container",
-    "capacity": 5,
     "state": {
       "is_open": false,
       "is_locked": false
@@ -10,23 +9,33 @@
     "interactions": [
       {
         "verb": "OPEN",
-        "condition": { "is_open": false },
+        "condition": {
+          "is_open": false
+        },
         "response_original": "Opening the small mailbox reveals a leaflet.",
         "response_spooky": "The rusted mailbox creaks open, its hinges screaming. Inside, a blood-stained parchment awaits.",
-        "state_change": { "is_open": true }
+        "state_change": {
+          "is_open": true
+        }
       },
       {
         "verb": "CLOSE",
-        "condition": { "is_open": true },
+        "condition": {
+          "is_open": true
+        },
         "response_original": "The mailbox is now closed.",
         "response_spooky": "The mailbox slams shut with a sound like breaking bones.",
-        "state_change": { "is_open": false }
+        "state_change": {
+          "is_open": false
+        }
       },
       {
         "verb": "READ",
         "response_original": "The small mailbox is closed.",
         "response_spooky": "The mailbox is sealed shut, its surface covered in arcane symbols.",
-        "condition": { "is_open": false }
+        "condition": {
+          "is_open": false
+        }
       },
       {
         "verb": "TAKE",
@@ -38,8 +47,6 @@
   "leaflet": {
     "name": "cursed parchment",
     "type": "item",
-    "is_takeable": true,
-    "size": 1,
     "state": {
       "is_taken": false,
       "is_read": false
@@ -49,20 +56,28 @@
         "verb": "READ",
         "response_original": "\"WELCOME TO ZORK! ZORK is a game of adventure, danger, and low cunning. In it you will explore some of the most amazing territory ever seen by mortals. No computer should be without one!\"",
         "response_spooky": "\"ABANDON HOPE, ALL YE WHO ENTER HERE. You have been chosen to explore the Haunted Manor and its cursed depths. Few who enter ever leave, and those who do are forever changed. The treasures you seek are cursed, the paths are treacherous, and death is only the beginning of your suffering. Welcome to your nightmare.\"",
-        "state_change": { "is_read": true }
+        "state_change": {
+          "is_read": true
+        }
       },
       {
         "verb": "TAKE",
         "response_original": "Taken.",
         "response_spooky": "You grasp the parchment. It's cold to the touch and seems to writhe in your hands.",
-        "state_change": { "is_taken": true }
+        "state_change": {
+          "is_taken": true
+        }
       },
       {
         "verb": "DROP",
-        "condition": { "is_taken": true },
+        "condition": {
+          "is_taken": true
+        },
         "response_original": "Dropped.",
         "response_spooky": "The parchment falls, landing with a wet sound.",
-        "state_change": { "is_taken": false }
+        "state_change": {
+          "is_taken": false
+        }
       }
     ]
   },
@@ -112,17 +127,25 @@
     "interactions": [
       {
         "verb": "OPEN",
-        "condition": { "is_open": false },
+        "condition": {
+          "is_open": false
+        },
         "response_original": "With great effort, you open the window far enough to allow entry.",
         "response_spooky": "With great effort, you pry the window open. The glass is cracked and stained with something dark. Cold air and the smell of decay flow from within.",
-        "state_change": { "is_open": true }
+        "state_change": {
+          "is_open": true
+        }
       },
       {
         "verb": "CLOSE",
-        "condition": { "is_open": true },
+        "condition": {
+          "is_open": true
+        },
         "response_original": "The window closes (more easily than it opened).",
         "response_spooky": "The window slams shut with a sound like breaking glass.",
-        "state_change": { "is_open": false }
+        "state_change": {
+          "is_open": false
+        }
       },
       {
         "verb": "EXAMINE",
@@ -134,7 +157,6 @@
   "trophy_case": {
     "name": "cursed trophy case",
     "type": "container",
-    "capacity": 20,
     "state": {
       "is_open": true,
       "is_transparent": true
@@ -166,14 +188,20 @@
     "interactions": [
       {
         "verb": "MOVE",
-        "condition": { "is_moved": false },
+        "condition": {
+          "is_moved": false
+        },
         "response_original": "With a great effort, the rug is moved to one side of the room, revealing the dusty cover of a closed trap door.",
         "response_spooky": "With great effort, you drag the heavy rug aside. Its underside is soaked with old blood. Beneath it, a trap door is revealed, its surface carved with warnings in dead languages.",
-        "state_change": { "is_moved": true }
+        "state_change": {
+          "is_moved": true
+        }
       },
       {
         "verb": "MOVE",
-        "condition": { "is_moved": true },
+        "condition": {
+          "is_moved": true
+        },
         "response_original": "Having moved the carpet previously, you find it impossible to move it again.",
         "response_spooky": "The rug refuses to move again, as if held in place by invisible hands."
       },
@@ -186,7 +214,9 @@
         "verb": "LOOK",
         "response_original": "Underneath the rug is a closed trap door. As you drop the corner of the rug, the trap door is once again concealed from view.",
         "response_spooky": "Beneath the rug lies a trap door carved with screaming faces. As you drop the rug's corner, the door vanishes from sight.",
-        "condition": { "is_moved": false }
+        "condition": {
+          "is_moved": false
+        }
       }
     ]
   },
@@ -200,25 +230,32 @@
     "interactions": [
       {
         "verb": "OPEN",
-        "condition": { "is_open": false, "is_visible": true },
+        "condition": {
+          "is_open": false,
+          "is_visible": true
+        },
         "response_original": "The door reluctantly opens to reveal a rickety staircase descending into darkness.",
         "response_spooky": "The trap door opens with a groan of tortured wood. Below, a staircase of bones descends into absolute darkness. Cold air and the smell of death flow upward.",
-        "state_change": { "is_open": true }
+        "state_change": {
+          "is_open": true
+        }
       },
       {
         "verb": "CLOSE",
-        "condition": { "is_open": true },
+        "condition": {
+          "is_open": true
+        },
         "response_original": "The door swings shut and closes.",
         "response_spooky": "The trap door slams shut with a sound like a coffin closing.",
-        "state_change": { "is_open": false }
+        "state_change": {
+          "is_open": false
+        }
       }
     ]
   },
   "lamp": {
     "name": "cursed lantern",
     "type": "item",
-    "is_takeable": true,
-    "size": 2,
     "state": {
       "is_on": false,
       "is_taken": false,
@@ -229,29 +266,37 @@
         "verb": "TAKE",
         "response_original": "Taken.",
         "response_spooky": "You grasp the tarnished lantern. It's cold to the touch and covered in strange symbols.",
-        "state_change": { "is_taken": true }
+        "state_change": {
+          "is_taken": true
+        }
       },
       {
         "verb": "TURN_ON",
-        "condition": { "is_on": false },
+        "condition": {
+          "is_on": false
+        },
         "response_original": "The brass lantern is now on.",
         "response_spooky": "The lantern flickers to life with a sickly green flame that casts dancing shadows.",
-        "state_change": { "is_on": true }
+        "state_change": {
+          "is_on": true
+        }
       },
       {
         "verb": "TURN_OFF",
-        "condition": { "is_on": true },
+        "condition": {
+          "is_on": true
+        },
         "response_original": "The brass lantern is now off.",
         "response_spooky": "The cursed flame dies, leaving you in darkness. You hear breathing nearby.",
-        "state_change": { "is_on": false }
+        "state_change": {
+          "is_on": false
+        }
       }
     ]
   },
   "sword": {
     "name": "spectral blade",
     "type": "item",
-    "is_takeable": true,
-    "size": 3,
     "state": {
       "is_taken": false,
       "is_glowing": false
@@ -261,7 +306,9 @@
         "verb": "TAKE",
         "response_original": "Taken.",
         "response_spooky": "You grasp the spectral blade. It's cold as ice and seems to drink in the light. Runes along its length glow with pale fire.",
-        "state_change": { "is_taken": true }
+        "state_change": {
+          "is_taken": true
+        }
       },
       {
         "verb": "EXAMINE",
@@ -274,8 +321,7 @@
         "response_spooky": "The blade cuts through the air with a sound like screaming. Ghostly afterimages trail behind it."
       }
     ]
-  }
-,
+  },
   "troll": {
     "name": "flesh-eating ogre",
     "type": "scenery",
@@ -298,8 +344,6 @@
   "skull": {
     "name": "crystal skull",
     "type": "item",
-    "is_takeable": true,
-    "size": 2,
     "state": {
       "is_taken": false
     },
@@ -307,7 +351,9 @@
       {
         "verb": "TAKE",
         "response_spooky": "You grasp the crystal skull. It's cold and seems to pulse with dark energy. Whispers fill your mind.",
-        "state_change": { "is_taken": true }
+        "state_change": {
+          "is_taken": true
+        }
       },
       {
         "verb": "EXAMINE",
@@ -318,8 +364,6 @@
   "painting": {
     "name": "portrait of the damned",
     "type": "item",
-    "is_takeable": true,
-    "size": 4,
     "state": {
       "is_taken": false
     },
@@ -327,12 +371,668 @@
       {
         "verb": "TAKE",
         "response_spooky": "You take the cursed portrait. The subject's eyes follow you, and blood weeps from the canvas.",
-        "state_change": { "is_taken": true }
+        "state_change": {
+          "is_taken": true
+        }
       },
       {
         "verb": "EXAMINE",
         "response_spooky": "The portrait depicts a nobleman whose face is frozen in a silent scream. Blood runs from his eyes, and his mouth moves as if trying to warn you."
       }
     ]
+  },
+  "advertisement": {
+    "name": "death notice",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "altar": {
+    "name": "sacrificial altar",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "attic_table": {
+    "name": "dusty table",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "axe": {
+    "name": "executioner's axe",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "bar": {
+    "name": "cursed platinum bar",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "barrow": {
+    "name": "ancient tomb",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "barrow_door": {
+    "name": "tomb door",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "bat": {
+    "name": "vampire bat",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "bauble": {
+    "name": "cursed bauble",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "bell": {
+    "name": "funeral bell",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "blue_button": {
+    "name": "blue skull button",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "boarded_window": {
+    "name": "sealed window",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "boards": {
+    "name": "coffin boards",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "boat_label": {
+    "name": "warning label",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "bodies": {
+    "name": "pile of corpses",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "bolt": {
+    "name": "iron bolt",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "bones": {
+    "name": "skeleton",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "book": {
+    "name": "necronomicon",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "bottle": {
+    "name": "vial of poison",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "bracelet": {
+    "name": "soul-binding bracelet",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "broken_canary": {
+    "name": "broken raven",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "broken_egg": {
+    "name": "shattered raven egg",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "broken_lamp": {
+    "name": "shattered lantern",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "brown_button": {
+    "name": "brown skull button",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "bubble": {
+    "name": "toxic bubble",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "buoy": {
+    "name": "corpse buoy",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "burned_out_lantern": {
+    "name": "dead lantern",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "canary": {
+    "name": "mechanical raven",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "candles": {
+    "name": "black candles",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "chalice": {
+    "name": "chalice of souls",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "chimney": {
+    "name": "crematorium chimney",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "climbable_cliff": {
+    "name": "cliff",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "coal": {
+    "name": "cursed coal",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "coffin": {
+    "name": "obsidian coffin",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "coins": {
+    "name": "cursed coins",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "control_panel": {
+    "name": "control panel",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "crack": {
+    "name": "fissure",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "cyclops": {
+    "name": "one-eyed demon",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "dam": {
+    "name": "cursed dam",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "diamond": {
+    "name": "cursed diamond",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "egg": {
+    "name": "raven's egg",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "emerald": {
+    "name": "blood emerald",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "engravings": {
+    "name": "cursed engravings",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "forest": {
+    "name": "dead forest",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "garlic": {
+    "name": "withered garlic",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "ghosts": {
+    "name": "tortured spirits",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "global_water": {
+    "name": "dark water",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "granite_wall": {
+    "name": "granite wall",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "grate": {
+    "name": "iron grate",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "guidebook": {
+    "name": "book of the dead",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "gunk": {
+    "name": "toxic slag",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "hot_bell": {
+    "name": "molten bell",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "inflatable_boat": {
+    "name": "ghost ship",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "jade": {
+    "name": "jade death mask",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "keys": {
+    "name": "skeleton key",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "kitchen_table": {
+    "name": "bloodstained table",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "knife": {
+    "name": "ritual knife",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "ladder": {
+    "name": "bone ladder",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "large_bag": {
+    "name": "body bag",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "leak": {
+    "name": "blood leak",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "leaves": {
+    "name": "pile of bones",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "lowered_basket": {
+    "name": "cage",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "machine": {
+    "name": "torture machine",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "machine_switch": {
+    "name": "blood switch",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "map": {
+    "name": "blood-stained map",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "match": {
+    "name": "cursed matches",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "mirror_1": {
+    "name": "haunted mirror",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "mirror_2": {
+    "name": "cursed mirror",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "mountain_range": {
+    "name": "cursed mountains",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "nest": {
+    "name": "raven's nest",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "owners_manual": {
+    "name": "grimoire",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "pedestal": {
+    "name": "obsidian pedestal",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "pot_of_gold": {
+    "name": "cauldron of blood",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "prayer": {
+    "name": "dark prayer",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "pump": {
+    "name": "bone pump",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "punctured_boat": {
+    "name": "wrecked ship",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "putty": {
+    "name": "flesh putty",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "railing": {
+    "name": "bone railing",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "rainbow": {
+    "name": "spectral bridge",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "raised_basket": {
+    "name": "hanging cage",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "red_button": {
+    "name": "red skull button",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "river": {
+    "name": "river of blood",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "rope": {
+    "name": "hangman's rope",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "rusty_knife": {
+    "name": "cursed rusty knife",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "sand": {
+    "name": "grave dirt",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "sandwich": {
+    "name": "rotting flesh",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "sandwich_bag": {
+    "name": "leather pouch",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "scarab": {
+    "name": "death scarab",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "sceptre": {
+    "name": "necromancer's sceptre",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "screwdriver": {
+    "name": "rusted screwdriver",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "shovel": {
+    "name": "gravedigger's shovel",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "slide": {
+    "name": "blood chute",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "songbird": {
+    "name": "death raven",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "stiletto": {
+    "name": "poisoned dagger",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "teeth": {
+    "name": "vampire fangs",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "thief": {
+    "name": "shadow thief",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "timbers": {
+    "name": "gallows timber",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "tool_chest": {
+    "name": "torture chest",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "torch": {
+    "name": "cursed torch",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "tree": {
+    "name": "dead tree",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "trident": {
+    "name": "bone trident",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "trunk": {
+    "name": "coffin of jewels",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "tube": {
+    "name": "vial",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "wall": {
+    "name": "stone wall",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "water": {
+    "name": "tainted water",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "white_cliff": {
+    "name": "bone cliffs",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "wooden_door": {
+    "name": "rotting door",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "wrench": {
+    "name": "blood-stained wrench",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "yellow_button": {
+    "name": "yellow skull button",
+    "type": "item",
+    "state": {},
+    "interactions": []
   }
 }
