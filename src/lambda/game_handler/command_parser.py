@@ -151,6 +151,17 @@ class CommandParser:
             'wake': 'WAKE',
             'awaken': 'WAKE',
             'kiss': 'KISS',
+            'xyzzy': 'XYZZY',
+            'plugh': 'PLUGH',
+            'hello': 'HELLO',
+            'hi': 'HELLO',
+            'pray': 'PRAY',
+            'jump': 'JUMP',
+            'leap': 'JUMP',
+            'yell': 'YELL',
+            'scream': 'YELL',
+            'shout': 'YELL',
+            'echo': 'ECHO',
         }
         
         # Utility verbs
@@ -163,6 +174,13 @@ class CommandParser:
             'l': 'LOOK',
             'quit': 'QUIT',
             'q': 'QUIT',
+            'save': 'SAVE',
+            'restore': 'RESTORE',
+            'restart': 'RESTART',
+            'score': 'SCORE',
+            'verbose': 'VERBOSE',
+            'brief': 'BRIEF',
+            'superbrief': 'SUPERBRIEF',
         }
         
         # Prepositions to recognize
@@ -262,6 +280,13 @@ class CommandParser:
                 return ParsedCommand(
                     verb="EXAMINE",
                     object=" ".join(words[1:])
+                )
+            
+            # Special case: "restore <save_id>" takes an argument
+            if verb == "RESTORE" and len(words) > 1:
+                return ParsedCommand(
+                    verb=verb,
+                    object=words[1]  # Save ID
                 )
             
             return ParsedCommand(verb=verb)

@@ -323,14 +323,14 @@
   - **Property 26: Inflate/Deflate inverse operations**
   - **Validates: Requirements 6.4**
 
-- [ ] 8.9 Implement WAVE, RUB, SHAKE, SQUEEZE commands
+- [x] 8.9 Implement WAVE, RUB, SHAKE, SQUEEZE commands
   - Add handle_wave, handle_rub, handle_shake, handle_squeeze methods
   - Support these actions on all objects
   - Return thematic responses
   - Apply any special effects if defined
   - _Requirements: 6.5, 6.6, 6.7, 6.8_
 
-- [ ] 8.10 Write property tests for utility command responses
+- [x] 8.10 Write property tests for utility command responses
   - **Property 27: Wave generates response**
   - **Property 28: Rub/Touch generates response**
   - **Property 29: Shake generates response or state change**
@@ -338,7 +338,7 @@
   - **Validates: Requirements 6.5, 6.6, 6.7, 6.8**
 
 - [-] 9. Implement meta-game commands
-- [-] 9.1 Implement SAVE command
+- [x] 9.1 Implement SAVE command
   - Add handle_save method to GameEngine
   - Serialize current game state to JSON
   - Store in DynamoDB with unique save ID
@@ -346,7 +346,7 @@
   - Return success message with save ID
   - _Requirements: 7.1_
 
-- [ ] 9.2 Implement RESTORE command
+- [x] 9.2 Implement RESTORE command
   - Add handle_restore method to GameEngine
   - Load game state from DynamoDB by save ID
   - Deserialize JSON to GameState object
@@ -358,7 +358,7 @@
   - **Property 31: Save/Restore round-trip**
   - **Validates: Requirements 7.1, 7.2**
 
-- [ ] 9.4 Implement RESTART command
+- [x] 9.4 Implement RESTART command
   - Add handle_restart method to GameEngine
   - Reset game state to initial values
   - Clear inventory, flags, score
@@ -366,7 +366,7 @@
   - Return confirmation message
   - _Requirements: 7.3_
 
-- [ ] 9.5 Implement SCORE command
+- [x] 9.5 Implement SCORE command
   - Add handle_score method to GameEngine
   - Display current score and rank
   - Calculate rank based on score thresholds
@@ -378,7 +378,7 @@
   - **Property 32: Score displays current value**
   - **Validates: Requirements 7.5**
 
-- [ ] 9.7 Implement verbosity commands (VERBOSE, BRIEF, SUPERBRIEF)
+- [x] 9.7 Implement verbosity commands (VERBOSE, BRIEF, SUPERBRIEF)
   - Add handle_verbose, handle_brief, handle_superbrief methods
   - Add verbosity field to GameState
   - Add visited_rooms tracking to GameState

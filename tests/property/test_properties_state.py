@@ -7,7 +7,7 @@ serialization, and session management.
 
 import sys
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 # Add src directory to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler'))
@@ -248,7 +248,7 @@ def test_session_expiration_ttl_set(num_sessions):
     Note: DynamoDB TTL cleanup is asynchronous and handled by AWS, so we test
     that the TTL field is properly set rather than testing actual deletion.
     """
-    current_time = int(datetime.utcnow().timestamp())
+    current_time = int(datetime.now(UTC).timestamp())
     
     for _ in range(num_sessions):
         # Create new game session
@@ -284,13 +284,13 @@ def test_session_ttl_update(state, hours):
     This property ensures that TTL updates correctly extend session lifetime.
     """
     # Record time before update
-    before_time = int(datetime.utcnow().timestamp())
+    before_time = int(datetime.now(UTC).timestamp())
     
     # Update TTL
     state.update_ttl(hours=hours)
     
     # Record time after update
-    after_time = int(datetime.utcnow().timestamp())
+    after_time = int(datetime.now(UTC).timestamp())
     
     # Calculate expected expiry range
     min_expected_expiry = before_time + (hours * 60 * 60)

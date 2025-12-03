@@ -429,3 +429,135 @@ def test_inflate_fails_for_non_inflatable_objects(data):
     assert result.success is False
     assert result.message is not None
     assert "can't inflate" in result.message.lower()
+
+
+# Feature: complete-zork-commands, Property 27: Wave generates response
+@settings(max_examples=100)
+@given(st.data())
+def test_wave_generates_response(data):
+    """WAVE should generate a response for any object in inventory. Validates: Requirements 6.5"""
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    # Create a test object
+    object_id = "test_waveable"
+    waveable = GameObject(
+        id=object_id,
+        name="test object",
+        name_spooky="cursed wand",
+        type="item",
+        is_takeable=True,
+        is_treasure=False,
+        treasure_value=0,
+        interactions=[],
+        state={}
+    )
+    world.objects[object_id] = waveable
+    
+    room_ids = list(world.rooms.keys())
+    room_id = data.draw(st.sampled_from(room_ids))
+    
+    state = GameState.create_new_game()
+    state.current_room = room_id
+    state.add_to_inventory(object_id)
+    
+    result = engine.handle_wave(object_id, state)
+    
+    assert result.success is True
+    assert result.message is not None
+
+
+# Feature: complete-zork-commands, Property 28: Rub/Touch generates response
+@settings(max_examples=100)
+@given(st.data())
+def test_rub_generates_response(data):
+    """RUB should generate a response for any accessible object. Validates: Requirements 6.6"""
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    object_ids = list(world.objects.keys())
+    if not object_ids:
+        assume(False)
+    
+    object_id = data.draw(st.sampled_from(object_ids))
+    room_ids = list(world.rooms.keys())
+    room_id = data.draw(st.sampled_from(room_ids))
+    
+    state = GameState.create_new_game()
+    state.current_room = room_id
+    
+    room = world.get_room(room_id)
+    room.items.append(object_id)
+    
+    result = engine.handle_rub(object_id, state)
+    
+    assert result.success is True
+    assert result.message is not None
+
+
+# Feature: complete-zork-commands, Property 29: Shake generates response or state change
+@settings(max_examples=100)
+@given(st.data())
+def test_shake_generates_response(data):
+    """SHAKE should generate a response for any accessible object. Validates: Requirements 6.7"""
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    object_ids = list(world.objects.keys())
+    if not object_ids:
+        assume(False)
+    
+    object_id = data.draw(st.sampled_from(object_ids))
+    room_ids = list(world.rooms.keys())
+    room_id = data.draw(st.sampled_from(room_ids))
+    
+    state = GameState.create_new_game()
+    state.current_room = room_id
+    
+    room = world.get_room(room_id)
+    room.items.append(object_id)
+    
+    result = engine.handle_shake(object_id, state)
+    
+    assert result.success is True
+    assert result.message is not None
+
+
+# Feature: complete-zork-commands, Property 30: Squeeze generates response or state change
+@settings(max_examples=100)
+@given(st.data())
+def test_squeeze_generates_response(data):
+    """SQUEEZE should generate a response for any accessible object. Validates: Requirements 6.8"""
+    world = WorldData()
+    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    world.load_from_json(data_dir)
+    
+    engine = GameEngine(world)
+    
+    object_ids = list(world.objects.keys())
+    if not object_ids:
+        assume(False)
+    
+    object_id = data.draw(st.sampled_from(object_ids))
+    room_ids = list(world.rooms.keys())
+    room_id = data.draw(st.sampled_from(room_ids))
+    
+    state = GameState.create_new_game()
+    state.current_room = room_id
+    
+    room = world.get_room(room_id)
+    room.items.append(object_id)
+    
+    result = engine.handle_squeeze(object_id, state)
+    
+    assert result.success is True
+    assert result.message is not None

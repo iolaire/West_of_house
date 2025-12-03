@@ -11,6 +11,11 @@
 - **Infrastructure as Code**: TypeScript with AWS CDK (via Amplify Gen 2)
 - **Security**: IAM roles with least-privilege policies (no hardcoded credentials)
 
+**Python Best Practices:**
+- **Datetime**: Always use `datetime.datetime.now(datetime.UTC)` instead of deprecated `datetime.datetime.utcnow()`
+- **Imports**: `from datetime import datetime, UTC` for timezone-aware timestamps
+- **ISO Format**: Store timestamps as ISO strings with `datetime.now(UTC).isoformat()`
+
 ## Frontend
 
 - **Framework**: React

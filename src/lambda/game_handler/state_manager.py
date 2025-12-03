@@ -10,7 +10,7 @@ import json
 import uuid
 from dataclasses import dataclass, field, asdict
 from typing import Dict, List, Set, Union, Any, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 
 @dataclass
@@ -61,9 +61,9 @@ class GameState:
     def __post_init__(self):
         """Initialize timestamps if not provided."""
         if self.created_at is None:
-            self.created_at = datetime.utcnow().isoformat()
+            self.created_at = datetime.now(UTC).isoformat()
         if self.last_accessed is None:
-            self.last_accessed = datetime.utcnow().isoformat()
+            self.last_accessed = datetime.now(UTC).isoformat()
     
     def move_to_room(self, room_id: str) -> None:
         """
@@ -74,7 +74,7 @@ class GameState:
         """
         self.current_room = room_id
         self.rooms_visited.add(room_id)
-        self.last_accessed = datetime.utcnow().isoformat()
+        self.last_accessed = datetime.now(UTC).isoformat()
     
     def add_to_inventory(self, object_id: str) -> bool:
         """
@@ -89,7 +89,7 @@ class GameState:
         if object_id in self.inventory:
             return False
         self.inventory.append(object_id)
-        self.last_accessed = datetime.utcnow().isoformat()
+        self.last_accessed = datetime.now(UTC).isoformat()
         return True
     
     def remove_from_inventory(self, object_id: str) -> bool:
@@ -105,7 +105,7 @@ class GameState:
         if object_id not in self.inventory:
             return False
         self.inventory.remove(object_id)
-        self.last_accessed = datetime.utcnow().isoformat()
+        self.last_accessed = datetime.now(UTC).isoformat()
         return True
     
     def set_flag(self, flag_name: str, value: Union[bool, int]) -> None:
@@ -117,7 +117,7 @@ class GameState:
             value: The new flag value (boolean or integer)
         """
         self.flags[flag_name] = value
-        self.last_accessed = datetime.utcnow().isoformat()
+        self.last_accessed = datetime.now(UTC).isoformat()
     
     def get_flag(self, flag_name: str, default: Union[bool, int] = False) -> Union[bool, int]:
         """
@@ -140,7 +140,7 @@ class GameState:
         """
         self.turn_count += 1
         self.moves += 1
-        self.last_accessed = datetime.utcnow().isoformat()
+        self.last_accessed = datetime.now(UTC).isoformat()
     
     def to_dict(self) -> Dict[str, Any]:
         """
@@ -210,7 +210,7 @@ class GameState:
             New GameState instance with initial values
         """
         session_id = str(uuid.uuid4())
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         
         # Set TTL to 1 hour from now (3600 seconds)
         expires = int((now + timedelta(hours=1)).timestamp())
@@ -244,7 +244,7 @@ class GameState:
         Args:
             hours: Number of hours until expiration (default: 1)
         """
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         self.expires = int((now + timedelta(hours=hours)).timestamp())
         self.last_accessed = now.isoformat()
 
@@ -334,7 +334,7 @@ class SessionManager:
             state = GameState.from_dict(item)
             
             # Update last accessed timestamp
-            state.last_accessed = datetime.utcnow().isoformat()
+            state.last_accessed = datetime.now(UTC).isoformat()
             
             return state
             
