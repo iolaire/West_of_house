@@ -51,7 +51,7 @@ const GrimoireContainer: React.FC = () => {
       if (!sessionId) {
         try {
           await createSession();
-          
+
           // Add welcome message to output
           const welcomeLine: OutputLine = {
             id: `welcome-${Date.now()}`,
@@ -59,8 +59,32 @@ const GrimoireContainer: React.FC = () => {
             text: 'Welcome to West of Haunted House. The grimoire opens before you...',
             timestamp: Date.now(),
           };
-          
+
           setOutputLines([welcomeLine]);
+
+          // Send an initial "look" command to get the room description
+          setTimeout(async () => {
+            try {
+              const response: GameResponse = await sendCommand("look");
+
+              // Update room state
+              if (response.room) {
+                setCurrentRoom(response.room);
+              }
+
+              // Update room description
+              if (response.description_spooky) {
+                setRoomDescription(response.description_spooky);
+              }
+
+              // The response will be added to output through the normal command flow
+              // So we don't need to add it here
+
+            } catch (err) {
+              console.error('Failed to get initial room description:', err);
+            }
+          }, 100);
+
         } catch (err) {
           console.error('Failed to initialize session:', err);
           setError('Failed to start game. Please refresh the page.');
@@ -69,7 +93,7 @@ const GrimoireContainer: React.FC = () => {
     };
 
     initializeSession();
-  }, [sessionId, createSession]);
+  }, [sessionId, createSession, sendCommand]);
 
   /**
    * Handle command submission

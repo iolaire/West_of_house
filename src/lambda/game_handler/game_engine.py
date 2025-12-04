@@ -1587,9 +1587,9 @@ class GameEngine:
         state: GameState
     ) -> ActionResult:
         """
-        Handle taking an object from the current room.
+        Handle taking an object from the current room or open containers.
         
-        Validates that object is takeable, adds to inventory, removes from room.
+        Validates that object is takeable, adds to inventory, removes from room/container.
         
         Args:
             object_id: The object identifier to take
@@ -1612,6 +1612,27 @@ class GameEngine:
                         success=False,
                         message="The cursed object already weighs heavy in your possession."
                     )
+                
+                # Check if object is in an open container in the room
+                found_in_container = None
+                for item_id in current_room.items:
+                    try:
+                        item = self.world.get_object(item_id)
+                        if item.type == "container":
+                            is_open = item.state.get('is_open', False)
+                            is_transparent = item.state.get('is_transparent', False)
+                            if is_open or is_transparent:
+                                contents = item.state.get('contents', [])
+                                if object_id in contents:
+                                    found_in_container = item_id
+                                    break
+                    except:
+                        continue
+                
+                if found_in_container:
+                    # Delegate to handle_take_from_container
+                    return self.handle_take_from_container(object_id, found_in_container, state)
+                
                 return ActionResult(
                     success=False,
                     message=f"The shadows reveal no {object_id} in this forsaken place."
@@ -1805,7 +1826,8 @@ class GameEngine:
         state: GameState
     ) -> List[str]:
         """
-        Move container contents to/from room items when opening/closing.
+        Handle container opening/closing without moving contents to room.
+        Items stay in containers and must be taken from there.
 
         Args:
             container_id: The container object ID
@@ -1813,47 +1835,22 @@ class GameEngine:
             state: Current game state
 
         Returns:
-            List of notifications about content movements
+            List of notifications about container state changes
         """
         notifications = []
 
         try:
             container = self.world.get_object(container_id)
-            current_room = self.world.get_room(state.current_room)
 
             # Check if this is actually a container
             if container.type != "container":
                 return notifications
 
-            contents = container.state.get('contents', [])
-
-            if is_opening and contents:
-                # Move contents from container to room
-                for item_id in contents:
-                    if item_id not in current_room.items:
-                        current_room.items.append(item_id)
-                        notifications.append(f"The {item_id} falls out of the {container_id}.")
-
-                # Clear container contents (items are now in room)
-                # Keep a copy for when we close it again
-                container.state['_stored_contents'] = contents.copy()
-                container.state['contents'] = []
-
-            elif not is_opening and not contents:
-                # Move contents from room back to container when closing
-                stored_contents = container.state.get('_stored_contents', [])
-
-                for item_id in stored_contents:
-                    if item_id in current_room.items:
-                        current_room.items.remove(item_id)
-                        notifications.append(f"The {item_id} is placed back in the {container_id}.")
-
-                # Restore contents in container
-                container.state['contents'] = stored_contents.copy()
-                container.state.pop('_stored_contents', None)
+            # No content movement - items stay in container
+            # This is the correct text adventure behavior
 
         except ValueError:
-            # Container or room doesn't exist
+            # Container doesn't exist
             pass
         except Exception as e:
             # Log error but don't crash

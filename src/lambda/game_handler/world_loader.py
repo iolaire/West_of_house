@@ -338,16 +338,22 @@ class WorldData:
             if name_lower in obj_id_words:
                 return obj_id
             
-            # Check if name is a word in display name
+            # Check if name is a word in display name or matches the full display name
             if obj.name:
                 name_words = obj.name.lower().split()
                 if name_lower in name_words:
                     return obj_id
-            
-            # Check if name is a word in spooky name
+                # Also check if the entered name matches a subset of the display name
+                if ' '.join(name_words).startswith(name_lower) or ' '.join(name_words).endswith(name_lower):
+                    return obj_id
+
+            # Check if name is a word in spooky name or matches the full spooky name
             if obj.name_spooky:
                 spooky_words = obj.name_spooky.lower().split()
                 if name_lower in spooky_words:
+                    return obj_id
+                # Also check if the entered name matches a subset of the spooky name
+                if ' '.join(spooky_words).startswith(name_lower) or ' '.join(spooky_words).endswith(name_lower):
                     return obj_id
         
         return None

@@ -129,17 +129,20 @@ def handler(event, context):
                 inventory_display.append(item_id)
         
         # Return AppSync response
+        # Ensure room is not null for GraphQL schema compliance
+        room_id = state.current_room or "west_of_house"
+
         return {
-            "room": state.current_room,
-            "description_spooky": description,
-            "exits": list(room.exits.keys()),
+            "room": room_id,
+            "description_spooky": description or "",
+            "exits": list(room.exits.keys()) if room else [],
             "objects": objects_visible,
             "inventory": inventory_display,
             "sanity": state.sanity,
             "score": state.score,
             "moves": state.moves,
             "lampBattery": state.lamp_battery,
-            "message": result.message
+            "message": result.message or ""
         }
         
     except Exception as e:
