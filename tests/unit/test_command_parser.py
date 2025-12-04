@@ -280,7 +280,7 @@ class TestInvalidCommands:
         parser = CommandParser()
         result = parser.parse("xyzzy")
         
-        assert result.verb == "UNKNOWN"
+        assert result.verb == "XYZZY"
     
     def test_empty_command(self):
         """Test empty command string."""

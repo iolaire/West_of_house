@@ -1204,7 +1204,9 @@
   "rug": {
     "name": "bloodstained rug",
     "type": "scenery",
-    "state": {},
+    "state": {
+      "is_moved": false
+    },
     "interactions": [
       {
         "verb": "RAISE",
@@ -1230,6 +1232,17 @@
         "verb": "EXAMINE",
         "response_original": "carpet",
         "response_spooky": "bloodstained carpet"
+      },
+      {
+        "verb": "MOVE",
+        "condition": {
+          "is_moved": false
+        },
+        "response_original": "With a great effort, the rug is moved to one side of the room, revealing the dusty cover of a closed trap door.",
+        "response_spooky": "With great effort, you drag the heavy rug aside. Its underside is soaked with old blood. Beneath it, a trap door is revealed, its surface carved with warnings in dead languages.",
+        "state_change": {
+          "is_moved": true
+        }
       },
       {
         "verb": "MOVE",

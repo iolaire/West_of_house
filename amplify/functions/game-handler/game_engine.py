@@ -1350,7 +1350,7 @@ class GameEngine:
             # Check container capacity
             if container.capacity > 0:
                 # Calculate current contents size
-                contents = container.contents
+                contents = container.state.get('contents', [])
                 current_size = 0
                 for obj_id in contents:
                     try:
@@ -1482,7 +1482,7 @@ class GameEngine:
                 )
             
             # Check if object is in container
-            contents = container.contents
+            contents = container.state.get('contents', [])
             if object_id not in contents:
                 return ActionResult(
                     success=False,
@@ -1515,7 +1515,9 @@ class GameEngine:
                     break
             
             # Remove from container
-            container.contents.remove(object_id)
+            if 'contents' not in container.state:
+                container.state['contents'] = []
+            container.state['contents'].remove(object_id)
             
             # Add to inventory
             state.add_to_inventory(object_id)
@@ -1601,7 +1603,7 @@ class GameEngine:
             
             # Build description with contents if visible
             if is_open or is_transparent:
-                contents = container.contents
+                contents = container.state.get('contents', [])
                 if contents:
                     contents_names = []
                     for obj_id in contents:
@@ -3040,7 +3042,7 @@ class GameEngine:
                 )
             
             # Get contents
-            contents = container.contents
+            contents = container.state.get('contents', [])
             
             if not contents:
                 return ActionResult(

@@ -407,6 +407,14 @@ class CommandParser:
                 obj = " ".join(words[1:preposition_idx])
                 remaining = " ".join(words[preposition_idx + 1:])
                 
+                # If object is empty, treat preposition as part of object name
+                if not obj:
+                    obj = " ".join(words[1:])
+                    return ParsedCommand(
+                        verb=verb,
+                        object=obj if obj else None
+                    )
+                
                 return ParsedCommand(
                     verb=verb,
                     object=obj if obj else None,

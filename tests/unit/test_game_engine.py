@@ -905,6 +905,7 @@ class TestContainers:
         mailbox = world_data.get_object('mailbox')
         mailbox.state['is_open'] = True
         mailbox.state['contents'] = []
+        mailbox.capacity = 5  # Set capacity to 5
         
         # Add objects to inventory
         sword = world_data.get_object('sword')

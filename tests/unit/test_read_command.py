@@ -24,6 +24,8 @@ from command_parser import CommandParser
 @pytest.fixture
 def world_data():
     """Load world data for testing."""
+    # Clear cache to ensure fresh data
+    WorldData.clear_cache()
     world = WorldData()
     data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
     world.load_from_json(data_dir)
