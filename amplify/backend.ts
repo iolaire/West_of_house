@@ -10,7 +10,7 @@ import { gameHandler } from './functions/game-handler/resource';
  * - Authentication (Cognito Identity Pool for guest access)
  * - Data (DynamoDB GameSessions table via Amplify Data)
  * - Lambda Function (Game handler for command processing)
- * - API Gateway (REST API for game endpoints)
+ * - AppSync GraphQL API (processCommand custom query)
  * 
  * All resources are automatically tagged with:
  * - Project: west-of-haunted-house
@@ -60,65 +60,11 @@ Tags.of(stack).add('Environment', process.env.AMPLIFY_ENV || 'dev');
  * 
  * Requirements: 21.1, 21.2, 21.3, 21.4
  */
-// Grant the Lambda function access to the Amplify Data resources
 backend.data.resources.tables["GameSession"].grantReadWriteData(
   backend.gameHandler.resources.lambda
 );
 
-// Set the table name as an environment variable for the Lambda function
 backend.gameHandler.addEnvironment(
   'GAME_SESSIONS_TABLE_NAME',
   backend.data.resources.tables["GameSession"].tableName
 );
-
-/**
- * Configure API Gateway REST API
- * 
- * Creates a REST API with endpoints for game operations:
- * - POST /game/new - Create new game session
- * - POST /game/command - Execute game command
- * - GET /game/state/{sessionId} - Get current game state
- * 
- * All endpoints are configured with CORS for frontend access.
- * 
- * Requirements: 11.1, 11.2, 17.3.5
- */
-const { RestApi, LambdaIntegration, Cors } = await import('aws-cdk-lib/aws-apigateway');
-
-// Create REST API
-const api = new RestApi(Stack.of(backend.data), 'GameAPI', {
-  restApiName: 'West of Haunted House API',
-  description: 'REST API for West of Haunted House game',
-  defaultCorsPreflightOptions: {
-    allowOrigins: Cors.ALL_ORIGINS,
-    allowMethods: Cors.ALL_METHODS,
-    allowHeaders: ['Content-Type', 'Authorization'],
-  },
-  deployOptions: {
-    stageName: 'prod',
-  },
-});
-
-// Create Lambda integration
-const lambdaIntegration = new LambdaIntegration(backend.gameHandler.resources.lambda);
-
-// Add /game resource
-const gameResource = api.root.addResource('game');
-
-// POST /game/new - Create new game session
-const newGameResource = gameResource.addResource('new');
-newGameResource.addMethod('POST', lambdaIntegration);
-
-// POST /game/command - Execute game command
-const commandResource = gameResource.addResource('command');
-commandResource.addMethod('POST', lambdaIntegration);
-
-// GET /game/state/{sessionId} - Get current game state
-const stateResource = gameResource.addResource('state');
-const sessionResource = stateResource.addResource('{sessionId}');
-sessionResource.addMethod('GET', lambdaIntegration);
-
-// Apply tags to API Gateway
-Tags.of(api).add('Project', 'west-of-haunted-house');
-Tags.of(api).add('ManagedBy', 'vedfolnir');
-Tags.of(api).add('Environment', process.env.AMPLIFY_ENV || 'dev');
