@@ -128,7 +128,8 @@ def handler(event, context):
         
     Requirements: 11.1, 11.2, 11.3, 2.1, 2.3, 2.4, 16.1, 16.2, 16.3, 16.5
     """
-    request_id = context.request_id if context else 'unknown'
+    # Get request ID safely - context may not have request_id in all invocation types
+    request_id = getattr(context, 'aws_request_id', 'unknown') if context else 'unknown'
     
     try:
         # Initialize game components

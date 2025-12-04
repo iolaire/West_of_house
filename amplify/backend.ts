@@ -67,7 +67,7 @@ backend.data.resources.tables["GameSession"].grantReadWriteData(
 
 // Set the table name as an environment variable for the Lambda function
 backend.gameHandler.addEnvironment(
-  'TABLE_NAME',
+  'GAME_SESSIONS_TABLE_NAME',
   backend.data.resources.tables["GameSession"].tableName
 );
 
