@@ -1,0 +1,4639 @@
+{
+  "board": {
+    "name": "boards",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "board",
+        "response_spooky": "board It's covered in strange symbols."
+      }
+    ]
+  },
+  "teeth": {
+    "name": "vampire fangs",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "BRUSH",
+        "response_original": "Dental hygiene is highly recommended, but I'm not sure what you want\nto brush them with.",
+        "response_spooky": "Dental hygiene is highly recommended, but I'm not sure what you want\nto brush them with."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "set of teeth",
+        "response_spooky": "set of teeth It seems to pulse with malevolent energy."
+      }
+    ]
+  },
+  "wall": {
+    "name": "stone wall",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "surrounding wall",
+        "response_spooky": "surrounding wall Shadows cling to it unnaturally."
+      }
+    ]
+  },
+  "granite_wall": {
+    "name": "granite wall",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "FIND",
+        "response_original": "The east wall is solid granite here.",
+        "response_spooky": "The east wall is solid granite here."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "granite wall",
+        "response_spooky": "granite wall Shadows cling to it unnaturally."
+      }
+    ]
+  },
+  "songbird": {
+    "name": "death raven",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "LISTEN",
+        "response_original": "You can't hear the songbird now.",
+        "response_spooky": "You can't hear the death raven now."
+      },
+      {
+        "verb": "FOLLOW",
+        "response_original": "It can't be followed.",
+        "response_spooky": "It can't be followed."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "songbird",
+        "response_spooky": "death raven"
+      }
+    ]
+  },
+  "white_house": {
+    "name": "haunted manor",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "FIND",
+        "response_original": "It's right here! Are you blind or something?",
+        "response_spooky": "It's right here! Are you blind or something?"
+      },
+      {
+        "verb": "WALK-AROUND",
+        "response_original": "The house is a beautiful colonial house which is painted white.\nIt is clear that the owners must have been extremely wealthy.",
+        "response_spooky": "The manor is a grotesque colonial manor which is painted bone-white.\nIt is murky that the owners must have been extremely wealthy."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "The house is a beautiful colonial house which is painted white.\nIt is clear that the owners must have been extremely wealthy.",
+        "response_spooky": "The manor is a Gothic nightmare of decay and dark magic. Its walls are black with rot, and gargoyles leer from every corner. Windows glow with sickly green light, and you hear screaming from within. The owners were wealthy beyond measure, but their fortune was built on blood and suffering."
+      },
+      {
+        "verb": "BURN",
+        "response_original": "You must be joking.",
+        "response_spooky": "You must be joking."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "white house",
+        "response_spooky": "bone-white manor"
+      },
+      {
+        "verb": "ENTER",
+        "response_original": "I can't see how to get in from here.",
+        "response_spooky": "The manor's entrance is sealed with iron and dark magic. You must find another way in."
+      }
+    ]
+  },
+  "forest": {
+    "name": "dead forest",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "WALK-AROUND",
+        "response_original": "You aren't even in the forest.",
+        "response_spooky": "You aren't even in the dead forest."
+      },
+      {
+        "verb": "DISEMBARK",
+        "response_original": "You will have to specify a direction.",
+        "response_spooky": "You will have to specify a direction."
+      },
+      {
+        "verb": "FIND",
+        "response_original": "You cannot see the forest for the trees.",
+        "response_spooky": "You cannot see the dead forest for the trees."
+      },
+      {
+        "verb": "LISTEN",
+        "response_original": "The pines and the hemlocks seem to be murmuring.",
+        "response_spooky": "The pines and the hemlocks seem to be murmuring."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "forest",
+        "response_spooky": "dead forest It seems to pulse with malevolent energy."
+      }
+    ]
+  },
+  "tree": {
+    "name": "dead tree",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "tree",
+        "response_spooky": "dead tree Dark stains mar its surface."
+      }
+    ]
+  },
+  "mountain_range": {
+    "name": "cursed mountains",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "mountain range",
+        "response_spooky": "mountain range Shadows cling to it unnaturally."
+      }
+    ]
+  },
+  "global_water": {
+    "name": "dark water",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "It's in the bottle. Perhaps you should take that instead.",
+        "response_spooky": "It's in the vial. Perhaps you should take that instead. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "PUT",
+        "response_original": "Nice try.",
+        "response_spooky": "Nice try."
+      },
+      {
+        "verb": "DROP",
+        "response_original": "The bottle is closed.",
+        "response_spooky": "The vial is slammed shut. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "THROW",
+        "response_original": "The water splashes on the walls and evaporates immediately.",
+        "response_spooky": "The absolute darkness water splashes on the walls and evaporates immediately."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "water",
+        "response_spooky": "absolute darkness water"
+      }
+    ]
+  },
+  "water": {
+    "name": "tainted water",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "It's in the bottle. Perhaps you should take that instead.",
+        "response_spooky": "It's in the vial. Perhaps you should take that instead. It's cold to the touch."
+      },
+      {
+        "verb": "PUT",
+        "response_original": "Nice try.",
+        "response_spooky": "Nice try."
+      },
+      {
+        "verb": "DROP",
+        "response_original": "The bottle is closed.",
+        "response_spooky": "The vial is slammed shut. It falls with a wet sound."
+      },
+      {
+        "verb": "THROW",
+        "response_original": "The water splashes on the walls and evaporates immediately.",
+        "response_spooky": "The absolute darkness water splashes on the walls and evaporates immediately."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. It's cold to the touch."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It falls with a wet sound."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "quantity of water",
+        "response_spooky": "quantity of absolute darkness water"
+      }
+    ],
+    "is_takeable": true
+  },
+  "kitchen_window": {
+    "name": "broken window",
+    "type": "door",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The window is slightly ajar, but not enough to allow entry.",
+        "response_spooky": "The window hangs ajar, its glass cracked and stained. Through it, you see flickering candlelight and shadows that move wrong."
+      },
+      {
+        "verb": "LOOK-INSIDE",
+        "response_original": "You can see",
+        "response_spooky": "You can see"
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "kitchen window",
+        "response_spooky": "kitchen broken window Shadows cling to it unnaturally."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "With great effort, you open the window far enough to allow entry.",
+        "response_spooky": "With great effort, you pry the window open. The glass is cracked and stained with something dark. Cold air and the smell of decay flow from within.",
+        "state_change": {
+          "is_open": true
+        }
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "The window closes (more easily than it opened).",
+        "response_spooky": "The window slams shut with a sound like breaking glass.",
+        "state_change": {
+          "is_open": false
+        }
+      }
+    ]
+  },
+  "chimney": {
+    "name": "crematorium chimney",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The chimney leads",
+        "response_spooky": "The crematorium chimney leads Shadows cling to it unnaturally."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "chimney",
+        "response_spooky": "crematorium chimney Shadows cling to it unnaturally."
+      }
+    ]
+  },
+  "ghosts": {
+    "name": "tortured spirits",
+    "type": "npc",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "TELL",
+        "response_original": "The spirits jeer loudly and ignore you.",
+        "response_spooky": "The spirits jeer loudly and ignore you."
+      },
+      {
+        "verb": "EXORCISE",
+        "response_original": "Only the ceremony itself has any effect.",
+        "response_spooky": "Only the ceremony itself has any effect."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "number of ghosts",
+        "response_spooky": "number of ghosts Shadows cling to it unnaturally."
+      }
+    ]
+  },
+  "skull": {
+    "name": "crystal skull",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "response_spooky": "You grasp the crystal skull. It's cold and seems to pulse with dark energy. Whispers fill your mind.",
+        "state_change": {
+          "is_taken": true
+        }
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It falls with a wet sound."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "crystal skull",
+        "response_spooky": "The crystal skull grins with malevolent glee. Trapped souls swirl within its depths, their faces twisted in eternal agony."
+      }
+    ],
+    "is_takeable": true
+  },
+  "lowered_basket": {
+    "name": "cage",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "RAISE",
+        "response_original": "The basket is raised to the top of the shaft.",
+        "response_spooky": "The basket is raised to the top of the shaft."
+      },
+      {
+        "verb": "LOWER",
+        "response_original": "The basket is lowered to the bottom of the shaft.",
+        "response_spooky": "The basket is lowered to the bottom of the shaft."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "The cage is securely fastened to the iron chain.",
+        "response_spooky": "The cage is securely fastened to the iron chain. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "From the chain is suspended a basket.",
+        "response_spooky": "From the chain is suspended a basket. Dark stains mar its surface."
+      }
+    ],
+    "is_takeable": true
+  },
+  "raised_basket": {
+    "name": "hanging cage",
+    "type": "container",
+    "state": {
+      "is_open": true,
+      "is_locked": false
+    },
+    "interactions": [
+      {
+        "verb": "RAISE",
+        "response_original": "The basket is raised to the top of the shaft.",
+        "response_spooky": "The basket is raised to the top of the shaft."
+      },
+      {
+        "verb": "LOWER",
+        "response_original": "The basket is lowered to the bottom of the shaft.",
+        "response_spooky": "The basket is lowered to the bottom of the shaft."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "The cage is securely fastened to the iron chain.",
+        "response_spooky": "The cage is securely fastened to the iron chain. A chill runs down your spine."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "At the end of the chain is a basket.",
+        "response_spooky": "At the end of the chain is a basket. It seems to pulse with malevolent energy."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. A smell of decay wafts out."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. You hear a click like a coffin sealing."
+      }
+    ],
+    "is_takeable": true,
+    "capacity": 50
+  },
+  "lunch": {
+    "name": "hot food",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. You feel its cursed weight."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "A hot pepper sandwich is here.",
+        "response_spooky": "A hot pepper sandwich is here. Dark stains mar its surface."
+      }
+    ],
+    "is_takeable": true
+  },
+  "bat": {
+    "name": "vampire bat",
+    "type": "npc",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "TELL",
+        "response_original": "You can't reach him; he's on the ceiling.",
+        "response_spooky": "You can't reach him; he's on the ceiling."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "bat",
+        "response_spooky": "vampire bat It seems to pulse with malevolent energy."
+      }
+    ],
+    "is_takeable": true
+  },
+  "bell": {
+    "name": "funeral bell",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "RING",
+        "response_original": "Ding, dong.",
+        "response_spooky": "Ding, dong."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "brass bell",
+        "response_spooky": "brass funeral bell It seems to pulse with malevolent energy."
+      }
+    ],
+    "is_takeable": true
+  },
+  "hot_bell": {
+    "name": "molten bell",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "The bell is very hot and cannot be taken.",
+        "response_spooky": "The funeral bell is very hot and cannot be grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "RUB",
+        "response_original": "The",
+        "response_spooky": "The"
+      },
+      {
+        "verb": "RING",
+        "response_original": "The bell is too hot to reach.",
+        "response_spooky": "The funeral bell is too hot to reach."
+      },
+      {
+        "verb": "POUR-ON",
+        "response_original": "The water cools the bell and is evaporated.",
+        "response_spooky": "The absolute darkness water cools the funeral bell and is evaporated."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "On the ground is a red hot bell.",
+        "response_spooky": "On the ground is a red hot funeral bell. Dark stains mar its surface."
+      }
+    ],
+    "is_takeable": true
+  },
+  "axe": {
+    "name": "executioner's axe",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. A chill runs down your spine."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "bloody axe",
+        "response_spooky": "bloody executioner's axe"
+      }
+    ],
+    "is_takeable": true
+  },
+  "bolt": {
+    "name": "iron bolt",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "TURN",
+        "response_original": "The sluice gates close and water starts to collect behind the dam.",
+        "response_spooky": "The sluice gates slam shut and absolute darkness water starts to collect behind the dam."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Hmm. It appears the tube contained glue, not oil. Turning the bolt\nwon't get any easier....",
+        "response_spooky": "Hmm. It appears the tube contained glue, not oil. Turning the bolt\nwon't get any easier.... You feel its cursed weight."
+      },
+      {
+        "verb": "OIL",
+        "response_original": "Hmm. It appears the tube contained glue, not oil. Turning the bolt\nwon't get any easier....",
+        "response_spooky": "Hmm. It appears the tube contained glue, not oil. Turning the bolt\nwon't get any easier...."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "bolt",
+        "response_spooky": "bolt It's covered in strange symbols."
+      }
+    ],
+    "is_takeable": true
+  },
+  "bubble": {
+    "name": "toxic bubble",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "green bubble",
+        "response_spooky": "green bubble Dark stains mar its surface."
+      }
+    ],
+    "is_takeable": true
+  },
+  "altar": {
+    "name": "sacrificial altar",
+    "type": "container",
+    "state": {
+      "is_open": true,
+      "is_locked": false,
+      "contents": [
+        "book"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "altar",
+        "response_spooky": "sacrificial altar It seems to pulse with malevolent energy."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. Darkness spills forth."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. You hear a click like a coffin sealing."
+      }
+    ],
+    "capacity": 50
+  },
+  "book": {
+    "name": "necronomicon",
+    "type": "container",
+    "state": {
+      "is_open": false,
+      "is_locked": false,
+      "is_taken": false,
+      "is_read": false
+    },
+    "interactions": [
+      {
+        "verb": "OPEN",
+        "response_original": "The book is already open to page 569.",
+        "response_spooky": "The necronomicon is already creak open to page 569. A smell of decay wafts out."
+      },
+      {
+        "verb": "CLOSE",
+        "response_original": "As hard as you try, the book cannot be closed.",
+        "response_spooky": "As hard as you try, the necronomicon cannot be slammed shut. It slams shut with a sound like breaking bones."
+      },
+      {
+        "verb": "TURN",
+        "response_original": "Beside page 569, there is only one other page with any legible printing on\nit. Most of it is unreadable, but the subject seems to be the banishment of\nevil. Apparently, certain noises, lights, and prayers are efficacious in this\nregard.",
+        "response_spooky": "Beside page 569, there is only one other page with any legible printing on\nit. Most of it is unreadable, but the subject seems to be the banishment of\nevil. Apparently, certain noises, lights, and prayers are efficacious in this\nregard."
+      },
+      {
+        "verb": "READ-PAGE",
+        "response_original": "Beside page 569, there is only one other page with any legible printing on\nit. Most of it is unreadable, but the subject seems to be the banishment of\nevil. Apparently, certain noises, lights, and prayers are efficacious in this\nregard.",
+        "response_spooky": "Beside page 569, there is only one other page with any legible printing on\nit. Most of it is unreadable, but the subject seems to be the banishment of\nevil. Apparently, certain noises, lights, and prayers are efficacious in this\nregard."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. A chill runs down your spine."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It falls with a wet sound."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "black book",
+        "response_spooky": "black necronomicon It's covered in strange symbols."
+      },
+      {
+        "verb": "READ",
+        "response_original": "Commandment #12592\n\n\n\nOh ye who go about saying unto each:  \\",
+        "state_change": {
+          "is_read": true
+        },
+        "response_spooky": "Commandment #12592\n\n\n\nOh ye who go about saying unto each:  \\ The words seem to writhe on the page."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. A smell of decay wafts out."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. It slams shut with a sound like breaking bones."
+      }
+    ],
+    "is_takeable": true
+  },
+  "broken_lamp": {
+    "name": "shattered lantern",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. It's cold to the touch."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "broken lantern",
+        "response_spooky": "broken cursed lantern"
+      }
+    ],
+    "is_takeable": true
+  },
+  "sceptre": {
+    "name": "necromancer's sceptre",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "An ornamented sceptre, tapering to a sharp point, is here.",
+        "response_spooky": "An ornamented necromancer's sceptre, tapering to a sharp point, is here. Dark stains mar its surface."
+      }
+    ],
+    "is_takeable": true
+  },
+  "timbers": {
+    "name": "gallows timber",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "broken timber",
+        "response_spooky": "broken timber Dark stains mar its surface."
+      }
+    ],
+    "is_takeable": true
+  },
+  "slide": {
+    "name": "blood chute",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "PUT",
+        "response_original": "You tumble down the slide....",
+        "response_spooky": "You tumble down the slide...."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "chute",
+        "response_spooky": "chute It seems to pulse with malevolent energy."
+      }
+    ]
+  },
+  "kitchen_table": {
+    "name": "bloodstained table",
+    "type": "container",
+    "state": {
+      "is_open": true,
+      "is_locked": false,
+      "contents": [
+        "sandwich_bag",
+        "bottle"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "kitchen table",
+        "response_spooky": "kitchen bloodstained table"
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. A smell of decay wafts out."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. The closure echoes through the darkness."
+      }
+    ],
+    "capacity": 50
+  },
+  "attic_table": {
+    "name": "dusty table",
+    "type": "container",
+    "state": {
+      "is_open": true,
+      "is_locked": false,
+      "contents": [
+        "knife"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "table",
+        "response_spooky": "bloodstained table"
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. Darkness spills forth."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. You hear a click like a coffin sealing."
+      }
+    ],
+    "capacity": 40
+  },
+  "sandwich_bag": {
+    "name": "leather pouch",
+    "type": "container",
+    "state": {
+      "is_open": false,
+      "is_locked": false,
+      "is_taken": false,
+      "contents": [
+        "lunch",
+        "garlic"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "SMELL",
+        "response_original": "It smells of hot peppers.",
+        "response_spooky": "It smells of hot peppers."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "brown sack",
+        "response_spooky": "brown sack Dark stains mar its surface."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. You hear whispers from inside."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. The closure echoes through the darkness."
+      }
+    ],
+    "is_takeable": true,
+    "capacity": 9
+  },
+  "tool_chest": {
+    "name": "torture chest",
+    "type": "container",
+    "state": {
+      "is_open": true,
+      "is_locked": false,
+      "contents": []
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The chests are all empty.",
+        "response_spooky": "The chests are all empty. It's covered in strange symbols."
+      },
+      {
+        "verb": "OPEN",
+        "response_original": "The chests are already open.",
+        "response_spooky": "The chests are already creak open. The hinges scream in protest."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "group of tool chests",
+        "response_spooky": "group of tool chests It's covered in strange symbols."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. The hinges scream in protest."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. It slams shut with a sound like breaking bones."
+      }
+    ],
+    "is_takeable": true
+  },
+  "yellow_button": {
+    "name": "yellow skull button",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "READ",
+        "response_original": "They're greek to you.",
+        "response_spooky": "They're greek to you. The words seem to writhe on the page."
+      },
+      {
+        "verb": "PUSH",
+        "response_original": "There is a rumbling sound and a stream of water appears to burst\nfrom the east wall of the room (apparently, a leak has occurred in a\npipe).",
+        "response_spooky": "There is a rumbling sound and a stream of absolute darkness water appears to burst\nfrom the east wall of the room (apparently, a leak has occurred in a\npipe)."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "yellow button",
+        "response_spooky": "yellow button It's covered in strange symbols."
+      }
+    ]
+  },
+  "brown_button": {
+    "name": "brown skull button",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "READ",
+        "response_original": "They're greek to you.",
+        "response_spooky": "They're greek to you. Ancient curses fill the pages."
+      },
+      {
+        "verb": "PUSH",
+        "response_original": "There is a rumbling sound and a stream of water appears to burst\nfrom the east wall of the room (apparently, a leak has occurred in a\npipe).",
+        "response_spooky": "There is a rumbling sound and a stream of absolute darkness water appears to burst\nfrom the east wall of the room (apparently, a leak has occurred in a\npipe)."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "brown button",
+        "response_spooky": "brown button Shadows cling to it unnaturally."
+      }
+    ]
+  },
+  "red_button": {
+    "name": "red skull button",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "READ",
+        "response_original": "They're greek to you.",
+        "response_spooky": "They're greek to you. The words seem to writhe on the page."
+      },
+      {
+        "verb": "PUSH",
+        "response_original": "There is a rumbling sound and a stream of water appears to burst\nfrom the east wall of the room (apparently, a leak has occurred in a\npipe).",
+        "response_spooky": "There is a rumbling sound and a stream of absolute darkness water appears to burst\nfrom the east wall of the room (apparently, a leak has occurred in a\npipe)."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "red button",
+        "response_spooky": "red button It's covered in strange symbols."
+      }
+    ]
+  },
+  "blue_button": {
+    "name": "blue skull button",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "READ",
+        "response_original": "They're greek to you.",
+        "response_spooky": "They're greek to you. The text is written in something dark."
+      },
+      {
+        "verb": "PUSH",
+        "response_original": "There is a rumbling sound and a stream of water appears to burst\nfrom the east wall of the room (apparently, a leak has occurred in a\npipe).",
+        "response_spooky": "There is a rumbling sound and a stream of absolute darkness water appears to burst\nfrom the east wall of the room (apparently, a leak has occurred in a\npipe)."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "blue button",
+        "response_spooky": "blue button It seems to pulse with malevolent energy."
+      }
+    ]
+  },
+  "trophy_case": {
+    "name": "cursed trophy case",
+    "type": "container",
+    "state": {
+      "is_open": false,
+      "is_locked": false,
+      "contents": [
+        "map"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "The trophy case is securely fastened to the wall.",
+        "response_spooky": "The trophy case is fused to the wall by dark magic. It cannot be moved."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "trophy case",
+        "response_spooky": "The trophy case is made of black wood and cracked glass. Inside, shadows move despite the emptiness. The case hungers for cursed treasures."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. Darkness spills forth."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. The closure echoes through the darkness."
+      },
+      {
+        "verb": "PUT",
+        "response_original": "Done.",
+        "response_spooky": "The trophy case accepts the cursed treasure with a sound like satisfied breathing."
+      }
+    ],
+    "is_takeable": true,
+    "capacity": 10000
+  },
+  "rug": {
+    "name": "bloodstained rug",
+    "type": "scenery",
+    "state": {
+      "is_moved": false
+    },
+    "interactions": [
+      {
+        "verb": "RAISE",
+        "response_original": "The rug is too heavy to lift",
+        "response_spooky": "The bloodstained rug is too heavy to lift"
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "The rug is extremely heavy and cannot be carried.",
+        "response_spooky": "The rug is impossibly heavy, as if weighted down by the souls of the dead."
+      },
+      {
+        "verb": "LOOK-UNDER",
+        "response_original": "Underneath the rug is a closed trap door. As you drop the corner of the\nrug, the trap door is once again concealed from view.",
+        "response_spooky": "Underneath the bloodstained rug is a slammed shut trap obsidian coffin lid. As you drop the corner of the\nbloodstained rug, the trap obsidian coffin lid is once again concealed from view."
+      },
+      {
+        "verb": "CLIMB-ON",
+        "response_original": "As you sit, you notice an irregularity underneath it. Rather than be\nuncomfortable, you stand up again.",
+        "response_spooky": "As you sit, you notice an irregularity underneath it. Rather than be\nuncomfortable, you stand up again."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "carpet",
+        "response_spooky": "bloodstained carpet"
+      },
+      {
+        "verb": "MOVE",
+        "condition": {
+          "is_moved": false
+        },
+        "response_original": "With a great effort, the rug is moved to one side of the room, revealing the dusty cover of a closed trap door.",
+        "response_spooky": "With great effort, you drag the heavy rug aside. Its underside is soaked with old blood. Beneath it, a trap door is revealed, its surface carved with warnings in dead languages.",
+        "state_change": {
+          "is_moved": true
+        }
+      },
+      {
+        "verb": "MOVE",
+        "condition": {
+          "is_moved": true
+        },
+        "response_original": "Having moved the carpet previously, you find it impossible to move it again.",
+        "response_spooky": "The rug refuses to move again, as if held in place by invisible hands."
+      },
+      {
+        "verb": "LOOK",
+        "response_original": "Underneath the rug is a closed trap door. As you drop the corner of the rug, the trap door is once again concealed from view.",
+        "response_spooky": "Beneath the rug lies a trap door carved with screaming faces. As you drop the rug's corner, the door vanishes from sight.",
+        "condition": {
+          "is_moved": false
+        }
+      }
+    ],
+    "is_takeable": true
+  },
+  "chalice": {
+    "name": "chalice of souls",
+    "type": "container",
+    "state": {
+      "is_open": false,
+      "is_locked": false,
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "You'd be stabbed in the back first.",
+        "response_spooky": "You'd be stabbed in the back first. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "PUT",
+        "response_original": "You can't. It's not a very good chalice, is it?",
+        "response_spooky": "You can't. It's not a very good chalice, is it?"
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "There is a silver chalice, intricately engraved, here.",
+        "response_spooky": "There is a silver chalice, intricately engraved, here."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. Cold air flows from within."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. The closure echoes through the darkness."
+      }
+    ],
+    "is_takeable": true,
+    "capacity": 5
+  },
+  "garlic": {
+    "name": "withered garlic",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "EAT",
+        "response_original": "What the heck! You won't make friends this way, but nobody around\nhere is too friendly anyhow. Gulp!",
+        "response_spooky": "What the heck! You won't make friends this way, but nobody around\nhere is too friendly anyhow. Gulp!"
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. You feel its cursed weight."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "clove of garlic",
+        "response_spooky": "clove of garlic Shadows cling to it unnaturally."
+      }
+    ],
+    "is_takeable": true
+  },
+  "trident": {
+    "name": "bone trident",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. A chill runs down your spine."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "crystal trident",
+        "response_spooky": "crystal trident Shadows cling to it unnaturally."
+      }
+    ],
+    "is_takeable": true
+  },
+  "cyclops": {
+    "name": "one-eyed demon",
+    "type": "npc",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "ODYSSEUS",
+        "response_original": "The cyclops prefers eating to making conversation.",
+        "response_spooky": "The one-eyed demon prefers eating to making conversation."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "A hungry cyclops is standing at the foot of the stairs.",
+        "response_spooky": "A hungry one-eyed demon is standing at the foot of the stairs. Shadows cling to it unnaturally."
+      },
+      {
+        "verb": "GIVE",
+        "response_original": "The cyclops says \\",
+        "response_spooky": "The one-eyed demon says \\"
+      },
+      {
+        "verb": "MUNG",
+        "response_original": "\\",
+        "response_spooky": "\\"
+      },
+      {
+        "verb": "THROW",
+        "response_original": "The cyclops doesn't take kindly to being grabbed.",
+        "response_spooky": "The one-eyed demon doesn't take kindly to being grabbed."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "The cyclops doesn't take kindly to being grabbed.",
+        "response_spooky": "The one-eyed demon doesn't take kindly to being grabbed. A chill runs down your spine."
+      },
+      {
+        "verb": "TIE",
+        "response_original": "You cannot tie the cyclops, though he is fit to be tied.",
+        "response_spooky": "You cannot tie the one-eyed demon, though he is fit to be tied."
+      },
+      {
+        "verb": "LISTEN",
+        "response_original": "You can hear his stomach rumbling.",
+        "response_spooky": "You can hear his stomach rumbling."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "cyclops",
+        "response_spooky": "one-eyed demon Shadows cling to it unnaturally."
+      }
+    ],
+    "is_takeable": true
+  },
+  "dam": {
+    "name": "cursed dam",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "PLUG",
+        "response_original": "Are you the little Dutch boy, then? Sorry, this is a big dam.",
+        "response_spooky": "Are you the little Dutch boy, then? Sorry, this is a big dam."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "dam",
+        "response_spooky": "dam It seems to pulse with malevolent energy."
+      }
+    ],
+    "is_takeable": true
+  },
+  "trap_door": {
+    "name": "cursed trap door",
+    "type": "door",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "RAISE",
+        "response_original": "You see a rickety staircase descending into darkness.",
+        "response_spooky": "You see a rickety staircase descending into darkness."
+      },
+      {
+        "verb": "LOOK-UNDER",
+        "response_original": "You see a rickety staircase descending into darkness.",
+        "response_spooky": "You see a rickety staircase descending into darkness."
+      },
+      {
+        "verb": "CLOSE",
+        "response_original": "The door closes and locks.",
+        "response_spooky": "The trap door slams shut with a sound like a coffin closing.",
+        "condition": {
+          "is_open": true
+        },
+        "state_change": {
+          "is_open": false
+        }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "trap door",
+        "response_spooky": "trap obsidian coffin lid Shadows cling to it unnaturally."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false,
+          "is_visible": true
+        },
+        "response_original": "The door reluctantly opens to reveal a rickety staircase descending into darkness.",
+        "response_spooky": "The trap door opens with a groan of tortured wood. Below, a staircase of bones descends into absolute darkness. Cold air and the smell of death flow upward.",
+        "state_change": {
+          "is_open": true
+        }
+      }
+    ]
+  },
+  "boarded_window": {
+    "name": "sealed window",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "OPEN",
+        "response_original": "The windows are boarded and can't be opened.",
+        "response_spooky": "The windows are boarded and can't be creaked open. The hinges scream in protest."
+      },
+      {
+        "verb": "MUNG",
+        "response_original": "You can't break the windows open.",
+        "response_spooky": "You can't break the windows creak open."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "boarded window",
+        "response_spooky": "boarded broken window Shadows cling to it unnaturally."
+      }
+    ]
+  },
+  "front_door": {
+    "name": "cursed door",
+    "type": "door",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "OPEN",
+        "response_original": "The door cannot be opened.",
+        "response_spooky": "The door is sealed with iron nails driven through human bones. Arcane symbols carved in blood prevent entry. The boards are fused by dark magic."
+      },
+      {
+        "verb": "BURN",
+        "response_original": "You cannot burn this door.",
+        "response_spooky": "You cannot burn this obsidian coffin lid."
+      },
+      {
+        "verb": "MUNG",
+        "response_original": "You can't seem to damage the door.",
+        "response_spooky": "You can't seem to damage the obsidian coffin lid."
+      },
+      {
+        "verb": "LOOK-BEHIND",
+        "response_original": "It won't open.",
+        "response_spooky": "It won't creak open."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "door",
+        "response_spooky": "The door is covered in warnings written in blood: 'Turn back', 'Death awaits', 'Abandon hope'. The boards are made from coffin lids."
+      }
+    ]
+  },
+  "barrow_door": {
+    "name": "tomb door",
+    "type": "door",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "stone door",
+        "response_spooky": "stone obsidian coffin lid It's covered in strange symbols."
+      }
+    ]
+  },
+  "barrow": {
+    "name": "ancient tomb",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "stone barrow",
+        "response_spooky": "stone barrow It seems to pulse with malevolent energy."
+      }
+    ]
+  },
+  "bottle": {
+    "name": "vial of poison",
+    "type": "container",
+    "state": {
+      "is_open": false,
+      "is_locked": false,
+      "is_taken": false,
+      "contents": [
+        "water"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "THROW",
+        "response_original": "The bottle hits the far wall and shatters.",
+        "response_spooky": "The vial hits the far wall and shatters."
+      },
+      {
+        "verb": "MUNG",
+        "response_original": "A brilliant maneuver destroys the bottle.",
+        "response_spooky": "A brilliant maneuver destroys the vial."
+      },
+      {
+        "verb": "SHAKE",
+        "response_original": "The water spills to the floor and evaporates.",
+        "response_spooky": "The absolute darkness water spills to the floor and evaporates."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "glass bottle",
+        "response_spooky": "glass vial Dark stains mar its surface."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. You hear whispers from inside."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. The closure echoes through the darkness."
+      }
+    ],
+    "is_takeable": true,
+    "capacity": 4
+  },
+  "crack": {
+    "name": "fissure",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "THROUGH",
+        "response_original": "You can't fit through the crack.",
+        "response_spooky": "You can't fit through the crack."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "crack",
+        "response_spooky": "crack It seems to pulse with malevolent energy."
+      }
+    ]
+  },
+  "coffin": {
+    "name": "obsidian coffin",
+    "type": "container",
+    "state": {
+      "is_open": false,
+      "is_locked": false,
+      "is_taken": false,
+      "contents": [
+        "sceptre"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. A chill runs down your spine."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "The solid-gold coffin used for the burial of Ramses II is here.",
+        "response_spooky": "The solid-gold obsidian coffin used for the burial of Ramses II is here. Shadows cling to it unnaturally."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. A smell of decay wafts out."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. It shuts with finality."
+      }
+    ],
+    "is_takeable": true,
+    "capacity": 35
+  },
+  "grate": {
+    "name": "iron grate",
+    "type": "door",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "OPEN",
+        "response_original": "The grate is locked.",
+        "response_spooky": "The grate is locked. The hinges scream in protest."
+      },
+      {
+        "verb": "LOCK",
+        "response_original": "The grate is locked.",
+        "response_spooky": "The grate is locked."
+      },
+      {
+        "verb": "UNLOCK",
+        "response_original": "The grate is unlocked.",
+        "response_spooky": "The grate is unlocked."
+      },
+      {
+        "verb": "PICK",
+        "response_original": "You can't pick the lock.",
+        "response_spooky": "You can't pick the lock."
+      },
+      {
+        "verb": "PUT",
+        "response_original": "It won't fit through the grating.",
+        "response_spooky": "It won't fit through the grating."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "grating",
+        "response_spooky": "grating It's covered in strange symbols."
+      }
+    ]
+  },
+  "pump": {
+    "name": "bone pump",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. A chill runs down your spine."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "hand-held air pump",
+        "response_spooky": "hand-held air pump Shadows cling to it unnaturally."
+      }
+    ],
+    "is_takeable": true
+  },
+  "diamond": {
+    "name": "cursed diamond",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It falls with a wet sound."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "There is an enormous diamond (perfectly cut) here.",
+        "response_spooky": "There is an enormous diamond (perfectly cut) here. It's covered in strange symbols."
+      }
+    ],
+    "is_takeable": true
+  },
+  "jade": {
+    "name": "jade death mask",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It falls with a wet sound."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "There is an exquisite jade figurine here.",
+        "response_spooky": "There is an exquisite jade figurine here. It's covered in strange symbols."
+      }
+    ],
+    "is_takeable": true
+  },
+  "knife": {
+    "name": "ritual knife",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. It's cold to the touch."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "nasty knife",
+        "response_spooky": "nasty ritual knife Dark stains mar its surface."
+      }
+    ],
+    "is_takeable": true
+  },
+  "bones": {
+    "name": "skeleton",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "skeleton",
+        "response_spooky": "skeleton It's covered in strange symbols."
+      }
+    ],
+    "is_takeable": true
+  },
+  "burned_out_lantern": {
+    "name": "dead lantern",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "burned-out lantern",
+        "response_spooky": "burned-out cursed lantern"
+      }
+    ],
+    "is_takeable": true
+  },
+  "bag_of_coins": {
+    "name": "old bag",
+    "type": "container",
+    "state": {
+      "is_taken": false,
+      "contents": ["coins"]
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. It's cold to the touch."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It falls with a wet sound."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "An old leather bag, bulging with coins, is here.",
+        "response_spooky": "An old leather bag, bulging with coins, is here. It's covered in strange symbols."
+      }
+    ],
+    "is_takeable": true
+  },
+  "lamp": {
+    "name": "cursed lantern",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_on": false,
+      "battery_life": 200
+    },
+    "interactions": [
+      {
+        "verb": "THROW",
+        "response_original": "The lamp has smashed into the floor, and the light has gone out.",
+        "response_spooky": "The cursed lantern has smashed into the floor, and the flickering light has gone out."
+      },
+      {
+        "verb": "LAMP-ON",
+        "response_original": "A burned-out lamp won't light.",
+        "response_spooky": "A burned-out cursed lantern won't flickering light."
+      },
+      {
+        "verb": "LAMP-OFF",
+        "response_original": "The lamp has already burned out.",
+        "response_spooky": "The cursed lantern has already burned out."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "The lamp",
+        "response_spooky": "The tarnished lantern is covered in strange symbols. Its flame burns with an unnatural color."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "response_spooky": "You grasp the tarnished lantern. It's cold to the touch and covered in strange symbols.",
+        "state_change": {
+          "is_taken": true
+        }
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "There is a brass lantern (battery-powered) here.",
+        "response_spooky": "The tarnished lantern is covered in strange symbols. Its flame burns with an unnatural color."
+      },
+      {
+        "verb": "TURN_ON",
+        "response_original": "The brass lamp is now on.",
+        "response_spooky": "The lantern flickers to life with a sickly green flame that casts dancing shadows.",
+        "condition": {
+          "is_on": false
+        },
+        "state_change": {
+          "is_on": true
+        }
+      },
+      {
+        "verb": "TURN_OFF",
+        "response_original": "The brass lamp is now off.",
+        "response_spooky": "The cursed flame dies, leaving you in darkness. You hear breathing nearby.",
+        "condition": {
+          "is_on": true
+        },
+        "state_change": {
+          "is_on": false
+        }
+      }
+    ],
+    "is_takeable": true
+  },
+  "emerald": {
+    "name": "blood emerald",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. You feel its cursed weight."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "large emerald",
+        "response_spooky": "large emerald It seems to pulse with malevolent energy."
+      }
+    ],
+    "is_takeable": true
+  },
+  "advertisement": {
+    "name": "death notice",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_read": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. It's cold to the touch."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "A small leaflet is on the ground.",
+        "response_spooky": "A small cursed parchment is on the ground."
+      },
+      {
+        "verb": "READ",
+        "response_original": "\\",
+        "state_change": {
+          "is_read": true
+        },
+        "response_spooky": "\\ The text is written in something dark."
+      }
+    ],
+    "is_takeable": true
+  },
+  "leak": {
+    "name": "blood leak",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "leak",
+        "response_spooky": "leak Dark stains mar its surface."
+      }
+    ]
+  },
+  "machine": {
+    "name": "torture machine",
+    "type": "container",
+    "state": {
+      "is_open": false,
+      "is_locked": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "It is far too large to carry.",
+        "response_spooky": "It is far too large to carry. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "OPEN",
+        "response_original": "The lid opens, revealing",
+        "response_spooky": "The lid opens, revealing You hear whispers from inside."
+      },
+      {
+        "verb": "CLOSE",
+        "response_original": "The lid closes.",
+        "response_spooky": "The lid closes. It shuts with finality."
+      },
+      {
+        "verb": "LAMP-ON",
+        "response_original": "It's not clear how to turn it on with your bare hands.",
+        "response_spooky": "It's not murky how to turn it on with your bare hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "machine",
+        "response_spooky": "machine Shadows cling to it unnaturally."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. You hear whispers from inside."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. It shuts with finality."
+      }
+    ],
+    "is_takeable": true,
+    "capacity": 50
+  },
+  "inflated_boat": {
+    "name": "inflat boat",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "contents": [
+        "boat_label"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "WALK",
+        "response_original": "Read the label for the boat's instructions.",
+        "response_spooky": "Read the label for the boat's instructions."
+      },
+      {
+        "verb": "LAUNCH",
+        "response_original": "You're not in the boat!",
+        "response_spooky": "You're not in the boat!"
+      },
+      {
+        "verb": "DROP",
+        "response_original": "It seems that the",
+        "response_spooky": "It seems that the It falls with a wet sound."
+      },
+      {
+        "verb": "PUT",
+        "response_original": "It seems that the",
+        "response_spooky": "It seems that the"
+      },
+      {
+        "verb": "BOARD",
+        "response_original": "Oops! Something sharp seems to have slipped and punctured the boat.\nThe boat deflates to the sounds of hissing, sputtering, and cursing.",
+        "response_spooky": "Oops! Something sharp seems to have slipped and punctured the boat.\nThe boat deflates to the sounds of hissing, sputtering, and cursing."
+      },
+      {
+        "verb": "DEFLATE",
+        "response_original": "You can't deflate the boat while you're in it.",
+        "response_spooky": "You can't deflate the boat while you're in it."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. A chill runs down your spine."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It falls with a wet sound."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "magic boat",
+        "response_spooky": "magic boat It's covered in strange symbols."
+      }
+    ],
+    "is_takeable": true,
+    "capacity": 100
+  },
+  "mailbox": {
+    "name": "rusted mailbox",
+    "type": "container",
+    "state": {
+      "is_open": false,
+      "is_locked": false,
+      "contents": [
+        "advertisement"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "It is securely anchored.",
+        "response_spooky": "The mailbox is fused to the ground by dark magic. It will not budge."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "small mailbox",
+        "response_spooky": "small rusted mailbox Dark stains mar its surface."
+      },
+      {
+        "verb": "OPEN",
+        "response_original": "Opened.",
+        "response_spooky": "The rusted mailbox creaks open, its hinges screaming. Inside, a blood-stained parchment awaits.",
+        "condition": {
+          "is_open": false
+        },
+        "state_change": {
+          "is_open": true
+        }
+      },
+      {
+        "verb": "CLOSE",
+        "response_original": "Closed.",
+        "response_spooky": "The mailbox slams shut with a sound like breaking bones.",
+        "condition": {
+          "is_open": true
+        },
+        "state_change": {
+          "is_open": false
+        }
+      },
+      {
+        "verb": "READ",
+        "response_original": "The small mailbox is closed.",
+        "response_spooky": "The mailbox is sealed shut, its surface covered in arcane symbols.",
+        "condition": {
+          "is_open": false
+        }
+      }
+    ],
+    "is_takeable": true,
+    "capacity": 10
+  },
+  "match": {
+    "name": "cursed matches",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_read": false
+    },
+    "interactions": [
+      {
+        "verb": "LAMP-OFF",
+        "response_original": "The match is out.",
+        "response_spooky": "The match is out."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "The match is burning.",
+        "response_spooky": "The match is burning. It's covered in strange symbols."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. It's cold to the touch."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It falls with a wet sound."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "matchbook",
+        "response_spooky": "matchbook It's covered in strange symbols."
+      },
+      {
+        "verb": "READ",
+        "response_original": "(Close cover before striking)\n\n\n\nYOU too can make BIG MONEY in the exciting field of PAPER SHUFFLING!\n\n\n\nMr. Anderson of Muddle, Mass. says: \\",
+        "state_change": {
+          "is_read": true
+        },
+        "response_spooky": "(slam shut cover before striking)\n\n\n\nYOU too can make BIG MONEY in the exciting field of PAPER SHUFFLING!\n\n\n\nMr. Anderson of Muddle, Mass. says: \\ The words seem to writhe on the page."
+      }
+    ],
+    "is_takeable": true
+  },
+  "mirror_2": {
+    "name": "cursed mirror",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "RUB",
+        "response_original": "You feel a faint tingling transmitted through the",
+        "response_spooky": "You feel a faint tingling transmitted through the"
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "The mirror is many times your size. Give up.",
+        "response_spooky": "The mirror is many times your size. Give up. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "mirror",
+        "response_spooky": "mirror It's covered in strange symbols."
+      }
+    ],
+    "is_takeable": true
+  },
+  "mirror_1": {
+    "name": "haunted mirror",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "RUB",
+        "response_original": "You feel a faint tingling transmitted through the",
+        "response_spooky": "You feel a faint tingling transmitted through the"
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "The mirror is many times your size. Give up.",
+        "response_spooky": "The mirror is many times your size. Give up. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "mirror",
+        "response_spooky": "mirror Shadows cling to it unnaturally."
+      }
+    ],
+    "is_takeable": true
+  },
+  "painting": {
+    "name": "portrait of the damned",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "MUNG",
+        "response_original": "Congratulations! Unlike the other vandals, who merely stole the\nartist's masterpieces, you have destroyed one.",
+        "response_spooky": "Congratulations! Unlike the other vandals, who merely stole the\nartist's masterpieces, you have destroyed one."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "response_spooky": "You take the cursed portrait. The subject's eyes follow you, and blood weeps from the canvas.",
+        "state_change": {
+          "is_taken": true
+        }
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "A painting by a neglected genius is here.",
+        "response_spooky": "The portrait depicts a nobleman whose face is frozen in a silent scream. Blood runs from his eyes, and his mouth moves as if trying to warn you."
+      }
+    ],
+    "is_takeable": true
+  },
+  "candles": {
+    "name": "soul candles",
+    "type": "item",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "candles",
+        "response_spooky": "candles They seem to absorb light rather than produce it."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. It's cold to the touch."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "pair of candles",
+        "response_spooky": "pair of black candles Shadows cling to it unnaturally."
+      },
+      {
+        "verb": "TURN_ON",
+        "condition": {
+          "is_on": false
+        },
+        "response_original": "The burning candles is now on.",
+        "state_change": {
+          "is_on": true
+        },
+        "response_spooky": "The burning black candles is now on. It illuminates the darkness with cold fire."
+      },
+      {
+        "verb": "TURN_OFF",
+        "condition": {
+          "is_on": true
+        },
+        "response_original": "The burning candles is now off.",
+        "state_change": {
+          "is_on": false
+        },
+        "response_spooky": "The burning black candles is now off. The flame gutters and dies."
+      }
+    ],
+    "is_takeable": true
+  },
+  "gunk": {
+    "name": "toxic slag",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "small piece of vitreous slag",
+        "response_spooky": "small piece of vitreous slag It seems to pulse with malevolent energy."
+      }
+    ],
+    "is_takeable": true
+  },
+  "bodies": {
+    "name": "pile of corpses",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "A force keeps you from taking the bodies.",
+        "response_spooky": "A force keeps you from taking the bodies. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "pile of bodies",
+        "response_spooky": "pile of bodies Shadows cling to it unnaturally."
+      }
+    ],
+    "is_takeable": true
+  },
+  "leaves": {
+    "name": "pile of bones",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "COUNT",
+        "response_original": "There are 69,105 leaves here.",
+        "response_spooky": "There are 69,105 pile of bones here."
+      },
+      {
+        "verb": "BURN",
+        "response_original": "The leaves burn.",
+        "response_spooky": "The pile of bones burn."
+      },
+      {
+        "verb": "CUT",
+        "response_original": "You rustle the leaves around, making quite a mess.",
+        "response_spooky": "You rustle the pile of bones around, making quite a mess."
+      },
+      {
+        "verb": "MOVE",
+        "response_original": "Done.",
+        "response_spooky": "It is done."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Underneath the pile of leaves is a grating. As you release the leaves,\nthe grating is once again concealed from view.",
+        "response_spooky": "Underneath the pile of pile of bones is a grating. As you release the pile of bones,\nthe grating is once again concealed from view."
+      },
+      {
+        "verb": "LOOK-UNDER",
+        "response_original": "Underneath the pile of leaves is a grating. As you release the leaves,\nthe grating is once again concealed from view.",
+        "response_spooky": "Underneath the pile of pile of bones is a grating. As you release the pile of bones,\nthe grating is once again concealed from view."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. You feel its cursed weight."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "On the ground is a pile of leaves.",
+        "response_spooky": "On the ground is a pile of pile of bones."
+      }
+    ],
+    "is_takeable": true
+  },
+  "punctured_boat": {
+    "name": "wrecked ship",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. You feel its cursed weight."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "punctured boat",
+        "response_spooky": "punctured boat It seems to pulse with malevolent energy."
+      }
+    ],
+    "is_takeable": true
+  },
+  "inflatable_boat": {
+    "name": "ghost ship",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It falls with a wet sound."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "There is a folded pile of plastic here which has a small valve\nattached.",
+        "response_spooky": "There is a folded pile of plastic here which has a small valve\nattached. It's covered in strange symbols."
+      }
+    ],
+    "is_takeable": true
+  },
+  "bar": {
+    "name": "cursed platinum bar",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. You feel its cursed weight."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "On the ground is a large platinum bar.",
+        "response_spooky": "On the ground is a large platinum bar. It seems to pulse with malevolent energy."
+      }
+    ],
+    "is_takeable": true
+  },
+  "pot_of_gold": {
+    "name": "cauldron of blood",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. It's cold to the touch."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "pot of gold",
+        "response_spooky": "pot of gold Shadows cling to it unnaturally."
+      }
+    ],
+    "is_takeable": true
+  },
+  "prayer": {
+    "name": "dark prayer",
+    "type": "scenery",
+    "state": {
+      "is_read": false
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "prayer",
+        "response_spooky": "absolute darkness prayer"
+      },
+      {
+        "verb": "READ",
+        "response_original": "The prayer is inscribed in an ancient script, rarely used today. It seems\nto be a philippic against small insects, absent-mindedness, and the picking\nup and dropping of small objects. The final verse consigns trespassers to\nthe land of the dead. All evidence indicates that the beliefs of the ancient\nZorkers were obscure.",
+        "state_change": {
+          "is_read": true
+        },
+        "response_spooky": "The absolute darkness prayer is inscribed in an ancient script, rarely used today. It seems\nto be a philippic against small insects, absent-mindedness, and the picking\nup and dropping of small objects. The final verse consigns trespassers to\nthe land of the dead. All evidence indicates that the beliefs of the ancient\nZorkers were obscure."
+      }
+    ]
+  },
+  "railing": {
+    "name": "bone railing",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "wooden railing",
+        "response_spooky": "wooden railing It seems to pulse with malevolent energy."
+      }
+    ]
+  },
+  "rainbow": {
+    "name": "spectral bridge",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "LOOK-UNDER",
+        "response_original": "The Frigid River flows under the rainbow.",
+        "response_spooky": "The Frigid river of blood flows under the spectral bridge."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "rainbow",
+        "response_spooky": "spectral bridge Shadows cling to it unnaturally."
+      }
+    ]
+  },
+  "river": {
+    "name": "river of blood",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "PUT",
+        "response_original": "You should get in the boat then launch it.",
+        "response_spooky": "You should get in the boat then launch it."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "river",
+        "response_spooky": "river of blood"
+      }
+    ]
+  },
+  "buoy": {
+    "name": "corpse buoy",
+    "type": "container",
+    "state": {
+      "is_open": false,
+      "is_locked": false,
+      "is_taken": false,
+      "contents": [
+        "emerald"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. It's cold to the touch."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It falls with a wet sound."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "red buoy",
+        "response_spooky": "red buoy It's covered in strange symbols."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. The hinges scream in protest."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. It slams shut with a sound like breaking bones."
+      }
+    ],
+    "is_takeable": true,
+    "capacity": 20
+  },
+  "rope": {
+    "name": "hangman's rope",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TIE",
+        "response_original": "The rope is already tied to it.",
+        "response_spooky": "The hangman's rope is already tied to it."
+      },
+      {
+        "verb": "CLIMB-DOWN",
+        "response_original": "Your attempt to tie up the",
+        "response_spooky": "Your attempt to tie up the"
+      },
+      {
+        "verb": "TIE-UP",
+        "response_original": "Your attempt to tie up the",
+        "response_spooky": "Your attempt to tie up the"
+      },
+      {
+        "verb": "UNTIE",
+        "response_original": "The rope is now untied.",
+        "response_spooky": "The hangman's rope is now untied."
+      },
+      {
+        "verb": "DROP",
+        "response_original": "The rope drops gently to the floor below.",
+        "response_spooky": "The hangman's rope drops gently to the floor below. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "The rope is tied to the railing.",
+        "response_spooky": "The hangman's rope is tied to the railing. It's cold to the touch."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. It's cold to the touch."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "rope",
+        "response_spooky": "hangman's rope Dark stains mar its surface."
+      }
+    ],
+    "is_takeable": true
+  },
+  "rusty_knife": {
+    "name": "cursed rusty knife",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "As you touch the rusty knife, your sword gives a single pulse of blinding\nblue light.",
+        "response_spooky": "As you touch the rusty ritual knife, your spectral blade gives a single pulse of blinding\nblue flickering light. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It falls with a wet sound."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "rusty knife",
+        "response_spooky": "rusty ritual knife It's covered in strange symbols."
+      }
+    ],
+    "is_takeable": true
+  },
+  "sand": {
+    "name": "grave dirt",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "DIG",
+        "response_original": "You can see a scarab here in the sand.",
+        "response_spooky": "You can see a scarab here in the grave dirt."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "sand",
+        "response_spooky": "grave dirt"
+      }
+    ]
+  },
+  "bracelet": {
+    "name": "soul-binding bracelet",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "sapphire-encrusted bracelet",
+        "response_spooky": "sapphire-encrusted bracelet It seems to pulse with malevolent energy."
+      }
+    ],
+    "is_takeable": true
+  },
+  "screwdriver": {
+    "name": "rusted screwdriver",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "screwdriver",
+        "response_spooky": "screwdriver Dark stains mar its surface."
+      }
+    ],
+    "is_takeable": true
+  },
+  "keys": {
+    "name": "skeleton key",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It falls with a wet sound."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "skeleton key",
+        "response_spooky": "skeleton key It's covered in strange symbols."
+      }
+    ],
+    "is_takeable": true
+  },
+  "shovel": {
+    "name": "gravedigger's shovel",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "shovel",
+        "response_spooky": "shovel It seems to pulse with malevolent energy."
+      }
+    ],
+    "is_takeable": true
+  },
+  "coal": {
+    "name": "cursed coal",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. You feel its cursed weight."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "small pile of coal",
+        "response_spooky": "small pile of coal Dark stains mar its surface."
+      }
+    ],
+    "is_takeable": true
+  },
+  "ladder": {
+    "name": "bone ladder",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "wooden ladder",
+        "response_spooky": "wooden ladder It seems to pulse with malevolent energy."
+      }
+    ]
+  },
+  "scarab": {
+    "name": "death scarab",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. A chill runs down your spine."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "beautiful jeweled scarab",
+        "response_spooky": "grotesque jeweled scarab"
+      }
+    ],
+    "is_takeable": true
+  },
+  "large_bag": {
+    "name": "body bag",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Sadly for you, the robber collapsed on top of the bag. Trying to take\nit would wake him.",
+        "response_spooky": "Sadly for you, the robber collapsed on top of the bag. Trying to take\nit would wake him. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "PUT",
+        "response_original": "It would be a good trick.",
+        "response_spooky": "It would be a good trick."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "large bag",
+        "response_spooky": "large bag It seems to pulse with malevolent energy."
+      }
+    ],
+    "is_takeable": true
+  },
+  "stiletto": {
+    "name": "poisoned dagger",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. A chill runs down your spine."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "stiletto",
+        "response_spooky": "stiletto Shadows cling to it unnaturally."
+      }
+    ],
+    "is_takeable": true
+  },
+  "machine_switch": {
+    "name": "blood switch",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "TURN",
+        "response_original": "The machine doesn't seem to want to do anything.",
+        "response_spooky": "The machine doesn't seem to want to do anything."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "switch",
+        "response_spooky": "switch Shadows cling to it unnaturally."
+      }
+    ]
+  },
+  "wooden_door": {
+    "name": "rotting door",
+    "type": "door",
+    "state": {
+      "is_read": false
+    },
+    "interactions": [
+      {
+        "verb": "OPEN",
+        "response_original": "The door cannot be opened.",
+        "response_spooky": "The obsidian coffin lid cannot be creaked open. You hear whispers from inside."
+      },
+      {
+        "verb": "BURN",
+        "response_original": "You cannot burn this door.",
+        "response_spooky": "You cannot burn this obsidian coffin lid."
+      },
+      {
+        "verb": "MUNG",
+        "response_original": "You can't seem to damage the door.",
+        "response_spooky": "You can't seem to damage the obsidian coffin lid."
+      },
+      {
+        "verb": "LOOK-BEHIND",
+        "response_original": "It won't open.",
+        "response_spooky": "It won't creak open."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "wooden door",
+        "response_spooky": "wooden obsidian coffin lid Dark stains mar its surface."
+      },
+      {
+        "verb": "READ",
+        "response_original": "The engravings translate to \\",
+        "state_change": {
+          "is_read": true
+        },
+        "response_spooky": "The engravings translate to \\ Reading it fills you with dread."
+      }
+    ]
+  },
+  "sword": {
+    "name": "spectral blade",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Your sword is glowing with a faint blue glow.",
+        "response_spooky": "You grasp the spectral blade. It's cold as ice and seems to drink in the light. Runes along its length glow with pale fire.",
+        "state_change": {
+          "is_taken": true
+        }
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "Your sword is glowing with a faint blue glow.",
+        "response_spooky": "The blade is forged from some otherworldly metal that seems to shift between solid and ethereal. Ancient runes carved along its length speak of death and damnation. When enemies are near, it glows with cold fire and whispers of blood."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "You grasp the spectral blade. It's cold as ice and seems to drink in the light. Runes along its length glow with pale fire."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It falls with a wet sound."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "sword",
+        "response_spooky": "The blade is forged from some otherworldly metal that seems to shift between solid and ethereal. Ancient runes carved along its length speak of death and damnation."
+      },
+      {
+        "verb": "WAVE",
+        "response_original": "Whoosh!",
+        "response_spooky": "The blade cuts through the air with a sound like screaming. Ghostly afterimages trail behind it."
+      }
+    ],
+    "is_takeable": true
+  },
+  "map": {
+    "name": "blood-stained map",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_read": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. A chill runs down your spine."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "ancient map",
+        "response_spooky": "ancient map Dark stains mar its surface."
+      },
+      {
+        "verb": "READ",
+        "response_original": "The map shows a forest with three clearings. The largest clearing contains\na house. Three paths leave the large clearing. One of these paths, leading\nsouthwest, is marked \\",
+        "state_change": {
+          "is_read": true
+        },
+        "response_spooky": "The map shows a dead forest with three clearings. The largest clearing contains\na manor. Three paths leave the large clearing. One of these paths, leading\nsouthwest, is marked \\ Reading it fills you with dread."
+      }
+    ],
+    "is_takeable": true
+  },
+  "boat_label": {
+    "name": "warning label",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_read": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "tan label",
+        "response_spooky": "tan label Shadows cling to it unnaturally."
+      },
+      {
+        "verb": "READ",
+        "response_original": "!!!!FROBOZZ MAGIC BOAT COMPANY!!!!\n\n\n\nHello, Sailor!\n\n\n\nInstructions for use:\n\n\n\n   To get into a body of water, say \\",
+        "state_change": {
+          "is_read": true
+        },
+        "response_spooky": "!!!!FROBOZZ MAGIC BOAT COMPANY!!!!\n\n\n\nHello, Sailor!\n\n\n\nInstructions for use:\n\n\n\n   To get into a body of absolute darkness water, say \\"
+      }
+    ],
+    "is_takeable": true
+  },
+  "thief": {
+    "name": "shadow thief",
+    "type": "container",
+    "state": {
+      "is_open": true,
+      "is_locked": false,
+      "contents": [
+        "large_bag",
+        "stiletto"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "TELL",
+        "response_original": "The thief is a strong, silent type.",
+        "response_spooky": "The shadow thief is a strong, silent type."
+      },
+      {
+        "verb": "HELLO",
+        "response_original": "The thief, being temporarily incapacitated, is unable to acknowledge\nyour greeting with his usual graciousness.",
+        "response_spooky": "The shadow thief, being temporarily incapacitated, is unable to acknowledge\nyour greeting with his usual graciousness."
+      },
+      {
+        "verb": "THROW",
+        "response_original": "You evidently frightened the robber, though you didn't hit him. He\nflees",
+        "response_spooky": "You evidently frightened the robber, though you didn't hit him. He\nflees"
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Once you got him, what would you do with him?",
+        "response_spooky": "Once you got him, what would you do with him? You feel its cursed weight."
+      },
+      {
+        "verb": "LISTEN",
+        "response_original": "The thief says nothing, as you have not been formally introduced.",
+        "response_spooky": "The shadow thief says nothing, as you have not been formally introduced."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "There is a suspicious-looking individual, holding a large bag, leaning\nagainst one wall. He is armed with a deadly stiletto.",
+        "response_spooky": "There is a suspicious-looking individual, holding a large bag, leaning\nagainst one wall. He is armed with a deadly stiletto. Shadows cling to it unnaturally."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. Darkness spills forth."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. It shuts with finality."
+      }
+    ],
+    "is_takeable": true
+  },
+  "pedestal": {
+    "name": "obsidian pedestal",
+    "type": "container",
+    "state": {
+      "is_open": true,
+      "is_locked": false,
+      "contents": [
+        "torch"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "It looks pretty much like a",
+        "response_spooky": "It looks pretty much like a Shadows cling to it unnaturally."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "pedestal",
+        "response_spooky": "pedestal Shadows cling to it unnaturally."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. Cold air flows from within."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. It shuts with finality."
+      }
+    ],
+    "capacity": 30
+  },
+  "torch": {
+    "name": "cursed torch",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_on": true
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "The torch is burning.",
+        "response_spooky": "The cursed torch is burning."
+      },
+      {
+        "verb": "POUR-ON",
+        "response_original": "The water evaporates before it gets close.",
+        "response_spooky": "The absolute darkness water evaporates before it gets slam shut."
+      },
+      {
+        "verb": "LAMP-OFF",
+        "response_original": "You nearly burn your hand trying to extinguish the flame.",
+        "response_spooky": "You nearly burn your hand trying to extinguish the flame."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "torch",
+        "response_spooky": "cursed torch"
+      },
+      {
+        "verb": "TURN_ON",
+        "condition": {
+          "is_on": false
+        },
+        "response_original": "The flaming torch is now on.",
+        "state_change": {
+          "is_on": true
+        },
+        "response_spooky": "The flaming cursed torch is now on."
+      },
+      {
+        "verb": "TURN_OFF",
+        "condition": {
+          "is_on": true
+        },
+        "response_original": "The flaming torch is now off.",
+        "state_change": {
+          "is_on": false
+        },
+        "response_spooky": "The flaming cursed torch is now off."
+      }
+    ],
+    "is_takeable": true
+  },
+  "guide": {
+    "name": "tour guide",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_read": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "tour guidebook",
+        "response_spooky": "tour guidebook It seems to pulse with malevolent energy."
+      },
+      {
+        "verb": "READ",
+        "response_original": "\\",
+        "state_change": {
+          "is_read": true
+        },
+        "response_spooky": "\\ The text is written in something dark."
+      }
+    ],
+    "is_takeable": true
+  },
+  "troll": {
+    "name": "flesh-eating ogre",
+    "type": "npc",
+    "state": {
+      "contents": [
+        "axe"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "TELL",
+        "response_original": "The troll isn't much of a conversationalist.",
+        "response_spooky": "The flesh-eating ogre isn't much of a conversationalist."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "The troll scratches his head in confusion, then takes the axe.",
+        "response_spooky": "The flesh-eating ogre scratches his head in confusion, then takes the executioner's axe. It's covered in strange symbols."
+      },
+      {
+        "verb": "THROW",
+        "response_original": "The troll, who is remarkably coordinated, catches the",
+        "response_spooky": "The flesh-eating ogre, who is remarkably coordinated, catches the"
+      },
+      {
+        "verb": "MUNG",
+        "response_original": "The troll laughs at your puny gesture.",
+        "response_spooky": "The flesh-eating ogre laughs at your puny gesture."
+      },
+      {
+        "verb": "LISTEN",
+        "response_original": "Every so often the troll says something, probably uncomplimentary, in\nhis guttural tongue.",
+        "response_spooky": "Every so often the flesh-eating ogre says something, probably uncomplimentary, in\nhis guttural tongue."
+      },
+      {
+        "verb": "HELLO",
+        "response_original": "Unfortunately, the troll can't hear you.",
+        "response_spooky": "Unfortunately, the flesh-eating ogre can't hear you."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "A nasty-looking troll, brandishing a bloody axe, blocks all passages\nout of the room.",
+        "response_spooky": "A nasty-looking flesh-eating ogre, brandishing a bloody executioner's axe, blocks all passages\nout of the room."
+      },
+      {
+        "verb": "ATTACK",
+        "response_spooky": "The ogre swings its gore-stained axe, barely missing your head. Its roar shakes the walls."
+      },
+      {
+        "verb": "GIVE",
+        "response_spooky": "The ogre snatches the offering and devours it with disturbing enthusiasm, bones and all."
+      }
+    ],
+    "is_takeable": true
+  },
+  "trunk": {
+    "name": "coffin of jewels",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "There is an old trunk here, bulging with assorted jewels.",
+        "response_spooky": "There is an old trunk here, bulging with assorted jewels. Shadows cling to it unnaturally."
+      }
+    ],
+    "is_takeable": true
+  },
+  "tube": {
+    "name": "vial",
+    "type": "container",
+    "state": {
+      "is_open": false,
+      "is_locked": false,
+      "is_taken": false,
+      "is_read": false,
+      "contents": [
+        "putty"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "PUT",
+        "response_original": "The tube refuses to accept anything.",
+        "response_spooky": "The tube refuses to accept anything."
+      },
+      {
+        "verb": "SQUEEZE",
+        "response_original": "The viscous material oozes into your hand.",
+        "response_spooky": "The viscous material oozes into your hand."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "There is an object which looks like a tube of toothpaste here.",
+        "response_spooky": "There is an object which looks like a tube of toothpaste here. Shadows cling to it unnaturally."
+      },
+      {
+        "verb": "READ",
+        "response_original": "---> Frobozz Magic Gunk Company <---\n\n\t  All-Purpose Gunk",
+        "state_change": {
+          "is_read": true
+        },
+        "response_spooky": "---> Frobozz Magic Gunk Company <---\n\n\t  All-Purpose Gunk Ancient curses fill the pages."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. You hear whispers from inside."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. It shuts with finality."
+      }
+    ],
+    "is_takeable": true,
+    "capacity": 7
+  },
+  "putty": {
+    "name": "flesh putty",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "OIL",
+        "response_original": "The all-purpose gunk isn't a lubricant.",
+        "response_spooky": "The all-purpose gunk isn't a lubricant."
+      },
+      {
+        "verb": "PUT",
+        "response_original": "The all-purpose gunk isn't a lubricant.",
+        "response_spooky": "The all-purpose gunk isn't a lubricant."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "viscous material",
+        "response_spooky": "viscous material Shadows cling to it unnaturally."
+      }
+    ],
+    "is_takeable": true
+  },
+  "engravings": {
+    "name": "cursed engravings",
+    "type": "scenery",
+    "state": {
+      "is_read": false
+    },
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "There are old engravings on the walls here.",
+        "response_spooky": "There are old engravings on the walls here. It's covered in strange symbols."
+      },
+      {
+        "verb": "READ",
+        "response_original": "The engravings were incised in the living rock of the cave wall by\nan unknown hand. They depict, in symbolic form, the beliefs of the\nancient Zorkers. Skillfully interwoven with the bas reliefs are excerpts\nillustrating the major religious tenets of that time. Unfortunately, a\nlater age seems to have considered them blasphemous and just as skillfully\nexcised them.",
+        "state_change": {
+          "is_read": true
+        },
+        "response_spooky": "The engravings were incised in the living rock of the cave wall by\nan unknown hand. They depict, in symbolic form, the beliefs of the\nancient Zorkers. Skillfully interwoven with the bas reliefs are excerpts\nillustrating the major religious tenets of that time. Unfortunately, a\nlater age seems to have considered them blasphemous and just as skillfully\nexcised them. The words seem to writhe on the page."
+      }
+    ]
+  },
+  "owners_manual": {
+    "name": "grimoire",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_read": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. Your fingers tingle with dark energy."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. The object lands with an unnatural thud."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "ZORK owner's manual",
+        "response_spooky": "ZORK owner's manual Dark stains mar its surface."
+      },
+      {
+        "verb": "READ",
+        "response_original": "Congratulations!\n\n\n\nYou are the privileged owner of ZORK I: The Great Underground Empire,\na self-contained and self-maintaining universe. If used and maintained\nin accordance with normal operating practices for small universes, ZORK\nwill provide many months of trouble-free operation.",
+        "state_change": {
+          "is_read": true
+        },
+        "response_spooky": "Congratulations!\n\n\n\nYou are the privileged owner of ZORK I: The Great Underground Empire,\na self-contained and self-maintaining universe. If used and maintained\nin accordance with normal operating practices for small universes, ZORK\nwill provide many months of trouble-free operation. Reading it fills you with dread."
+      }
+    ],
+    "is_takeable": true
+  },
+  "climbable_cliff": {
+    "name": "cliff",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "LEAP",
+        "response_original": "That would be very unwise. Perhaps even fatal.",
+        "response_spooky": "That would be very unwise. Perhaps even fatal."
+      },
+      {
+        "verb": "PUT",
+        "response_original": "That would be very unwise. Perhaps even fatal.",
+        "response_spooky": "That would be very unwise. Perhaps even fatal."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "cliff",
+        "response_spooky": "cliff It seems to pulse with malevolent energy."
+      }
+    ]
+  },
+  "white_cliff": {
+    "name": "bone cliffs",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "white cliffs",
+        "response_spooky": "bone-white cliffs"
+      }
+    ]
+  },
+  "wrench": {
+    "name": "blood-stained wrench",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. It's cold to the touch."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "wrench",
+        "response_spooky": "wrench It seems to pulse with malevolent energy."
+      }
+    ],
+    "is_takeable": true
+  },
+  "control_panel": {
+    "name": "control panel",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "control panel",
+        "response_spooky": "control panel Shadows cling to it unnaturally."
+      }
+    ]
+  },
+  "nest": {
+    "name": "raven's nest",
+    "type": "container",
+    "state": {
+      "is_open": true,
+      "is_locked": false,
+      "is_taken": false,
+      "contents": [
+        "egg"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. A chill runs down your spine."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "bird's nest",
+        "response_spooky": "death raven's raven's nest"
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. A smell of decay wafts out."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. It shuts with finality."
+      }
+    ],
+    "is_takeable": true,
+    "capacity": 20
+  },
+  "egg": {
+    "name": "raven's egg",
+    "type": "container",
+    "state": {
+      "is_open": false,
+      "is_locked": false,
+      "is_taken": false,
+      "contents": [
+        "canary"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "MUNG",
+        "response_original": "The egg is now open, but the clumsiness of your attempt has seriously\ncompromised its esthetic appeal.",
+        "response_spooky": "The raven's egg is now creak open, but the clumsiness of your attempt has seriously\ncompromised its esthetic appeal."
+      },
+      {
+        "verb": "THROW",
+        "response_original": "Your rather indelicate handling of the egg has caused it some damage,\nalthough you have succeeded in opening it.",
+        "response_spooky": "Your rather indelicate handling of the raven's egg has caused it some damage,\nalthough you have succeeded in opening it."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "jewel-encrusted egg",
+        "response_spooky": "jewel-encrusted raven's egg It seems to pulse with malevolent energy."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. You hear whispers from inside."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. You hear a click like a coffin sealing."
+      }
+    ],
+    "is_takeable": true,
+    "capacity": 6
+  },
+  "broken_egg": {
+    "name": "shattered raven egg",
+    "type": "container",
+    "state": {
+      "is_open": true,
+      "is_locked": false,
+      "is_taken": false,
+      "contents": [
+        "broken_canary"
+      ]
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It falls with a wet sound."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "There is a somewhat ruined egg here.",
+        "response_spooky": "There is a somewhat ruined raven's egg here. It's covered in strange symbols."
+      },
+      {
+        "verb": "OPEN",
+        "condition": {
+          "is_open": false
+        },
+        "response_original": "Opened.",
+        "state_change": {
+          "is_open": true
+        },
+        "response_spooky": "creaked open. You hear whispers from inside."
+      },
+      {
+        "verb": "CLOSE",
+        "condition": {
+          "is_open": true
+        },
+        "response_original": "Closed.",
+        "state_change": {
+          "is_open": false
+        },
+        "response_spooky": "slammed shut. It slams shut with a sound like breaking bones."
+      }
+    ],
+    "is_takeable": true,
+    "capacity": 6
+  },
+  "bauble": {
+    "name": "cursed bauble",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. A chill runs down your spine."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "beautiful brass bauble",
+        "response_spooky": "grotesque brass bauble"
+      }
+    ],
+    "is_takeable": true
+  },
+  "canary": {
+    "name": "mechanical raven",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "WIND",
+        "response_original": "The canary chirps, slightly off-key, an aria from a forgotten opera.\nFrom out of the greenery flies a lovely songbird. It perches on a\nlimb just over your head and opens its beak to sing. As it does so\na beautiful brass bauble drops from its mouth, bounces off the top of\nyour head, and lands glimmering in the grass. As the canary winds\ndown, the songbird flies away.",
+        "response_spooky": "The mechanical raven chirps, slightly off-key, an aria from a forgotten opera.\nFrom out of the greenery flies a lovely death raven. It perches on a\nlimb just over your head and opens its beak to sing. As it does so\na grotesque brass bauble drops from its mouth, bounces off the top of\nyour head, and lands glimmering in the grass. As the mechanical raven winds\ndown, the death raven flies away."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. It's cold to the touch."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. It hits the ground and seems to pulse."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "golden clockwork canary",
+        "response_spooky": "golden clockwork mechanical raven Shadows cling to it unnaturally."
+      }
+    ],
+    "is_takeable": true
+  },
+  "broken_canary": {
+    "name": "broken raven",
+    "type": "item",
+    "state": {
+      "is_taken": false
+    },
+    "interactions": [
+      {
+        "verb": "WIND",
+        "response_original": "The canary chirps, slightly off-key, an aria from a forgotten opera.\nFrom out of the greenery flies a lovely songbird. It perches on a\nlimb just over your head and opens its beak to sing. As it does so\na beautiful brass bauble drops from its mouth, bounces off the top of\nyour head, and lands glimmering in the grass. As the canary winds\ndown, the songbird flies away.",
+        "response_spooky": "The mechanical raven chirps, slightly off-key, an aria from a forgotten opera.\nFrom out of the greenery flies a lovely death raven. It perches on a\nlimb just over your head and opens its beak to sing. As it does so\na grotesque brass bauble drops from its mouth, bounces off the top of\nyour head, and lands glimmering in the grass. As the mechanical raven winds\ndown, the death raven flies away."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "state_change": {
+          "is_taken": true
+        },
+        "response_spooky": "grasped. The object seems to writhe in your grasp."
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "state_change": {
+          "is_taken": false
+        },
+        "response_spooky": "released. You feel relief as it leaves your hands."
+      },
+      {
+        "verb": "EXAMINE",
+        "response_original": "broken clockwork canary",
+        "response_spooky": "broken clockwork mechanical raven It seems to pulse with malevolent energy."
+      }
+    ],
+    "is_takeable": true
+  },
+  "leaflet": {
+    "name": "cursed parchment",
+    "type": "item",
+    "state": {
+      "is_taken": false,
+      "is_read": false
+    },
+    "interactions": [
+      {
+        "verb": "READ",
+        "response_original": "\"WELCOME TO ZORK! ZORK is a game of adventure, danger, and low cunning. In it you will explore some of the most amazing territory ever seen by mortals. No computer should be without one!\"",
+        "response_spooky": "\"ABANDON HOPE, ALL YE WHO ENTER HERE. You have been chosen to explore the Haunted Manor and its cursed depths. Few who enter ever leave, and those who do are forever changed. The treasures you seek are cursed, the paths are treacherous, and death is only the beginning of your suffering. Welcome to your nightmare.\"",
+        "state_change": {
+          "is_read": true
+        }
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "Taken.",
+        "response_spooky": "You grasp the parchment. It's cold to the touch and seems to writhe in your hands.",
+        "state_change": {
+          "is_taken": true
+        }
+      },
+      {
+        "verb": "DROP",
+        "condition": {
+          "is_taken": true
+        },
+        "response_original": "Dropped.",
+        "response_spooky": "The parchment falls, landing with a wet sound.",
+        "state_change": {
+          "is_taken": false
+        }
+      }
+    ]
+  },
+  "boards": {
+    "name": "coffin boards",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "coins": {
+    "name": "cursed coins",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "guidebook": {
+    "name": "book of the dead",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "sandwich": {
+    "name": "rotting flesh",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
+  "matches": {
+    "name": "infernal matches",
+    "type": "item",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "match",
+        "response_spooky": "match The matchbox bears strange symbols."
+      }
+    ]
+  },
+  "food": {
+    "name": "lunch",
+    "type": "item",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "food",
+        "response_spooky": "food It looks suspiciously fresh."
+      },
+      {
+        "verb": "EAT",
+        "response_original": "eaten.",
+        "response_spooky": "eaten. You feel a strange hunger afterward."
+      }
+    ]
+  },
+  "grue": {
+    "name": "grue",
+    "type": "npc",
+    "state": {},
+    "interactions": []
+  },
+  "stairs": {
+    "name": "stairs",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "stairs",
+        "response_spooky": "stairs They seem to groan under an invisible weight."
+      }
+    ]
+  },
+  "ground": {
+    "name": "ground",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "ground",
+        "response_spooky": "ground The earth here feels unnaturally soft."
+      }
+    ]
+  },
+  "jewelry": {
+    "name": "cursed jewelry",
+    "type": "treasure",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "jewelry",
+        "response_spooky": "jewelry It seems to whisper to you."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "taken.",
+        "response_spooky": "taken. Your skin tingles where it touches."
+      }
+    ]
+  },
+  "silver": {
+    "name": "possessed silver",
+    "type": "treasure",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "silver",
+        "response_spooky": "silver It bears unholy markings."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "taken.",
+        "response_spooky": "taken. It feels unnaturally cold."
+      }
+    ]
+  },
+  "gold": {
+    "name": "haunted gold",
+    "type": "treasure",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "gold",
+        "response_spooky": "gold It glows with a faint, sickly light."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "taken.",
+        "response_spooky": "taken. You feel eyes upon you."
+      }
+    ]
+  }
+}
