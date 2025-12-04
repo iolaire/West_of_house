@@ -351,26 +351,75 @@ class WorldData:
                     return obj_id
         
         return None
-    
-    def get_room_description(self, room_id: str, sanity_level: int) -> str:
+
+    def get_visible_objects_in_room(self, room_id: str) -> List[str]:
+        """
+        Get list of visible object names in a room.
+
+        Args:
+            room_id: The room identifier
+
+        Returns:
+            List of visible object display names
+        """
+        if not self._loaded:
+            return []
+
+        try:
+            room = self.get_room(room_id)
+            visible_objects = []
+
+            for item_id in room.items:
+                try:
+                    obj = self.get_object(item_id)
+                    # Check if object is visible
+                    if obj.state.get('is_visible', True):
+                        # Use spooky name if available, otherwise regular name
+                        obj_name = obj.name_spooky or obj.name
+                        if obj_name:
+                            visible_objects.append(obj_name)
+                except ValueError:
+                    # Object doesn't exist, skip it
+                    continue
+
+            return visible_objects
+        except Exception:
+            return []
+
+    def get_room_description(self, room_id: str, sanity_level: int, include_objects: bool = False) -> str:
         """
         Get appropriate room description based on sanity level.
-        
+
         Always returns spooky description as per requirements.
-        
+
         Args:
             room_id: The room identifier
             sanity_level: Current sanity level (0-100)
-            
+            include_objects: Whether to include visible objects in the description
+
         Returns:
             Room description string
-            
+
         Raises:
             ValueError: If room not found
         """
         room = self.get_room(room_id)
         # Always use spooky description per requirements 19.5, 20.1
-        return room.description_spooky
+        description = room.description_spooky
+
+        # Add visible objects to description if requested
+        if include_objects:
+            visible_objects = self.get_visible_objects_in_room(room_id)
+            if visible_objects:
+                # Add object descriptions
+                object_descriptions = []
+                for obj_name in visible_objects:
+                    object_descriptions.append(f"There is a {obj_name} here.")
+
+                # Append object descriptions to room description
+                description += " ".join(object_descriptions)
+
+        return description
     
     def get_max_score(self) -> int:
         """
