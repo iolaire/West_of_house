@@ -661,7 +661,10 @@
     "type": "container",
     "state": {
       "is_open": true,
-      "is_locked": false
+      "is_locked": false,
+      "contents": [
+        "book"
+      ]
     },
     "interactions": [
       {
@@ -905,7 +908,11 @@
     "type": "container",
     "state": {
       "is_open": true,
-      "is_locked": false
+      "is_locked": false,
+      "contents": [
+        "sandwich_bag",
+        "bottle"
+      ]
     },
     "interactions": [
       {
@@ -943,7 +950,10 @@
     "type": "container",
     "state": {
       "is_open": true,
-      "is_locked": false
+      "is_locked": false,
+      "contents": [
+        "knife"
+      ]
     },
     "interactions": [
       {
@@ -982,7 +992,11 @@
     "state": {
       "is_open": false,
       "is_locked": false,
-      "is_taken": false
+      "is_taken": false,
+      "contents": [
+        "lunch",
+        "garlic"
+      ]
     },
     "interactions": [
       {
@@ -1181,7 +1195,10 @@
     "type": "container",
     "state": {
       "is_open": false,
-      "is_locked": false
+      "is_locked": false,
+      "contents": [
+        "map"
+      ]
     },
     "interactions": [
       {
@@ -1629,7 +1646,10 @@
     "state": {
       "is_open": false,
       "is_locked": false,
-      "is_taken": false
+      "is_taken": false,
+      "contents": [
+        "water"
+      ]
     },
     "interactions": [
       {
@@ -1720,7 +1740,10 @@
     "state": {
       "is_open": false,
       "is_locked": false,
-      "is_taken": false
+      "is_taken": false,
+      "contents": [
+        "sceptre"
+      ]
     },
     "interactions": [
       {
@@ -2257,7 +2280,10 @@
     "name": "inflat boat",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "contents": [
+        "boat_label"
+      ]
     },
     "interactions": [
       {
@@ -2323,7 +2349,10 @@
     "type": "container",
     "state": {
       "is_open": false,
-      "is_locked": false
+      "is_locked": false,
+      "contents": [
+        "advertisement"
+      ]
     },
     "interactions": [
       {
@@ -2911,7 +2940,10 @@
     "state": {
       "is_open": false,
       "is_locked": false,
-      "is_taken": false
+      "is_taken": false,
+      "contents": [
+        "emerald"
+      ]
     },
     "interactions": [
       {
@@ -3559,7 +3591,11 @@
     "type": "container",
     "state": {
       "is_open": true,
-      "is_locked": false
+      "is_locked": false,
+      "contents": [
+        "large_bag",
+        "stiletto"
+      ]
     },
     "interactions": [
       {
@@ -3622,7 +3658,10 @@
     "type": "container",
     "state": {
       "is_open": true,
-      "is_locked": false
+      "is_locked": false,
+      "contents": [
+        "torch"
+      ]
     },
     "interactions": [
       {
@@ -3778,7 +3817,11 @@
   "troll": {
     "name": "flesh-eating ogre",
     "type": "npc",
-    "state": {},
+    "state": {
+      "contents": [
+        "axe"
+      ]
+    },
     "interactions": [
       {
         "verb": "TELL",
@@ -3867,7 +3910,10 @@
       "is_open": false,
       "is_locked": false,
       "is_taken": false,
-      "is_read": false
+      "is_read": false,
+      "contents": [
+        "putty"
+      ]
     },
     "interactions": [
       {
@@ -4133,7 +4179,10 @@
     "state": {
       "is_open": true,
       "is_locked": false,
-      "is_taken": false
+      "is_taken": false,
+      "contents": [
+        "egg"
+      ]
     },
     "interactions": [
       {
@@ -4192,7 +4241,10 @@
     "state": {
       "is_open": false,
       "is_locked": false,
-      "is_taken": false
+      "is_taken": false,
+      "contents": [
+        "canary"
+      ]
     },
     "interactions": [
       {
@@ -4261,7 +4313,10 @@
     "state": {
       "is_open": true,
       "is_locked": false,
-      "is_taken": false
+      "is_taken": false,
+      "contents": [
+        "broken_canary"
+      ]
     },
     "interactions": [
       {

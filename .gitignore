@@ -125,3 +125,4 @@ package.json
 test-sandbox.mjs
 playwright-report/data/*.md
 test-results/*/error-context.md
+CLAUDE.md
