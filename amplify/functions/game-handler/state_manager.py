@@ -33,6 +33,9 @@ class GameState:
     # Game flags (boolean and numeric state variables)
     flags: Dict[str, Union[bool, int]] = field(default_factory=dict)
     
+    # Object states (tracks dynamic object properties like is_open, is_locked)
+    object_states: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+    
     # Rooms visited tracking
     rooms_visited: Set[str] = field(default_factory=set)
     
@@ -135,6 +138,34 @@ class GameState:
             The flag value or default if not set
         """
         return self.flags.get(flag_name, default)
+    
+    def set_object_state(self, object_id: str, state_key: str, value: Any) -> None:
+        """
+        Update an object's state property.
+        
+        Args:
+            object_id: The object identifier
+            state_key: The state property name (e.g., 'is_open', 'is_locked')
+            value: The new value
+        """
+        if object_id not in self.object_states:
+            self.object_states[object_id] = {}
+        self.object_states[object_id][state_key] = value
+        self.last_accessed = datetime.now(UTC).isoformat()
+    
+    def get_object_state(self, object_id: str, state_key: str, default: Any = None) -> Any:
+        """
+        Get an object's state property.
+        
+        Args:
+            object_id: The object identifier
+            state_key: The state property name
+            default: Default value if not set
+            
+        Returns:
+            The state value or default
+        """
+        return self.object_states.get(object_id, {}).get(state_key, default)
     
     def increment_turn(self) -> None:
         """

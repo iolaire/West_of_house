@@ -84,13 +84,13 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
    * Create a new game session
    * Requirements: 5.1, 5.2, 5.4
    */
-  const createSession = useCallback(async (): Promise<void> => {
+  const createSession = useCallback(async (): Promise<GameResponse> => {
     setIsLoading(true);
     setError(null);
 
     try {
       // Call GraphQL API to create new session
-      const newSessionId = await graphQLApiClient.createSession();
+      const { sessionId: newSessionId, initialState } = await graphQLApiClient.createSession();
       
       // Store session in state
       setSessionId(newSessionId);
@@ -104,6 +104,8 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
       localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionData));
       
       console.log('New session created:', newSessionId);
+      
+      return initialState;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create session';
       setError(errorMessage);

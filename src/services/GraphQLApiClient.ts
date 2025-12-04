@@ -25,10 +25,10 @@ const client = generateClient<Schema>();
 export class GraphQLApiClient {
   /**
    * Create a new game session
-   * @returns Promise resolving to session ID
+   * @returns Promise resolving to session ID and initial game state
    * @throws ApiError if the request fails
    */
-  async createSession(): Promise<string> {
+  async createSession(): Promise<{ sessionId: string; initialState: GameResponse }> {
     try {
       // Generate a unique session ID
       const sessionId = crypto.randomUUID();
@@ -66,7 +66,13 @@ export class GraphQLApiClient {
         );
       }
 
-      return data.sessionId;
+      // Get initial room state by sending "look" command
+      const initialState = await this.sendCommand(data.sessionId, 'look');
+
+      return {
+        sessionId: data.sessionId,
+        initialState,
+      };
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;

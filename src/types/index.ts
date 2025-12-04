@@ -138,7 +138,7 @@ export interface LoadingIndicatorProps {
  */
 export interface SessionContextValue {
   sessionId: string | null;
-  createSession: () => Promise<void>;
+  createSession: () => Promise<GameResponse>;
   sendCommand: (command: string) => Promise<GameResponse>;
   isLoading: boolean;
   error: string | null;

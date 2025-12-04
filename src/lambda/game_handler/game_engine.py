@@ -75,7 +75,7 @@ class GameEngine:
     
     def find_matching_objects(self, name: str, state: GameState) -> List[str]:
         """
-        Find all objects matching a name in current room and inventory.
+        Find all objects matching a name in current room, inventory, and open containers.
         
         Args:
             name: The name to search for
@@ -88,6 +88,18 @@ class GameEngine:
         try:
             current_room = self.world.get_room(state.current_room)
             available_objects = list(current_room.items) + list(state.inventory)
+            
+            # Add objects from open containers in room and inventory
+            for container_id in list(current_room.items) + list(state.inventory):
+                try:
+                    container = self.world.get_object(container_id)
+                    if container.type == 'container':
+                        # Check GameState first, then fall back to World data
+                        is_open = state.get_object_state(container_id, 'is_open', container.state.get('is_open', False))
+                        if is_open:
+                            available_objects.extend(container.state.get('contents', []))
+                except (ValueError, AttributeError):
+                    continue
             
             for obj_id in available_objects:
                 try:
@@ -109,6 +121,7 @@ class GameEngine:
 
         This method allows objects to be referenced by either their ID or any of their names.
         For example, both "teeth" and "vampire fangs" would resolve to the same object.
+        Also checks inside open containers.
 
         Args:
             object_ref: The object reference (ID or name)
@@ -124,6 +137,18 @@ class GameEngine:
         try:
             current_room = self.world.get_room(state.current_room)
             available_objects = list(current_room.items) + list(state.inventory)
+            
+            # Add objects from open containers in room and inventory
+            for container_id in list(current_room.items) + list(state.inventory):
+                try:
+                    container = self.world.get_object(container_id)
+                    if container.type == 'container':
+                        # Check GameState first, then fall back to World data
+                        is_open = state.get_object_state(container_id, 'is_open', container.state.get('is_open', False))
+                        if is_open:
+                            available_objects.extend(container.state.get('contents', []))
+                except (ValueError, AttributeError):
+                    continue
 
             # Check if it's a direct object ID
             for obj_id in available_objects:
@@ -1951,10 +1976,10 @@ class GameEngine:
             # Get response message (always use spooky)
             message = matching_interaction.response_spooky
             
-            # Apply state changes to object
+            # Apply state changes to GameState (not World object)
             if matching_interaction.state_change:
                 for key, value in matching_interaction.state_change.items():
-                    game_object.state[key] = value
+                    state.set_object_state(object_id, key, value)
             
             # Apply flag changes to game state
             if matching_interaction.flag_change:
