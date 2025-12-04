@@ -54,6 +54,9 @@ class GameState:
     thief_here: bool = False
     won_flag: bool = False
     
+    # Disambiguation context
+    disambiguation_context: Optional[Dict[str, Any]] = None  # Tracks ambiguous commands
+    
     # Session metadata
     created_at: Optional[str] = None
     last_accessed: Optional[str] = None

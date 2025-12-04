@@ -14,6 +14,7 @@ class ParsedCommand:
     """Structured representation of a parsed command."""
     verb: str
     object: Optional[str] = None
+    objects: Optional[List[str]] = None  # For multi-object commands
     target: Optional[str] = None
     instrument: Optional[str] = None
     direction: Optional[str] = None

@@ -73,6 +73,301 @@ class GameEngine:
         except Exception:
             return None
     
+    def find_matching_objects(self, name: str, state: GameState) -> List[str]:
+        """
+        Find all objects matching a name in current room and inventory.
+        
+        Args:
+            name: The name to search for
+            state: Current game state
+            
+        Returns:
+            List of matching object IDs
+        """
+        matches = []
+        try:
+            current_room = self.world.get_room(state.current_room)
+            available_objects = list(current_room.items) + list(state.inventory)
+            
+            for obj_id in available_objects:
+                try:
+                    obj = self.world.get_object(obj_id)
+                    # Check if name matches object ID or any of its names
+                    if (name.lower() == obj_id.lower() or 
+                        name.lower() in [n.lower() for n in [obj.name]]):
+                        matches.append(obj_id)
+                except ValueError:
+                    continue
+        except Exception:
+            pass
+        
+        return matches
+    
+    def create_disambiguation_prompt(self, matches: List[str]) -> str:
+        """
+        Create a prompt asking the player to clarify which object they mean.
+        
+        Args:
+            matches: List of matching object IDs
+            
+        Returns:
+            Disambiguation prompt message
+        """
+        if len(matches) == 0:
+            return "I don't see that here."
+        
+        if len(matches) == 1:
+            return ""  # No disambiguation needed
+        
+        # Get object names for display
+        object_names = []
+        for obj_id in matches:
+            try:
+                obj = self.world.get_object(obj_id)
+                # Use first name from names list
+                display_name = obj.name if [obj.name] else obj_id
+                object_names.append(display_name)
+            except ValueError:
+                object_names.append(obj_id)
+        
+        # Format prompt
+        if len(object_names) == 2:
+            return f"Which do you mean, the {object_names[0]} or the {object_names[1]}?"
+        else:
+            names_list = ", ".join(f"the {name}" for name in object_names[:-1])
+            return f"Which do you mean, {names_list}, or the {object_names[-1]}?"
+    
+    def check_prerequisites(
+        self,
+        verb: str,
+        object_id: Optional[str],
+        state: GameState
+    ) -> Optional[ActionResult]:
+        """
+        Check if prerequisites are met for a command.
+        
+        Verifies that required conditions are satisfied before executing
+        a command. Returns error message if prerequisites not met.
+        
+        Args:
+            verb: The command verb
+            object_id: The target object (if any)
+            state: Current game state
+            
+        Returns:
+            ActionResult with error if prerequisites not met, None if OK
+            
+        Requirements: 11.4
+        """
+        # Check object-specific prerequisites
+        if object_id:
+            try:
+                obj = self.world.get_object(object_id)
+                
+                # Check if object has prerequisites
+                prerequisites = obj.state.get('prerequisites', {})
+                
+                if prerequisites:
+                    # Check flag prerequisites
+                    required_flags = prerequisites.get('flags', {})
+                    for flag_name, required_value in required_flags.items():
+                        actual_value = state.get_flag(flag_name, False)
+                        if actual_value != required_value:
+                            reason = prerequisites.get('failure_message', 
+                                f"You can't do that yet.")
+                            return ActionResult(
+                                success=False,
+                                message=reason
+                            )
+                    
+                    # Check inventory prerequisites
+                    required_items = prerequisites.get('required_items', [])
+                    for item in required_items:
+                        if item not in state.inventory:
+                            item_obj = self.world.get_object(item)
+                            item_name = item_obj.name if item_[obj.name] else item
+                            return ActionResult(
+                                success=False,
+                                message=f"You need the {item_name} to do that."
+                            )
+                    
+                    # Check location prerequisites
+                    required_room = prerequisites.get('required_room', None)
+                    if required_room and state.current_room != required_room:
+                        return ActionResult(
+                            success=False,
+                            message="You can't do that here."
+                        )
+            except ValueError:
+                pass
+        
+        # Check verb-specific prerequisites
+        if verb == "UNLOCK":
+            # Unlocking requires object to be locked
+            if object_id:
+                try:
+                    obj = self.world.get_object(object_id)
+                    if not obj.state.get('is_locked', False):
+                        return ActionResult(
+                            success=False,
+                            message=f"The {object_id} isn't locked."
+                        )
+                except ValueError:
+                    pass
+        
+        elif verb == "LOCK":
+            # Locking requires object to be unlocked
+            if object_id:
+                try:
+                    obj = self.world.get_object(object_id)
+                    if obj.state.get('is_locked', False):
+                        return ActionResult(
+                            success=False,
+                            message=f"The {object_id} is already locked."
+                        )
+                except ValueError:
+                    pass
+        
+        elif verb == "OPEN":
+            # Opening requires object to be closed
+            if object_id:
+                try:
+                    obj = self.world.get_object(object_id)
+                    if obj.state.get('is_open', False):
+                        return ActionResult(
+                            success=False,
+                            message=f"The {object_id} is already open."
+                        )
+                except ValueError:
+                    pass
+        
+        elif verb == "CLOSE":
+            # Closing requires object to be open
+            if object_id:
+                try:
+                    obj = self.world.get_object(object_id)
+                    if not obj.state.get('is_open', False):
+                        return ActionResult(
+                            success=False,
+                            message=f"The {object_id} is already closed."
+                        )
+                except ValueError:
+                    pass
+        
+        # No prerequisites failed
+        return None
+    
+    def expand_multi_object(
+        self,
+        object_spec: str,
+        state: GameState
+    ) -> List[str]:
+        """
+        Expand multi-object specifiers like 'all', 'everything', etc.
+        
+        Args:
+            object_spec: The object specification (e.g., 'all', 'everything')
+            state: Current game state
+            
+        Returns:
+            List of object IDs matching the specification
+            
+        Requirements: 11.5
+        """
+        current_room = self.world.get_room(state.current_room)
+        
+        # Handle 'all' or 'everything'
+        if object_spec.lower() in ['all', 'everything']:
+            # Return all takeable objects in room
+            objects = []
+            for obj_id in current_room.items:
+                try:
+                    obj = self.world.get_object(obj_id)
+                    if obj.state.get('is_takeable', True):
+                        objects.append(obj_id)
+                except ValueError:
+                    continue
+            return objects
+        
+        # Handle 'all except X' or 'everything but X'
+        if 'except' in object_spec.lower() or 'but' in object_spec.lower():
+            parts = object_spec.lower().replace('but', 'except').split('except')
+            if len(parts) == 2:
+                excluded = parts[1].strip()
+                objects = []
+                for obj_id in current_room.items:
+                    try:
+                        obj = self.world.get_object(obj_id)
+                        if obj.state.get('is_takeable', True):
+                            # Check if this object matches the exclusion
+                            if excluded not in obj_id.lower() and excluded not in [n.lower() for n in [obj.name]]:
+                                objects.append(obj_id)
+                    except ValueError:
+                        continue
+                return objects
+        
+        # Single object
+        return [object_spec]
+    
+    def handle_multi_object_command(
+        self,
+        verb: str,
+        objects: List[str],
+        state: GameState,
+        target: Optional[str] = None
+    ) -> ActionResult:
+        """
+        Handle commands that affect multiple objects.
+        
+        Processes each object individually and combines results.
+        
+        Args:
+            verb: The command verb
+            objects: List of object IDs to process
+            state: Current game state
+            target: Optional target for the command
+            
+        Returns:
+            ActionResult with combined results
+            
+        Requirements: 11.5
+        """
+        if not objects:
+            return ActionResult(
+                success=False,
+                message="There's nothing here to do that with."
+            )
+        
+        results = []
+        success_count = 0
+        
+        for obj_id in objects:
+            # Create a command for this object
+            from command_parser import ParsedCommand
+            cmd = ParsedCommand(
+                verb=verb,
+                object=obj_id,
+                target=target
+            )
+            
+            # Execute the command
+            result = self.execute_command(cmd, state)
+            
+            if result.success:
+                success_count += 1
+                results.append(f"{obj_id}: {result.message}")
+            else:
+                results.append(f"{obj_id}: {result.message}")
+        
+        # Combine results
+        combined_message = "\n".join(results)
+        
+        return ActionResult(
+            success=success_count > 0,
+            message=combined_message,
+            room_changed=False
+        )
+    
     def handle_enter(
         self,
         object_id: Optional[str],
@@ -5603,6 +5898,301 @@ class GameEngine:
                 message=f"Failed to set verbosity: {str(e)}"
             )
     
+    def _handle_unknown_command(
+        self,
+        command: ParsedCommand,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle unknown commands with helpful suggestions.
+        
+        Provides clear feedback when a command is not recognized,
+        suggesting alternative commands the player might try.
+        
+        Args:
+            command: The parsed command with UNKNOWN verb
+            state: Current game state
+            
+        Returns:
+            ActionResult with helpful error message
+            
+        Requirements: 9.1
+        """
+        # Get the raw input if available
+        raw_input = command.object if command.object else "that"
+        
+        # Provide helpful suggestions based on common patterns
+        suggestions = [
+            "Try commands like:",
+            "  • Movement: 'go north', 'south', 'enter', 'climb up'",
+            "  • Objects: 'take lamp', 'examine mailbox', 'open door'",
+            "  • Utility: 'inventory', 'look', 'score'"
+        ]
+        
+        message = f"I don't understand '{raw_input}'.\n\n" + "\n".join(suggestions)
+        
+        return ActionResult(
+            success=False,
+            message=message
+        )
+    
+    def _handle_unimplemented_command(
+        self,
+        command: ParsedCommand,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle recognized but unimplemented commands.
+        
+        Provides specific feedback when a command is recognized but not yet
+        available, and suggests alternative commands when appropriate.
+        
+        Args:
+            command: The parsed command
+            state: Current game state
+            
+        Returns:
+            ActionResult with specific error message and suggestions
+            
+        Requirements: 9.1
+        """
+        verb = command.verb.lower().replace('_', ' ')
+        
+        # Provide context-specific suggestions based on verb type
+        suggestions = []
+        
+        # Movement-related commands
+        if command.verb in ['WALK_TO', 'RUN_TO', 'TRAVEL_TO']:
+            suggestions = [
+                "Try using directional commands instead:",
+                "  • 'go north', 'south', 'east', 'west'",
+                "  • 'up', 'down', 'in', 'out'"
+            ]
+        
+        # Object interaction commands
+        elif command.verb in ['USE', 'APPLY', 'OPERATE']:
+            suggestions = [
+                "Try being more specific:",
+                "  • 'open <object>', 'turn <object>'",
+                "  • 'push <object>', 'pull <object>'"
+            ]
+        
+        # Communication commands
+        elif command.verb in ['SAY', 'SPEAK', 'TALK']:
+            suggestions = [
+                "Try these communication commands:",
+                "  • 'tell <npc> about <topic>'",
+                "  • 'ask <npc> about <topic>'"
+            ]
+        
+        # Default suggestions
+        else:
+            suggestions = [
+                "This command is recognized but not yet available.",
+                "Try alternative commands like:",
+                "  • 'examine <object>' to inspect things",
+                "  • 'take <object>' or 'drop <object>'",
+                "  • 'open <object>' or 'close <object>'"
+            ]
+        
+        message = f"The '{verb}' command is not yet implemented.\n\n" + "\n".join(suggestions)
+        
+        return ActionResult(
+            success=False,
+            message=message
+        )
+    
+    def _handle_missing_object(
+        self,
+        object_name: str,
+        state: GameState
+    ) -> ActionResult:
+        """
+        Handle commands referencing missing objects.
+        
+        Clearly states when an object is not present and suggests
+        looking around to find available objects.
+        
+        Args:
+            object_name: The name of the missing object
+            state: Current game state
+            
+        Returns:
+            ActionResult with clear error message
+            
+        Requirements: 9.3
+        """
+        # Check if object exists in the game world at all
+        try:
+            obj = self.world.get_object(object_name)
+            # Object exists but not here
+            message = f"You don't see any {object_name} here."
+        except ValueError:
+            # Object doesn't exist in game
+            message = f"I don't know what '{object_name}' is."
+        
+        # Add helpful suggestion
+        message += "\n\nTry 'look' to see what's around you, or 'inventory' to check what you're carrying."
+        
+        return ActionResult(
+            success=False,
+            message=message
+        )
+    
+    def _handle_impossible_action(
+        self,
+        action: str,
+        reason: str,
+        hint: Optional[str] = None
+    ) -> ActionResult:
+        """
+        Handle impossible actions with explanations.
+        
+        Explains why an action cannot be performed and optionally
+        provides hints on how to proceed.
+        
+        Args:
+            action: Description of the attempted action
+            reason: Why the action is impossible
+            hint: Optional hint for the player
+            
+        Returns:
+            ActionResult with explanation
+            
+        Requirements: 9.4
+        """
+        message = f"You can't {action}. {reason}"
+        
+        if hint:
+            message += f"\n\nHint: {hint}"
+        
+        return ActionResult(
+            success=False,
+            message=message
+        )
+    
+    def _handle_incorrect_usage(
+        self,
+        verb: str,
+        correct_usage: str,
+        example: Optional[str] = None
+    ) -> ActionResult:
+        """
+        Handle incorrect command usage with guidance.
+        
+        Provides usage examples and suggests correct syntax when
+        a command is used incorrectly.
+        
+        Args:
+            verb: The verb that was used incorrectly
+            correct_usage: Description of correct usage
+            example: Optional example command
+            
+        Returns:
+            ActionResult with usage guidance
+            
+        Requirements: 9.2
+        """
+        message = f"Incorrect usage of '{verb}'.\n\nUsage: {correct_usage}"
+        
+        if example:
+            message += f"\n\nExample: {example}"
+        
+        return ActionResult(
+            success=False,
+            message=message
+        )
+    
+    def _handle_missing_parameter(
+        self,
+        verb: str,
+        missing_param: str,
+        examples: Optional[List[str]] = None
+    ) -> ActionResult:
+        """
+        Handle commands with missing parameters.
+        
+        Prompts for missing information and guides the player
+        to complete the command correctly.
+        
+        Args:
+            verb: The verb being used
+            missing_param: Description of what's missing
+            examples: Optional list of example commands
+            
+        Returns:
+            ActionResult with prompt for missing information
+            
+        Requirements: 9.5
+        """
+        message = f"What do you want to {verb.lower()} {missing_param}?"
+        
+        if examples:
+            message += "\n\nExamples:"
+            for example in examples:
+                message += f"\n  • {example}"
+        
+        return ActionResult(
+            success=False,
+            message=message
+        )
+    
+    def check_disambiguation(
+        self,
+        command: ParsedCommand,
+        state: GameState
+    ) -> Optional[ActionResult]:
+        """
+        Check if command requires disambiguation and handle it.
+        
+        If the command refers to an ambiguous object name, prompts the player
+        to clarify which object they mean. Stores disambiguation context in
+        game state for follow-up resolution.
+        
+        Args:
+            command: Parsed command
+            state: Current game state
+            
+        Returns:
+            ActionResult with disambiguation prompt if needed, None otherwise
+            
+        Requirements: 11.3
+        """
+        # Skip if no object specified
+        if not command.object:
+            return None
+        
+        # Check if we're resolving a previous disambiguation
+        if state.disambiguation_context:
+            # Player should be providing clarification
+            # Clear context and let command proceed
+            state.disambiguation_context = None
+            return None
+        
+        # Find all matching objects
+        matches = self.find_matching_objects(command.object, state)
+        
+        # If no matches or single match, no disambiguation needed
+        if len(matches) <= 1:
+            return None
+        
+        # Multiple matches - need disambiguation
+        prompt = self.create_disambiguation_prompt(matches)
+        
+        # Store disambiguation context
+        state.disambiguation_context = {
+            'command': command.verb,
+            'object': command.object,
+            'matches': matches,
+            'target': command.target,
+            'preposition': command.preposition
+        }
+        
+        return ActionResult(
+            success=False,
+            message=prompt
+        )
+    
     def execute_command(
         self,
         command: ParsedCommand,
@@ -5620,6 +6210,43 @@ class GameEngine:
         Returns:
             ActionResult with outcome of command execution
         """
+        # Handle multi-object commands
+        if command.objects and len(command.objects) > 1:
+            return self.handle_multi_object_command(
+                command.verb,
+                command.objects,
+                state,
+                command.target
+            )
+        
+        # Expand 'all' or 'everything' specifiers
+        if command.object and command.object.lower() in ['all', 'everything']:
+            objects = self.expand_multi_object(command.object, state)
+            if len(objects) > 1:
+                return self.handle_multi_object_command(
+                    command.verb,
+                    objects,
+                    state,
+                    command.target
+                )
+            elif len(objects) == 1:
+                command.object = objects[0]
+            else:
+                return ActionResult(
+                    success=False,
+                    message="There's nothing here to do that with."
+                )
+        
+        # Check for disambiguation needs
+        disambiguation_result = self.check_disambiguation(command, state)
+        if disambiguation_result:
+            return disambiguation_result
+        
+        # Check prerequisites
+        prerequisite_result = self.check_prerequisites(command.verb, command.object, state)
+        if prerequisite_result:
+            return prerequisite_result
+        
         # Handle climb commands
         if command.verb == "CLIMB" and command.direction:
             return self.handle_climb(command.direction, command.object, state)
@@ -5904,13 +6531,7 @@ class GameEngine:
         
         # Handle unknown commands
         if command.verb == "UNKNOWN":
-            return ActionResult(
-                success=False,
-                message="I don't understand that command. Try 'go north', 'take lamp', or 'inventory'."
-            )
+            return self._handle_unknown_command(command, state)
         
         # Placeholder for other command types (to be implemented in future tasks)
-        return ActionResult(
-            success=False,
-            message=f"The {command.verb} command is not yet implemented."
-        )
+        return self._handle_unimplemented_command(command, state)

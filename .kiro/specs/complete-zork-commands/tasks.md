@@ -431,8 +431,8 @@
   - **Property 34: Echo repeats input**
   - **Validates: Requirements 8.7**
 
-- [ ] 11. Enhance error handling and feedback
-- [ ] 11.1 Improve unimplemented command messages
+- [-] 11. Enhance error handling and feedback
+- [x] 11.1 Improve unimplemented command messages
   - Update execute_command to provide specific messages
   - Indicate command is recognized but not yet available
   - Suggest alternative commands
@@ -532,34 +532,34 @@
   - **Property 44: Article handling**
   - **Validates: Requirements 10.5**
 
-- [ ] 13. Implement context-sensitive command handling
-- [ ] 13.1 Add disambiguation system
+- [x] 13. Implement context-sensitive command handling
+- [x] 13.1 Add disambiguation system
   - Detect ambiguous commands
   - Prompt for clarification
   - Track disambiguation context
   - _Requirements: 11.3_
 
-- [ ] 13.2 Write property test for disambiguation prompts
+- [x] 13.2 Write property test for disambiguation prompts
   - **Property 45: Disambiguation prompts**
   - **Validates: Requirements 11.3**
 
-- [ ] 13.3 Add prerequisite checking system
+- [x] 13.3 Add prerequisite checking system
   - Define prerequisites for commands
   - Check prerequisites before execution
   - Return helpful error messages
   - _Requirements: 11.4_
 
-- [ ] 13.4 Write property test for prerequisite checking
+- [x] 13.4 Write property test for prerequisite checking
   - **Property 46: Prerequisite checking**
   - **Validates: Requirements 11.4**
 
-- [ ] 13.5 Add multi-object handling
+- [x] 13.5 Add multi-object handling
   - Support commands affecting multiple objects
   - Process each object appropriately
   - Return combined results
   - _Requirements: 11.5_
 
-- [ ] 13.6 Write property test for multi-object handling
+- [x] 13.6 Write property test for multi-object handling
   - **Property 47: Multi-object handling**
   - **Validates: Requirements 11.5**
 
