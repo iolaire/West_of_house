@@ -71,8 +71,9 @@ lambda-package.zip
 *.swo
 *~
 
-# Reference (keep excluded)
-/reference
+# Reference (keep excluded except west_of_house_json)
+/reference/*
+!/reference/west_of_house_json/
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
@@ -121,8 +122,33 @@ documents/cost-analysis/*.json
 package-lock.json
 package.json
 
-#sandbox test should be excluded
+# Test artifacts and reports
 test-sandbox.mjs
-playwright-report/data/*.md
-test-results/*/error-context.md
+playwright-report/
+test-results/
+*.log
+
+# Development notes
 CLAUDE.md
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Lambda deployment package
+lambda-deployment-package.zip
+
+# Analysis and fix scripts (development only)
+test_*.py
+*_comparison.py
+comprehensive_analysis.py
+*fix*.py
+update_container_contents.py

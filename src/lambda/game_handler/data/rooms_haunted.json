@@ -79,7 +79,9 @@
       "EAST": "path",
       "SOUTH": "forest_3"
     },
-    "items": []
+    "items": [
+      "bauble"
+    ]
   },
   "forest_2": {
     "name": "Dead Forest",
@@ -101,9 +103,7 @@
       "SOUTH": "forest_2",
       "WEST": "forest_2"
     },
-    "items": [
-      "mountain_range"
-    ]
+    "items": []
   },
   "forest_3": {
     "name": "Dead Forest",
@@ -151,7 +151,8 @@
       "DOWN": "grating_room"
     },
     "items": [
-      "leaves"
+      "leaves",
+      "grate"
     ]
   },
   "clearing": {
@@ -177,7 +178,8 @@
       "UP": "attic"
     },
     "items": [
-      "kitchen_table"
+      "kitchen_table",
+      "kitchen_window"
     ]
   },
   "attic": {
@@ -205,7 +207,6 @@
       "rug",
       "trap_door",
       "lamp",
-      "wooden_door",
       "sword"
     ]
   },
@@ -528,7 +529,9 @@
       "DOWN": "cyclops_room"
     },
     "items": [
-      "chalice"
+      "chalice",
+      "diamond",
+      "gold"
     ]
   },
   "reservoir_south": {
@@ -555,7 +558,9 @@
       "WEST": "in_stream"
     },
     "items": [
-      "trunk"
+      "trunk",
+      "silver",
+      "jewelry"
     ]
   },
   "reservoir_north": {
@@ -846,7 +851,8 @@
       "DOWN": "north_temple"
     },
     "items": [
-      "pedestal"
+      "pedestal",
+      "torch"
     ]
   },
   "north_temple": {

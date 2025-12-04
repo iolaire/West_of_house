@@ -564,40 +564,40 @@
   - **Validates: Requirements 11.5**
 
 - [-] 14. Ensure haunted theme consistency across all commands
-- [-] 14.1 Review all command responses for haunted narrative
+- [x] 14.1 Review all command responses for haunted narrative
   - Audit all response messages
   - Replace original Zork descriptions with haunted theme equivalents
   - Ensure spooky/haunted language in all text
   - Update any generic messages to use haunted vocabulary
   - _Requirements: 12.1_
 
-- [ ] 14.2 Write property test for spooky narrative consistency
+- [x] 14.2 Write property test for spooky narrative consistency
   - **Property 48: Spooky narrative consistency**
   - **Validates: Requirements 12.1**
 
-- [ ] 14.3 Update object references to use haunted titles
+- [x] 14.3 Update object references to use haunted titles
   - Review all commands that reference objects
   - Ensure haunted theme object titles are used
   - Update object descriptions to haunted equivalents
   - Test object name consistency
   - _Requirements: 12.2_
 
-- [ ] 14.4 Write property test for haunted object titles
+- [x] 14.4 Write property test for haunted object titles
   - **Property 49: Haunted object title usage**
   - **Validates: Requirements 12.2**
 
-- [ ] 14.5 Update room descriptions to haunted theme
+- [x] 14.5 Update room descriptions to haunted theme
   - Review all commands that display room information
   - Replace original room descriptions with spooky versions
   - Ensure consistency with room data JSON
   - Test room description display
   - _Requirements: 12.3_
 
-- [ ] 14.6 Write property test for spooky room descriptions
+- [x] 14.6 Write property test for spooky room descriptions
   - **Property 50: Spooky room descriptions**
   - **Validates: Requirements 12.3**
 
-- [ ] 14.7 Ensure haunted vocabulary in feedback messages
+- [x] 14.7 Ensure haunted vocabulary in feedback messages
   - Review all command feedback messages
   - Replace generic terms with haunted theme vocabulary
   - Maintain consistent tone across all messages

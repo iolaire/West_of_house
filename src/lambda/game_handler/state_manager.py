@@ -146,6 +146,15 @@ class GameState:
         self.moves += 1
         self.last_accessed = datetime.now(UTC).isoformat()
     
+    def calculate_score(self) -> int:
+        """
+        Calculate and return the current score.
+        
+        Returns:
+            Current score value
+        """
+        return self.score
+    
     def to_dict(self) -> Dict[str, Any]:
         """
         Serialize game state to a dictionary for DynamoDB storage.

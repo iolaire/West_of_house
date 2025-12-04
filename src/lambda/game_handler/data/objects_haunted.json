@@ -1059,7 +1059,8 @@
     "type": "container",
     "state": {
       "is_open": true,
-      "is_locked": false
+      "is_locked": false,
+      "contents": []
     },
     "interactions": [
       {
@@ -2018,9 +2019,10 @@
   },
   "bag_of_coins": {
     "name": "old bag",
-    "type": "item",
+    "type": "container",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "contents": ["coins"]
     },
     "interactions": [
       {
@@ -2538,32 +2540,14 @@
     "is_takeable": true
   },
   "candles": {
-    "name": "black candles",
+    "name": "soul candles",
     "type": "item",
-    "state": {
-      "is_taken": false,
-      "is_on": true
-    },
+    "state": {},
     "interactions": [
       {
-        "verb": "COUNT",
-        "response_original": "Let's see, how many objects in a pair? Don't tell me, I'll get it.",
-        "response_spooky": "Let's see, how many objects in a pair? Don't tell me, I'll get it."
-      },
-      {
-        "verb": "LAMP-OFF",
-        "response_original": "The flame is extinguished.",
-        "response_spooky": "The flame is extinguished."
-      },
-      {
-        "verb": "PUT",
-        "response_original": "That wouldn't be smart.",
-        "response_spooky": "That wouldn't be smart."
-      },
-      {
         "verb": "EXAMINE",
-        "response_original": "The candles are",
-        "response_spooky": "The black candles are Shadows cling to it unnaturally."
+        "response_original": "candles",
+        "response_spooky": "candles They seem to absorb light rather than produce it."
       },
       {
         "verb": "TAKE",
@@ -4530,10 +4514,126 @@
     "state": {},
     "interactions": []
   },
+  "guidebook": {
+    "name": "book of the dead",
+    "type": "item",
+    "state": {},
+    "interactions": []
+  },
   "sandwich": {
     "name": "rotting flesh",
     "type": "item",
     "state": {},
     "interactions": []
+  },
+  "matches": {
+    "name": "infernal matches",
+    "type": "item",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "match",
+        "response_spooky": "match The matchbox bears strange symbols."
+      }
+    ]
+  },
+  "food": {
+    "name": "lunch",
+    "type": "item",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "food",
+        "response_spooky": "food It looks suspiciously fresh."
+      },
+      {
+        "verb": "EAT",
+        "response_original": "eaten.",
+        "response_spooky": "eaten. You feel a strange hunger afterward."
+      }
+    ]
+  },
+  "grue": {
+    "name": "grue",
+    "type": "npc",
+    "state": {},
+    "interactions": []
+  },
+  "stairs": {
+    "name": "stairs",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "stairs",
+        "response_spooky": "stairs They seem to groan under an invisible weight."
+      }
+    ]
+  },
+  "ground": {
+    "name": "ground",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "ground",
+        "response_spooky": "ground The earth here feels unnaturally soft."
+      }
+    ]
+  },
+  "jewelry": {
+    "name": "cursed jewelry",
+    "type": "treasure",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "jewelry",
+        "response_spooky": "jewelry It seems to whisper to you."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "taken.",
+        "response_spooky": "taken. Your skin tingles where it touches."
+      }
+    ]
+  },
+  "silver": {
+    "name": "possessed silver",
+    "type": "treasure",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "silver",
+        "response_spooky": "silver It bears unholy markings."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "taken.",
+        "response_spooky": "taken. It feels unnaturally cold."
+      }
+    ]
+  },
+  "gold": {
+    "name": "haunted gold",
+    "type": "treasure",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "gold",
+        "response_spooky": "gold It glows with a faint, sickly light."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "taken.",
+        "response_spooky": "taken. You feel eyes upon you."
+      }
+    ]
   }
 }

@@ -12,7 +12,10 @@
       "SW": "stone_barrow",
       "IN": "stone_barrow"
     },
-    "items": ["mailbox"]
+    "items": [
+      "front_door",
+      "mailbox"
+    ]
   },
   "stone_barrow": {
     "name": "Cursed Crypt",
@@ -21,7 +24,10 @@
     "exits": {
       "NE": "west_of_house"
     },
-    "items": []
+    "items": [
+      "barrow_door",
+      "barrow"
+    ]
   },
   "north_of_house": {
     "name": "North of Haunted Manor",
@@ -73,7 +79,9 @@
       "EAST": "path",
       "SOUTH": "forest_3"
     },
-    "items": []
+    "items": [
+      "bauble"
+    ]
   },
   "forest_2": {
     "name": "Dead Forest",
@@ -128,7 +136,9 @@
     "exits": {
       "DOWN": "path"
     },
-    "items": ["nest"]
+    "items": [
+      "nest"
+    ]
   },
   "grating_clearing": {
     "name": "Ritual Circle",
@@ -140,7 +150,10 @@
       "SOUTH": "path",
       "DOWN": "grating_room"
     },
-    "items": ["leaves", "grate"]
+    "items": [
+      "leaves",
+      "grate"
+    ]
   },
   "clearing": {
     "name": "Witch's Clearing",
@@ -164,7 +177,10 @@
       "OUT": "east_of_house",
       "UP": "attic"
     },
-    "items": ["kitchen_table", "kitchen_window"]
+    "items": [
+      "kitchen_table",
+      "kitchen_window"
+    ]
   },
   "attic": {
     "name": "Widow's Attic",
@@ -173,7 +189,10 @@
     "exits": {
       "DOWN": "kitchen"
     },
-    "items": ["attic_table", "rope"]
+    "items": [
+      "attic_table",
+      "rope"
+    ]
   },
   "living_room": {
     "name": "Parlor of Shadows",
@@ -183,9 +202,14 @@
       "EAST": "kitchen",
       "DOWN": "cellar"
     },
-    "items": ["trophy_case", "rug", "trap_door", "sword", "lamp"]
-  }
-,
+    "items": [
+      "trophy_case",
+      "rug",
+      "trap_door",
+      "lamp",
+      "sword"
+    ]
+  },
   "cellar": {
     "name": "Catacombs",
     "description_original": "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. On the west is the bottom of a steep metal ramp which is unclimbable.",
@@ -206,7 +230,9 @@
       "EAST": "ew_passage",
       "WEST": "maze_1"
     },
-    "items": ["troll"]
+    "items": [
+      "troll"
+    ]
   },
   "east_of_chasm": {
     "name": "Edge of the Abyss",
@@ -226,7 +252,9 @@
       "WEST": "east_of_chasm",
       "NORTH": "studio"
     },
-    "items": ["painting"]
+    "items": [
+      "painting"
+    ]
   },
   "studio": {
     "name": "Mad Artist's Studio",
@@ -236,7 +264,9 @@
       "SOUTH": "gallery",
       "UP": "kitchen"
     },
-    "items": ["owners_manual"]
+    "items": [
+      "owners_manual"
+    ]
   },
   "maze_1": {
     "name": "Labyrinth of Bones",
@@ -301,7 +331,13 @@
       "NORTH": "maze_3",
       "SW": "maze_6"
     },
-    "items": ["bones", "burned_out_lantern", "bag_of_coins", "rusty_knife", "keys"]
+    "items": [
+      "bones",
+      "burned_out_lantern",
+      "bag_of_coins",
+      "rusty_knife",
+      "keys"
+    ]
   },
   "dead_end_2": {
     "name": "Dead End",
@@ -470,7 +506,9 @@
       "EAST": "strange_passage",
       "UP": "treasure_room"
     },
-    "items": ["cyclops"]
+    "items": [
+      "cyclops"
+    ]
   },
   "strange_passage": {
     "name": "Cursed Passage",
@@ -490,9 +528,12 @@
     "exits": {
       "DOWN": "cyclops_room"
     },
-    "items": ["chalice"]
-  }
-,
+    "items": [
+      "chalice",
+      "diamond",
+      "gold"
+    ]
+  },
   "reservoir_south": {
     "name": "Blood Lake South",
     "description_original": "You are in a long room on the south shore of a large lake, far too deep and wide for crossing.",
@@ -516,7 +557,11 @@
       "UP": "in_stream",
       "WEST": "in_stream"
     },
-    "items": ["trunk"]
+    "items": [
+      "trunk",
+      "silver",
+      "jewelry"
+    ]
   },
   "reservoir_north": {
     "name": "Blood Lake North",
@@ -526,7 +571,9 @@
       "NORTH": "atlantis_room",
       "SOUTH": "reservoir"
     },
-    "items": ["pump"]
+    "items": [
+      "pump"
+    ]
   },
   "stream_view": {
     "name": "Crimson Stream View",
@@ -557,7 +604,9 @@
       "WEST": "twisting_passage",
       "EAST": "small_cave"
     },
-    "items": ["mirror_1"]
+    "items": [
+      "mirror_1"
+    ]
   },
   "mirror_room_2": {
     "name": "Hall of Cursed Mirrors",
@@ -568,7 +617,9 @@
       "NORTH": "narrow_passage",
       "EAST": "tiny_cave"
     },
-    "items": ["mirror_2"]
+    "items": [
+      "mirror_2"
+    ]
   },
   "small_cave": {
     "name": "Tomb Cave",
@@ -641,7 +692,9 @@
       "UP": "small_cave",
       "SOUTH": "reservoir_north"
     },
-    "items": ["trident"]
+    "items": [
+      "trident"
+    ]
   },
   "ew_passage": {
     "name": "Bleeding Passage",
@@ -666,7 +719,9 @@
       "SOUTH": "narrow_passage",
       "SE": "engravings_cave"
     },
-    "items": ["thief"]
+    "items": [
+      "thief"
+    ]
   },
   "deep_canyon": {
     "name": "Screaming Canyon",
@@ -699,7 +754,9 @@
       "WEST": "round_room",
       "UP": "deep_canyon"
     },
-    "items": ["bar"]
+    "items": [
+      "bar"
+    ]
   },
   "ns_passage": {
     "name": "Spine Passage",
@@ -733,7 +790,9 @@
       "IN": "land_of_living_dead",
       "SOUTH": "land_of_living_dead"
     },
-    "items": ["ghosts"]
+    "items": [
+      "ghosts"
+    ]
   },
   "land_of_living_dead": {
     "name": "Realm of Eternal Torment",
@@ -743,7 +802,9 @@
       "OUT": "entrance_to_hades",
       "NORTH": "entrance_to_hades"
     },
-    "items": ["skull"]
+    "items": [
+      "skull"
+    ]
   },
   "engravings_cave": {
     "name": "Cave of Forbidden Knowledge",
@@ -753,7 +814,9 @@
       "NW": "round_room",
       "EAST": "dome_room"
     },
-    "items": ["engravings"]
+    "items": [
+      "engravings"
+    ]
   },
   "egypt_room": {
     "name": "Pharaoh's Tomb",
@@ -763,7 +826,9 @@
       "WEST": "north_temple",
       "UP": "north_temple"
     },
-    "items": ["coffin"]
+    "items": [
+      "coffin"
+    ]
   },
   "dome_room": {
     "name": "Dome of Despair",
@@ -773,7 +838,9 @@
       "WEST": "engravings_cave",
       "DOWN": "torch_room"
     },
-    "items": ["railing"]
+    "items": [
+      "railing"
+    ]
   },
   "torch_room": {
     "name": "Chamber of Eternal Flame",
@@ -783,7 +850,10 @@
       "SOUTH": "north_temple",
       "DOWN": "north_temple"
     },
-    "items": ["pedestal"]
+    "items": [
+      "pedestal",
+      "torch"
+    ]
   },
   "north_temple": {
     "name": "Temple of Dark Gods",
@@ -797,7 +867,10 @@
       "UP": "torch_room",
       "SOUTH": "south_temple"
     },
-    "items": ["bell", "prayer"]
+    "items": [
+      "bell",
+      "prayer"
+    ]
   },
   "south_temple": {
     "name": "Altar of Sacrifice",
@@ -807,9 +880,11 @@
       "NORTH": "north_temple",
       "DOWN": "tiny_cave"
     },
-    "items": ["altar", "candles"]
-  }
-,
+    "items": [
+      "altar",
+      "candles"
+    ]
+  },
   "dam_room": {
     "name": "Blood Dam",
     "description_original": "You are standing on the top of the Flood Control Dam #3, which was quite a tourist attraction in times far distant. There are paths to the north, south, and west, and a scramble down.",
@@ -821,7 +896,12 @@
       "NORTH": "dam_lobby",
       "WEST": "reservoir_south"
     },
-    "items": ["bolt", "bubble", "dam"]
+    "items": [
+      "bolt",
+      "bubble",
+      "dam",
+      "control_panel"
+    ]
   },
   "dam_lobby": {
     "name": "Dam Antechamber",
@@ -832,7 +912,10 @@
       "NORTH": "maintenance_room",
       "EAST": "maintenance_room"
     },
-    "items": ["match", "guide"]
+    "items": [
+      "match",
+      "guide"
+    ]
   },
   "maintenance_room": {
     "name": "Control Chamber",
@@ -842,7 +925,17 @@
       "SOUTH": "dam_lobby",
       "WEST": "dam_lobby"
     },
-    "items": ["tool_chest", "yellow_button", "brown_button", "red_button", "blue_button", "screwdriver", "wrench", "tube", "leak"]
+    "items": [
+      "tool_chest",
+      "yellow_button",
+      "brown_button",
+      "red_button",
+      "blue_button",
+      "leak",
+      "screwdriver",
+      "tube",
+      "wrench"
+    ]
   },
   "dam_base": {
     "name": "Base of Blood Dam",
@@ -852,7 +945,9 @@
       "NORTH": "dam_room",
       "UP": "dam_room"
     },
-    "items": ["inflatable_boat"]
+    "items": [
+      "inflatable_boat"
+    ]
   },
   "river_1": {
     "name": "Crimson River",
@@ -913,7 +1008,9 @@
       "WEST": "white_cliffs_south",
       "EAST": "sandy_beach"
     },
-    "items": ["buoy"]
+    "items": [
+      "buoy"
+    ]
   },
   "river_5": {
     "name": "Crimson River",
@@ -943,7 +1040,9 @@
       "NE": "sandy_cave",
       "SOUTH": "shore"
     },
-    "items": ["shovel"]
+    "items": [
+      "shovel"
+    ]
   },
   "sandy_cave": {
     "name": "Ossuary Cave",
@@ -952,7 +1051,10 @@
     "exits": {
       "SW": "sandy_beach"
     },
-    "items": ["sand", "scarab"]
+    "items": [
+      "sand",
+      "scarab"
+    ]
   },
   "aragain_falls": {
     "name": "Blood Falls",
@@ -985,7 +1087,9 @@
       "EAST": "on_rainbow",
       "SW": "canyon_bottom"
     },
-    "items": ["pot_of_gold"]
+    "items": [
+      "pot_of_gold"
+    ]
   },
   "canyon_bottom": {
     "name": "Canyon of Bones",
@@ -1048,7 +1152,10 @@
       "SOUTH": "squeeky_room",
       "EAST": "shaft_room"
     },
-    "items": ["bat", "jade"]
+    "items": [
+      "bat",
+      "jade"
+    ]
   },
   "shaft_room": {
     "name": "The Shaft",
@@ -1058,7 +1165,9 @@
       "WEST": "bat_room",
       "NORTH": "smelly_room"
     },
-    "items": ["raised_basket"]
+    "items": [
+      "raised_basket"
+    ]
   },
   "smelly_room": {
     "name": "Sulfur Chamber",
@@ -1078,7 +1187,9 @@
       "UP": "smelly_room",
       "EAST": "mine_1"
     },
-    "items": ["bracelet"]
+    "items": [
+      "bracelet"
+    ]
   },
   "ladder_top": {
     "name": "Ladder Top",
@@ -1108,7 +1219,9 @@
     "exits": {
       "NORTH": "ladder_bottom"
     },
-    "items": ["coal"]
+    "items": [
+      "coal"
+    ]
   },
   "timber_room": {
     "name": "Collapsed Passage",
@@ -1118,7 +1231,9 @@
       "EAST": "ladder_bottom",
       "WEST": "lower_shaft"
     },
-    "items": ["timbers"]
+    "items": [
+      "timbers"
+    ]
   },
   "lower_shaft": {
     "name": "Bottom of the Shaft",
@@ -1129,7 +1244,9 @@
       "OUT": "timber_room",
       "EAST": "timber_room"
     },
-    "items": ["lowered_basket"]
+    "items": [
+      "lowered_basket"
+    ]
   },
   "machine_room": {
     "name": "Engine of Torment",
@@ -1138,7 +1255,10 @@
     "exits": {
       "NORTH": "lower_shaft"
     },
-    "items": ["machine", "machine_switch"]
+    "items": [
+      "machine",
+      "machine_switch"
+    ]
   },
   "mine_1": {
     "name": "Cursed Mine",

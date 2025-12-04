@@ -255,7 +255,8 @@
         "response_original": "quantity of water",
         "response_spooky": "quantity of absolute darkness water"
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "kitchen_window": {
     "name": "broken window",
@@ -371,7 +372,8 @@
         "response_original": "crystal skull",
         "response_spooky": "The crystal skull grins with malevolent glee. Trapped souls swirl within its depths, their faces twisted in eternal agony."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "lowered_basket": {
     "name": "cage",
@@ -398,7 +400,8 @@
         "response_original": "From the chain is suspended a basket.",
         "response_spooky": "From the chain is suspended a basket. Dark stains mar its surface."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "raised_basket": {
     "name": "hanging cage",
@@ -450,7 +453,9 @@
         },
         "response_spooky": "slammed shut. You hear a click like a coffin sealing."
       }
-    ]
+    ],
+    "is_takeable": true,
+    "capacity": 50
   },
   "lunch": {
     "name": "hot food",
@@ -483,7 +488,8 @@
         "response_original": "A hot pepper sandwich is here.",
         "response_spooky": "A hot pepper sandwich is here. Dark stains mar its surface."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "bat": {
     "name": "vampire bat",
@@ -500,7 +506,8 @@
         "response_original": "bat",
         "response_spooky": "vampire bat It seems to pulse with malevolent energy."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "bell": {
     "name": "funeral bell",
@@ -538,7 +545,8 @@
         "response_original": "brass bell",
         "response_spooky": "brass funeral bell It seems to pulse with malevolent energy."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "hot_bell": {
     "name": "molten bell",
@@ -570,7 +578,8 @@
         "response_original": "On the ground is a red hot bell.",
         "response_spooky": "On the ground is a red hot funeral bell. Dark stains mar its surface."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "axe": {
     "name": "executioner's axe",
@@ -603,7 +612,8 @@
         "response_original": "bloody axe",
         "response_spooky": "bloody executioner's axe"
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "bolt": {
     "name": "iron bolt",
@@ -630,7 +640,8 @@
         "response_original": "bolt",
         "response_spooky": "bolt It's covered in strange symbols."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "bubble": {
     "name": "toxic bubble",
@@ -642,7 +653,8 @@
         "response_original": "green bubble",
         "response_spooky": "green bubble Dark stains mar its surface."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "altar": {
     "name": "sacrificial altar",
@@ -682,7 +694,8 @@
         },
         "response_spooky": "slammed shut. You hear a click like a coffin sealing."
       }
-    ]
+    ],
+    "capacity": 50
   },
   "book": {
     "name": "necronomicon",
@@ -768,7 +781,8 @@
         },
         "response_spooky": "slammed shut. It slams shut with a sound like breaking bones."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "broken_lamp": {
     "name": "shattered lantern",
@@ -801,7 +815,8 @@
         "response_original": "broken lantern",
         "response_spooky": "broken cursed lantern"
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "sceptre": {
     "name": "necromancer's sceptre",
@@ -834,7 +849,8 @@
         "response_original": "An ornamented sceptre, tapering to a sharp point, is here.",
         "response_spooky": "An ornamented necromancer's sceptre, tapering to a sharp point, is here. Dark stains mar its surface."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "timbers": {
     "name": "gallows timber",
@@ -867,7 +883,8 @@
         "response_original": "broken timber",
         "response_spooky": "broken timber Dark stains mar its surface."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "slide": {
     "name": "blood chute",
@@ -925,7 +942,8 @@
         },
         "response_spooky": "slammed shut. The closure echoes through the darkness."
       }
-    ]
+    ],
+    "capacity": 50
   },
   "attic_table": {
     "name": "dusty table",
@@ -965,7 +983,8 @@
         },
         "response_spooky": "slammed shut. You hear a click like a coffin sealing."
       }
-    ]
+    ],
+    "capacity": 40
   },
   "sandwich_bag": {
     "name": "leather pouch",
@@ -1031,14 +1050,17 @@
         },
         "response_spooky": "slammed shut. The closure echoes through the darkness."
       }
-    ]
+    ],
+    "is_takeable": true,
+    "capacity": 9
   },
   "tool_chest": {
     "name": "torture chest",
     "type": "container",
     "state": {
       "is_open": true,
-      "is_locked": false
+      "is_locked": false,
+      "contents": []
     },
     "interactions": [
       {
@@ -1078,7 +1100,8 @@
         },
         "response_spooky": "slammed shut. It slams shut with a sound like breaking bones."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "yellow_button": {
     "name": "yellow skull button",
@@ -1216,12 +1239,16 @@
         "response_original": "Done.",
         "response_spooky": "The trophy case accepts the cursed treasure with a sound like satisfied breathing."
       }
-    ]
+    ],
+    "is_takeable": true,
+    "capacity": 10000
   },
   "rug": {
     "name": "bloodstained rug",
     "type": "scenery",
-    "state": {},
+    "state": {
+      "is_moved": false
+    },
     "interactions": [
       {
         "verb": "RAISE",
@@ -1251,6 +1278,17 @@
       {
         "verb": "MOVE",
         "condition": {
+          "is_moved": false
+        },
+        "response_original": "With a great effort, the rug is moved to one side of the room, revealing the dusty cover of a closed trap door.",
+        "response_spooky": "With great effort, you drag the heavy rug aside. Its underside is soaked with old blood. Beneath it, a trap door is revealed, its surface carved with warnings in dead languages.",
+        "state_change": {
+          "is_moved": true
+        }
+      },
+      {
+        "verb": "MOVE",
+        "condition": {
           "is_moved": true
         },
         "response_original": "Having moved the carpet previously, you find it impossible to move it again.",
@@ -1264,7 +1302,8 @@
           "is_moved": false
         }
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "chalice": {
     "name": "chalice of souls",
@@ -1331,7 +1370,9 @@
         },
         "response_spooky": "slammed shut. The closure echoes through the darkness."
       }
-    ]
+    ],
+    "is_takeable": true,
+    "capacity": 5
   },
   "garlic": {
     "name": "withered garlic",
@@ -1369,7 +1410,8 @@
         "response_original": "clove of garlic",
         "response_spooky": "clove of garlic Shadows cling to it unnaturally."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "trident": {
     "name": "bone trident",
@@ -1402,7 +1444,8 @@
         "response_original": "crystal trident",
         "response_spooky": "crystal trident Shadows cling to it unnaturally."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "cyclops": {
     "name": "one-eyed demon",
@@ -1454,7 +1497,8 @@
         "response_original": "cyclops",
         "response_spooky": "one-eyed demon Shadows cling to it unnaturally."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "dam": {
     "name": "cursed dam",
@@ -1471,7 +1515,8 @@
         "response_original": "dam",
         "response_spooky": "dam It seems to pulse with malevolent energy."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "trap_door": {
     "name": "cursed trap door",
@@ -1669,7 +1714,9 @@
         },
         "response_spooky": "slammed shut. The closure echoes through the darkness."
       }
-    ]
+    ],
+    "is_takeable": true,
+    "capacity": 4
   },
   "crack": {
     "name": "fissure",
@@ -1746,7 +1793,9 @@
         },
         "response_spooky": "slammed shut. It shuts with finality."
       }
-    ]
+    ],
+    "is_takeable": true,
+    "capacity": 35
   },
   "grate": {
     "name": "iron grate",
@@ -1816,7 +1865,8 @@
         "response_original": "hand-held air pump",
         "response_spooky": "hand-held air pump Shadows cling to it unnaturally."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "diamond": {
     "name": "cursed diamond",
@@ -1849,7 +1899,8 @@
         "response_original": "There is an enormous diamond (perfectly cut) here.",
         "response_spooky": "There is an enormous diamond (perfectly cut) here. It's covered in strange symbols."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "jade": {
     "name": "jade death mask",
@@ -1882,7 +1933,8 @@
         "response_original": "There is an exquisite jade figurine here.",
         "response_spooky": "There is an exquisite jade figurine here. It's covered in strange symbols."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "knife": {
     "name": "ritual knife",
@@ -1915,7 +1967,8 @@
         "response_original": "nasty knife",
         "response_spooky": "nasty ritual knife Dark stains mar its surface."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "bones": {
     "name": "skeleton",
@@ -1927,7 +1980,8 @@
         "response_original": "skeleton",
         "response_spooky": "skeleton It's covered in strange symbols."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "burned_out_lantern": {
     "name": "dead lantern",
@@ -1960,13 +2014,15 @@
         "response_original": "burned-out lantern",
         "response_spooky": "burned-out cursed lantern"
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "bag_of_coins": {
     "name": "old bag",
-    "type": "item",
+    "type": "container",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "contents": ["coins"]
     },
     "interactions": [
       {
@@ -1993,7 +2049,8 @@
         "response_original": "An old leather bag, bulging with coins, is here.",
         "response_spooky": "An old leather bag, bulging with coins, is here. It's covered in strange symbols."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "lamp": {
     "name": "cursed lantern",
@@ -2070,7 +2127,8 @@
           "is_on": false
         }
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "emerald": {
     "name": "blood emerald",
@@ -2103,7 +2161,8 @@
         "response_original": "large emerald",
         "response_spooky": "large emerald It seems to pulse with malevolent energy."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "advertisement": {
     "name": "death notice",
@@ -2145,7 +2204,8 @@
         },
         "response_spooky": "\\ The text is written in something dark."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "leak": {
     "name": "blood leak",
@@ -2214,7 +2274,9 @@
         },
         "response_spooky": "slammed shut. It shuts with finality."
       }
-    ]
+    ],
+    "is_takeable": true,
+    "capacity": 50
   },
   "inflated_boat": {
     "name": "inflat boat",
@@ -2280,7 +2342,9 @@
         "response_original": "magic boat",
         "response_spooky": "magic boat It's covered in strange symbols."
       }
-    ]
+    ],
+    "is_takeable": true,
+    "capacity": 100
   },
   "mailbox": {
     "name": "rusted mailbox",
@@ -2333,7 +2397,9 @@
           "is_open": false
         }
       }
-    ]
+    ],
+    "is_takeable": true,
+    "capacity": 10
   },
   "match": {
     "name": "cursed matches",
@@ -2385,7 +2451,8 @@
         },
         "response_spooky": "(slam shut cover before striking)\n\n\n\nYOU too can make BIG MONEY in the exciting field of PAPER SHUFFLING!\n\n\n\nMr. Anderson of Muddle, Mass. says: \\ The words seem to writhe on the page."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "mirror_2": {
     "name": "cursed mirror",
@@ -2407,7 +2474,8 @@
         "response_original": "mirror",
         "response_spooky": "mirror It's covered in strange symbols."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "mirror_1": {
     "name": "haunted mirror",
@@ -2429,7 +2497,8 @@
         "response_original": "mirror",
         "response_spooky": "mirror Shadows cling to it unnaturally."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "painting": {
     "name": "portrait of the damned",
@@ -2467,35 +2536,18 @@
         "response_original": "A painting by a neglected genius is here.",
         "response_spooky": "The portrait depicts a nobleman whose face is frozen in a silent scream. Blood runs from his eyes, and his mouth moves as if trying to warn you."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "candles": {
-    "name": "black candles",
+    "name": "soul candles",
     "type": "item",
-    "state": {
-      "is_taken": false,
-      "is_on": true
-    },
+    "state": {},
     "interactions": [
       {
-        "verb": "COUNT",
-        "response_original": "Let's see, how many objects in a pair? Don't tell me, I'll get it.",
-        "response_spooky": "Let's see, how many objects in a pair? Don't tell me, I'll get it."
-      },
-      {
-        "verb": "LAMP-OFF",
-        "response_original": "The flame is extinguished.",
-        "response_spooky": "The flame is extinguished."
-      },
-      {
-        "verb": "PUT",
-        "response_original": "That wouldn't be smart.",
-        "response_spooky": "That wouldn't be smart."
-      },
-      {
         "verb": "EXAMINE",
-        "response_original": "The candles are",
-        "response_spooky": "The black candles are Shadows cling to it unnaturally."
+        "response_original": "candles",
+        "response_spooky": "candles They seem to absorb light rather than produce it."
       },
       {
         "verb": "TAKE",
@@ -2543,7 +2595,8 @@
         },
         "response_spooky": "The burning black candles is now off. The flame gutters and dies."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "gunk": {
     "name": "toxic slag",
@@ -2576,7 +2629,8 @@
         "response_original": "small piece of vitreous slag",
         "response_spooky": "small piece of vitreous slag It seems to pulse with malevolent energy."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "bodies": {
     "name": "pile of corpses",
@@ -2593,7 +2647,8 @@
         "response_original": "pile of bodies",
         "response_spooky": "pile of bodies Shadows cling to it unnaturally."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "leaves": {
     "name": "pile of bones",
@@ -2656,7 +2711,8 @@
         "response_original": "On the ground is a pile of leaves.",
         "response_spooky": "On the ground is a pile of pile of bones."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "punctured_boat": {
     "name": "wrecked ship",
@@ -2689,7 +2745,8 @@
         "response_original": "punctured boat",
         "response_spooky": "punctured boat It seems to pulse with malevolent energy."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "inflatable_boat": {
     "name": "ghost ship",
@@ -2722,7 +2779,8 @@
         "response_original": "There is a folded pile of plastic here which has a small valve\nattached.",
         "response_spooky": "There is a folded pile of plastic here which has a small valve\nattached. It's covered in strange symbols."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "bar": {
     "name": "cursed platinum bar",
@@ -2755,7 +2813,8 @@
         "response_original": "On the ground is a large platinum bar.",
         "response_spooky": "On the ground is a large platinum bar. It seems to pulse with malevolent energy."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "pot_of_gold": {
     "name": "cauldron of blood",
@@ -2788,7 +2847,8 @@
         "response_original": "pot of gold",
         "response_spooky": "pot of gold Shadows cling to it unnaturally."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "prayer": {
     "name": "dark prayer",
@@ -2916,7 +2976,9 @@
         },
         "response_spooky": "slammed shut. It slams shut with a sound like breaking bones."
       }
-    ]
+    ],
+    "is_takeable": true,
+    "capacity": 20
   },
   "rope": {
     "name": "hangman's rope",
@@ -2979,7 +3041,8 @@
         "response_original": "rope",
         "response_spooky": "hangman's rope Dark stains mar its surface."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "rusty_knife": {
     "name": "cursed rusty knife",
@@ -3017,7 +3080,8 @@
         "response_original": "rusty knife",
         "response_spooky": "rusty ritual knife It's covered in strange symbols."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "sand": {
     "name": "grave dirt",
@@ -3067,7 +3131,8 @@
         "response_original": "sapphire-encrusted bracelet",
         "response_spooky": "sapphire-encrusted bracelet It seems to pulse with malevolent energy."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "screwdriver": {
     "name": "rusted screwdriver",
@@ -3100,7 +3165,8 @@
         "response_original": "screwdriver",
         "response_spooky": "screwdriver Dark stains mar its surface."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "keys": {
     "name": "skeleton key",
@@ -3133,7 +3199,8 @@
         "response_original": "skeleton key",
         "response_spooky": "skeleton key It's covered in strange symbols."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "shovel": {
     "name": "gravedigger's shovel",
@@ -3166,7 +3233,8 @@
         "response_original": "shovel",
         "response_spooky": "shovel It seems to pulse with malevolent energy."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "coal": {
     "name": "cursed coal",
@@ -3199,7 +3267,8 @@
         "response_original": "small pile of coal",
         "response_spooky": "small pile of coal Dark stains mar its surface."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "ladder": {
     "name": "bone ladder",
@@ -3244,7 +3313,8 @@
         "response_original": "beautiful jeweled scarab",
         "response_spooky": "grotesque jeweled scarab"
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "large_bag": {
     "name": "body bag",
@@ -3266,7 +3336,8 @@
         "response_original": "large bag",
         "response_spooky": "large bag It seems to pulse with malevolent energy."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "stiletto": {
     "name": "poisoned dagger",
@@ -3299,7 +3370,8 @@
         "response_original": "stiletto",
         "response_spooky": "stiletto Shadows cling to it unnaturally."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "machine_switch": {
     "name": "blood switch",
@@ -3409,7 +3481,8 @@
         "response_original": "Whoosh!",
         "response_spooky": "The blade cuts through the air with a sound like screaming. Ghostly afterimages trail behind it."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "map": {
     "name": "blood-stained map",
@@ -3451,7 +3524,8 @@
         },
         "response_spooky": "The map shows a dead forest with three clearings. The largest clearing contains\na manor. Three paths leave the large clearing. One of these paths, leading\nsouthwest, is marked \\ Reading it fills you with dread."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "boat_label": {
     "name": "warning label",
@@ -3493,7 +3567,8 @@
         },
         "response_spooky": "!!!!FROBOZZ MAGIC BOAT COMPANY!!!!\n\n\n\nHello, Sailor!\n\n\n\nInstructions for use:\n\n\n\n   To get into a body of absolute darkness water, say \\"
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "thief": {
     "name": "shadow thief",
@@ -3559,7 +3634,8 @@
         },
         "response_spooky": "slammed shut. It shuts with finality."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "pedestal": {
     "name": "obsidian pedestal",
@@ -3604,7 +3680,8 @@
         },
         "response_spooky": "slammed shut. It shuts with finality."
       }
-    ]
+    ],
+    "capacity": 30
   },
   "torch": {
     "name": "cursed torch",
@@ -3675,7 +3752,8 @@
         },
         "response_spooky": "The flaming cursed torch is now off."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "guide": {
     "name": "tour guide",
@@ -3717,7 +3795,8 @@
         },
         "response_spooky": "\\ The text is written in something dark."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "troll": {
     "name": "flesh-eating ogre",
@@ -3771,7 +3850,8 @@
         "verb": "GIVE",
         "response_spooky": "The ogre snatches the offering and devours it with disturbing enthusiasm, bones and all."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "trunk": {
     "name": "coffin of jewels",
@@ -3804,7 +3884,8 @@
         "response_original": "There is an old trunk here, bulging with assorted jewels.",
         "response_spooky": "There is an old trunk here, bulging with assorted jewels. Shadows cling to it unnaturally."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "tube": {
     "name": "vial",
@@ -3883,7 +3964,9 @@
         },
         "response_spooky": "slammed shut. It shuts with finality."
       }
-    ]
+    ],
+    "is_takeable": true,
+    "capacity": 7
   },
   "putty": {
     "name": "flesh putty",
@@ -3926,7 +4009,8 @@
         "response_original": "viscous material",
         "response_spooky": "viscous material Shadows cling to it unnaturally."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "engravings": {
     "name": "cursed engravings",
@@ -3990,7 +4074,8 @@
         },
         "response_spooky": "Congratulations!\n\n\n\nYou are the privileged owner of ZORK I: The Great Underground Empire,\na self-contained and self-maintaining universe. If used and maintained\nin accordance with normal operating practices for small universes, ZORK\nwill provide many months of trouble-free operation. Reading it fills you with dread."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "climbable_cliff": {
     "name": "cliff",
@@ -4057,7 +4142,8 @@
         "response_original": "wrench",
         "response_spooky": "wrench It seems to pulse with malevolent energy."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "control_panel": {
     "name": "control panel",
@@ -4129,7 +4215,9 @@
         },
         "response_spooky": "slammed shut. It shuts with finality."
       }
-    ]
+    ],
+    "is_takeable": true,
+    "capacity": 20
   },
   "egg": {
     "name": "raven's egg",
@@ -4199,7 +4287,9 @@
         },
         "response_spooky": "slammed shut. You hear a click like a coffin sealing."
       }
-    ]
+    ],
+    "is_takeable": true,
+    "capacity": 6
   },
   "broken_egg": {
     "name": "shattered raven egg",
@@ -4259,7 +4349,9 @@
         },
         "response_spooky": "slammed shut. It slams shut with a sound like breaking bones."
       }
-    ]
+    ],
+    "is_takeable": true,
+    "capacity": 6
   },
   "bauble": {
     "name": "cursed bauble",
@@ -4292,7 +4384,8 @@
         "response_original": "beautiful brass bauble",
         "response_spooky": "grotesque brass bauble"
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "canary": {
     "name": "mechanical raven",
@@ -4330,7 +4423,8 @@
         "response_original": "golden clockwork canary",
         "response_spooky": "golden clockwork mechanical raven Shadows cling to it unnaturally."
       }
-    ]
+    ],
+    "is_takeable": true
   },
   "broken_canary": {
     "name": "broken raven",
@@ -4368,345 +4462,8 @@
         "response_original": "broken clockwork canary",
         "response_spooky": "broken clockwork mechanical raven It seems to pulse with malevolent energy."
       }
-    ]
-  },
-  "global_objects": {
-    "name": "global objects",
-    "type": "scenery",
-    "state": {},
-    "interactions": []
-  },
-  "local_globals": {
-    "name": "zzmgck",
-    "type": "scenery",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "EXAMINE",
-        "response_original": "F",
-        "response_spooky": "F Dark stains mar its surface."
-      }
-    ]
-  },
-  "rooms": {
-    "name": "rooms",
-    "type": "scenery",
-    "state": {},
-    "interactions": []
-  },
-  "intnum": {
-    "name": "intnum",
-    "type": "scenery",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "EXAMINE",
-        "response_original": "number",
-        "response_spooky": "number Shadows cling to it unnaturally."
-      }
-    ]
-  },
-  "pseudo_object": {
-    "name": "pseudo object",
-    "type": "scenery",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "TELL",
-        "response_original": "Talking to yourself is said to be a sign of impending mental collapse.",
-        "response_spooky": "Talking to yourself is said to be a sign of impending mental collapse."
-      },
-      {
-        "verb": "GIVE",
-        "response_original": "Only you can do that.",
-        "response_spooky": "Only you can do that."
-      },
-      {
-        "verb": "MAKE",
-        "response_original": "Only you can do that.",
-        "response_spooky": "Only you can do that."
-      },
-      {
-        "verb": "DISEMBARK",
-        "response_original": "You'll have to do that on your own.",
-        "response_spooky": "You'll have to do that on your own."
-      },
-      {
-        "verb": "EAT",
-        "response_original": "Auto-cannibalism is not the answer.",
-        "response_spooky": "Auto-cannibalism is not the answer."
-      },
-      {
-        "verb": "THROW",
-        "response_original": "Why don't you just walk like normal people?",
-        "response_spooky": "Why don't you just walk like normal people?"
-      },
-      {
-        "verb": "TAKE",
-        "response_original": "How romantic!",
-        "response_spooky": "How romantic! The object seems to writhe in your grasp."
-      },
-      {
-        "verb": "EXAMINE",
-        "response_original": "Your image in the mirror looks tired.",
-        "response_spooky": "Your image in the mirror looks tired. It's covered in strange symbols."
-      },
-      {
-        "verb": "EXAMINE",
-        "response_original": "pseudo",
-        "response_spooky": "pseudo It's covered in strange symbols."
-      }
-    ]
-  },
-  "it": {
-    "name": "it",
-    "type": "scenery",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "EXAMINE",
-        "response_original": "random object",
-        "response_spooky": "random object It seems to pulse with malevolent energy."
-      }
-    ]
-  },
-  "not_here_object": {
-    "name": "not here object",
-    "type": "scenery",
-    "state": {},
-    "interactions": []
-  },
-  "blessings": {
-    "name": "blessings",
-    "type": "scenery",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "EXAMINE",
-        "response_original": "blessings",
-        "response_spooky": "blessings Dark stains mar its surface."
-      }
-    ]
-  },
-  "stairs": {
-    "name": "stone stairs",
-    "type": "scenery",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "THROUGH",
-        "response_original": "You should say whether you want to go up or down.",
-        "response_spooky": "You should say whether you want to go up or down."
-      },
-      {
-        "verb": "EXAMINE",
-        "response_original": "stairs",
-        "response_spooky": "stairs It seems to pulse with malevolent energy."
-      }
-    ]
-  },
-  "sailor": {
-    "name": "sailor",
-    "type": "scenery",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "TELL",
-        "response_original": "You can't talk to the sailor that way.",
-        "response_spooky": "You can't talk to the sailor that way."
-      },
-      {
-        "verb": "EXAMINE",
-        "response_original": "He looks like a sailor.",
-        "response_spooky": "He looks like a sailor. It's covered in strange symbols."
-      },
-      {
-        "verb": "HELLO",
-        "response_original": "The seaman looks up and maneuvers the boat toward shore. He cries out \\",
-        "response_spooky": "The seaman looks up and maneuvers the boat toward shore. He cries out \\"
-      },
-      {
-        "verb": "EXAMINE",
-        "response_original": "sailor",
-        "response_spooky": "sailor It's covered in strange symbols."
-      }
-    ]
-  },
-  "ground": {
-    "name": "ground",
-    "type": "scenery",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "DIG",
-        "response_original": "The ground is too hard for digging here.",
-        "response_spooky": "The ground is too hard for digging here."
-      },
-      {
-        "verb": "EXAMINE",
-        "response_original": "ground",
-        "response_spooky": "ground Dark stains mar its surface."
-      }
-    ]
-  },
-  "grue": {
-    "name": "lurking grue",
-    "type": "scenery",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "EXAMINE",
-        "response_original": "The grue is a sinister, lurking presence in the dark places of the\nearth. Its favorite diet is adventurers, but its insatiable\nappetite is tempered by its fear of light. No grue has ever been\nseen by the light of day, and few have survived its fearsome jaws\nto tell the tale.",
-        "response_spooky": "The shadow demon is a sinister, lurking presence in the absolute darkness places of the\nearth. Its favorite diet is adventurers, but its insatiable\nappetite is tempered by its fear of flickering light. No shadow demon has ever been\nseen by the flickering light of day, and few have survived its fearsome jaws\nto tell the tale."
-      },
-      {
-        "verb": "FIND",
-        "response_original": "There is no grue here, but I'm sure there is at least one lurking\nin the darkness nearby. I wouldn't let my light go out if I were\nyou!",
-        "response_spooky": "There is no shadow demon here, but I'm sure there is at least one lurking\nin the darkness nearby. I wouldn't let my flickering light go out if I were\nyou!"
-      },
-      {
-        "verb": "LISTEN",
-        "response_original": "It makes no sound but is always lurking in the darkness nearby.",
-        "response_spooky": "It makes no sound but is always lurking in the darkness nearby."
-      },
-      {
-        "verb": "EXAMINE",
-        "response_original": "lurking grue",
-        "response_spooky": "lurking shadow demon"
-      }
-    ]
-  },
-  "lungs": {
-    "name": "lungs",
-    "type": "scenery",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "EXAMINE",
-        "response_original": "blast of air",
-        "response_spooky": "blast of air Shadows cling to it unnaturally."
-      }
-    ]
-  },
-  "me": {
-    "name": "me",
-    "type": "npc",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "TELL",
-        "response_original": "Talking to yourself is said to be a sign of impending mental collapse.",
-        "response_spooky": "Talking to yourself is said to be a sign of impending mental collapse."
-      },
-      {
-        "verb": "GIVE",
-        "response_original": "Only you can do that.",
-        "response_spooky": "Only you can do that."
-      },
-      {
-        "verb": "MAKE",
-        "response_original": "Only you can do that.",
-        "response_spooky": "Only you can do that."
-      },
-      {
-        "verb": "DISEMBARK",
-        "response_original": "You'll have to do that on your own.",
-        "response_spooky": "You'll have to do that on your own."
-      },
-      {
-        "verb": "EAT",
-        "response_original": "Auto-cannibalism is not the answer.",
-        "response_spooky": "Auto-cannibalism is not the answer."
-      },
-      {
-        "verb": "THROW",
-        "response_original": "Why don't you just walk like normal people?",
-        "response_spooky": "Why don't you just walk like normal people?"
-      },
-      {
-        "verb": "TAKE",
-        "response_original": "How romantic!",
-        "response_spooky": "How romantic! It's cold to the touch."
-      },
-      {
-        "verb": "EXAMINE",
-        "response_original": "Your image in the mirror looks tired.",
-        "response_spooky": "Your image in the mirror looks tired. Dark stains mar its surface."
-      },
-      {
-        "verb": "EXAMINE",
-        "response_original": "you",
-        "response_spooky": "you Dark stains mar its surface."
-      }
-    ]
-  },
-  "adventurer": {
-    "name": "adventurer",
-    "type": "npc",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "EXAMINE",
-        "response_original": "cretin",
-        "response_spooky": "cretin It seems to pulse with malevolent energy."
-      }
-    ]
-  },
-  "pathobj": {
-    "name": "forest trail",
-    "type": "scenery",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "FIND",
-        "response_original": "I can't help you there....",
-        "response_spooky": "I can't help you there...."
-      },
-      {
-        "verb": "DIG",
-        "response_original": "Not a chance.",
-        "response_spooky": "Not a chance."
-      },
-      {
-        "verb": "EXAMINE",
-        "response_original": "passage",
-        "response_spooky": "passage Dark stains mar its surface."
-      }
-    ]
-  },
-  "zorkmid": {
-    "name": "zorkmid",
-    "type": "scenery",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "EXAMINE",
-        "response_original": "The zorkmid is the unit of currency of the Great Underground Empire.",
-        "response_spooky": "The zorkmid is the unit of currency of the Great Underground Empire. It seems to pulse with malevolent energy."
-      },
-      {
-        "verb": "FIND",
-        "response_original": "The best way to find zorkmids is to go out and look for them.",
-        "response_spooky": "The best way to find zorkmids is to go out and look for them."
-      },
-      {
-        "verb": "EXAMINE",
-        "response_original": "zorkmid",
-        "response_spooky": "zorkmid It seems to pulse with malevolent energy."
-      }
-    ]
-  },
-  "hands": {
-    "name": "bare pair",
-    "type": "scenery",
-    "state": {},
-    "interactions": [
-      {
-        "verb": "EXAMINE",
-        "response_original": "pair of hands",
-        "response_spooky": "pair of hands Shadows cling to it unnaturally."
-      }
-    ]
+    ],
+    "is_takeable": true
   },
   "leaflet": {
     "name": "cursed parchment",
@@ -4768,5 +4525,115 @@
     "type": "item",
     "state": {},
     "interactions": []
+  },
+  "matches": {
+    "name": "infernal matches",
+    "type": "item",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "match",
+        "response_spooky": "match The matchbox bears strange symbols."
+      }
+    ]
+  },
+  "food": {
+    "name": "lunch",
+    "type": "item",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "food",
+        "response_spooky": "food It looks suspiciously fresh."
+      },
+      {
+        "verb": "EAT",
+        "response_original": "eaten.",
+        "response_spooky": "eaten. You feel a strange hunger afterward."
+      }
+    ]
+  },
+  "grue": {
+    "name": "grue",
+    "type": "npc",
+    "state": {},
+    "interactions": []
+  },
+  "stairs": {
+    "name": "stairs",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "stairs",
+        "response_spooky": "stairs They seem to groan under an invisible weight."
+      }
+    ]
+  },
+  "ground": {
+    "name": "ground",
+    "type": "scenery",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "ground",
+        "response_spooky": "ground The earth here feels unnaturally soft."
+      }
+    ]
+  },
+  "jewelry": {
+    "name": "cursed jewelry",
+    "type": "treasure",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "jewelry",
+        "response_spooky": "jewelry It seems to whisper to you."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "taken.",
+        "response_spooky": "taken. Your skin tingles where it touches."
+      }
+    ]
+  },
+  "silver": {
+    "name": "possessed silver",
+    "type": "treasure",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "silver",
+        "response_spooky": "silver It bears unholy markings."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "taken.",
+        "response_spooky": "taken. It feels unnaturally cold."
+      }
+    ]
+  },
+  "gold": {
+    "name": "haunted gold",
+    "type": "treasure",
+    "state": {},
+    "interactions": [
+      {
+        "verb": "EXAMINE",
+        "response_original": "gold",
+        "response_spooky": "gold It glows with a faint, sickly light."
+      },
+      {
+        "verb": "TAKE",
+        "response_original": "taken.",
+        "response_spooky": "taken. You feel eyes upon you."
+      }
+    ]
   }
 }

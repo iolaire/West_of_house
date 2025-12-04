@@ -634,7 +634,12 @@ def clear_world_cache():
 
 ### Backend (Python)
 
+**Important**: Always activate the virtual environment before running tests:
+
 ```bash
+# Activate virtual environment (from project root)
+source venv/bin/activate
+
 # Run all tests
 pytest
 
@@ -655,7 +660,16 @@ pytest -v
 
 # Run with print statements visible
 pytest -s
+
+# Deactivate when done
+deactivate
 ```
+
+**Why use venv?**
+- Isolates project dependencies from system Python
+- Ensures consistent test environment
+- Prevents dependency conflicts
+- Matches deployment environment
 
 ### Frontend (React/TypeScript)
 

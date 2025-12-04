@@ -372,6 +372,19 @@ class WorldData:
         # Always use spooky description per requirements 19.5, 20.1
         return room.description_spooky
     
+    def get_max_score(self) -> int:
+        """
+        Calculate maximum possible score from all treasures.
+        
+        Returns:
+            Total treasure value of all treasure objects
+        """
+        max_score = 0
+        for obj in self.objects.values():
+            if obj.is_treasure:
+                max_score += obj.treasure_value
+        return max_score
+    
     @classmethod
     def clear_cache(cls) -> None:
         """Clear the class-level cache. Useful for testing."""
