@@ -76,11 +76,11 @@ class GameEngine:
     def find_matching_objects(self, name: str, state: GameState) -> List[str]:
         """
         Find all objects matching a name in current room and inventory.
-        
+
         Args:
             name: The name to search for
             state: Current game state
-            
+
         Returns:
             List of matching object IDs
         """
@@ -88,20 +88,53 @@ class GameEngine:
         try:
             current_room = self.world.get_room(state.current_room)
             available_objects = list(current_room.items) + list(state.inventory)
-            
+
             for obj_id in available_objects:
                 try:
                     obj = self.world.get_object(obj_id)
                     # Check if name matches object ID or any of its names
-                    if (name.lower() == obj_id.lower() or 
-                        name.lower() in [n.lower() for n in [obj.name]]):
+                    if (name.lower() == obj_id.lower() or
+                        (obj.name and name.lower() in obj.name.lower()) or
+                        (obj.name_spooky and name.lower() in obj.name_spooky.lower())):
                         matches.append(obj_id)
                 except ValueError:
                     continue
         except Exception:
             pass
-        
+
         return matches
+
+    def resolve_object_reference(self, object_ref: str, state: GameState) -> Optional[str]:
+        """
+        Resolve an object reference (ID or name) to an object ID.
+
+        This method allows objects to be referenced by either their ID or any of their names.
+        For example, both "teeth" and "vampire fangs" would resolve to the same object.
+
+        Args:
+            object_ref: The object reference (ID or name)
+            state: Current game state
+
+        Returns:
+            Object ID if found, None otherwise
+        """
+        if not object_ref:
+            return None
+
+        # First try direct ID match (case-insensitive)
+        try:
+            current_room = self.world.get_room(state.current_room)
+            available_objects = list(current_room.items) + list(state.inventory)
+
+            # Check if it's a direct object ID
+            for obj_id in available_objects:
+                if object_ref.lower() == obj_id.lower():
+                    return obj_id
+
+            # Use the existing flexible name matching
+            return self.world.find_object_by_name(object_ref, available_objects)
+        except Exception:
+            return None
     
     def create_disambiguation_prompt(self, matches: List[str]) -> str:
         """
@@ -12007,153 +12040,460 @@ class GameEngine:
         
         # Handle examine commands
         if command.verb == "EXAMINE" and command.object:
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+
             # Check if examining a container
             try:
-                obj = self.world.get_object(command.object)
+                obj = self.world.get_object(object_id)
                 if obj.type == "container":
-                    return self.handle_examine_container(command.object, state)
+                    return self.handle_examine_container(object_id, state)
             except ValueError:
                 pass
-            return self.handle_examine(command.object, state)
+            return self.handle_examine(object_id, state)
         
         # Handle take commands
         if command.verb == "TAKE" and command.object:
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+
             # Check if taking from a container (format: "take object from container")
             if command.preposition == "FROM" and command.target:
-                return self.handle_take_from_container(command.object, command.target, state)
-            return self.handle_take(command.object, state)
+                # Also resolve the target container
+                target_id = self.resolve_object_reference(command.target, state)
+                if not target_id:
+                    return ActionResult(
+                        success=False,
+                        message=f"I don't see any {command.target} here."
+                    )
+                return self.handle_take_from_container(object_id, target_id, state)
+            return self.handle_take(object_id, state)
         
         # Handle drop commands
         if command.verb == "DROP" and command.object:
-            return self.handle_drop(command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have any {command.object}."
+                )
+            return self.handle_drop(object_id, state)
         
         # Handle put commands (format: "put object in container")
         if command.verb == "PUT" and command.object and command.target:
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have any {command.object}."
+                )
+
+            # Resolve target container
+            target_id = self.resolve_object_reference(command.target, state)
+            if not target_id and command.target != "trophy_case":  # trophy_case is special
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.target} here."
+                )
+
             # Check if target is trophy case for treasure scoring
             if command.target == "trophy_case":
-                return self.handle_place_treasure(command.object, command.target, state)
-            return self.handle_put(command.object, command.target, state)
+                return self.handle_place_treasure(object_id, command.target, state)
+            return self.handle_put(object_id, target_id, state)
         
         # Handle lock commands (format: "lock object with key")
         if command.verb == "LOCK" and command.object:
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+
             if not command.target:
                 return ActionResult(
                     success=False,
                     message=f"What do you want to lock the {command.object} with?"
                 )
-            return self.handle_lock(command.object, command.target, state)
+            # Also resolve the key/instrument
+            target_id = self.resolve_object_reference(command.target, state)
+            if not target_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.target} here."
+                )
+            return self.handle_lock(object_id, target_id, state)
         
         # Handle unlock commands (format: "unlock object with key")
         if command.verb == "UNLOCK" and command.object:
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+
             if not command.target:
                 return ActionResult(
                     success=False,
                     message=f"What do you want to unlock the {command.object} with?"
                 )
-            return self.handle_unlock(command.object, command.target, state)
-        
+            # Also resolve the key/instrument
+            target_id = self.resolve_object_reference(command.target, state)
+            if not target_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.target} here."
+                )
+            return self.handle_unlock(object_id, target_id, state)
+
         # Handle turn commands
         if command.verb == "TURN" and command.object:
-            return self.handle_turn(command.object, state)
-        
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            return self.handle_turn(object_id, state)
+
         # Handle push commands
         if command.verb == "PUSH" and command.object:
-            return self.handle_push(command.object, state)
-        
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            return self.handle_push(object_id, state)
+
         # Handle pull commands
         if command.verb == "PULL" and command.object:
-            return self.handle_pull(command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            return self.handle_pull(object_id, state)
         
         # Handle tie commands (format: "tie object to target")
         if command.verb == "TIE" and command.object:
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+
             if not command.target:
                 return ActionResult(
                     success=False,
                     message=f"What do you want to tie the {command.object} to?"
                 )
-            return self.handle_tie(command.object, command.target, state)
-        
+            # Also resolve the target
+            target_id = self.resolve_object_reference(command.target, state)
+            if not target_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.target} here."
+                )
+            return self.handle_tie(object_id, target_id, state)
+
         # Handle untie commands
         if command.verb == "UNTIE" and command.object:
-            return self.handle_untie(command.object, state)
-        
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            return self.handle_untie(object_id, state)
+
         # Handle fill commands (format: "fill object from source")
         if command.verb == "FILL" and command.object:
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+
             if not command.target:
                 return ActionResult(
                     success=False,
                     message=f"What do you want to fill the {command.object} from?"
                 )
-            return self.handle_fill(command.object, command.target, state)
-        
+            # Also resolve the source
+            target_id = self.resolve_object_reference(command.target, state)
+            if not target_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.target} here."
+                )
+            return self.handle_fill(object_id, target_id, state)
+
         # Handle pour commands (format: "pour object" or "pour object into target")
         if command.verb == "POUR" and command.object:
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have any {command.object}."
+                )
+
             # Target is optional for pour (can pour onto ground)
-            return self.handle_pour(command.object, command.target, state)
-        
+            target_id = None
+            if command.target:
+                target_id = self.resolve_object_reference(command.target, state)
+                if not target_id:
+                    return ActionResult(
+                        success=False,
+                        message=f"I don't see any {command.target} here."
+                    )
+            return self.handle_pour(object_id, target_id, state)
+
         # Handle read commands
         if command.verb == "READ" and command.object:
-            return self.handle_read(command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            return self.handle_read(object_id, state)
 
         # Handle destroy commands (format: "destroy object", "break object", "smash object")
         if command.verb == "DESTROY" and command.object:
-            return self.handle_destroy(command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            return self.handle_destroy(object_id, state)
 
         # Handle eat commands (format: "eat object", "consume object", "devour object")
         if command.verb == "EAT" and command.object:
-            return self.handle_eat(command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            return self.handle_eat(object_id, state)
 
         # Handle drink commands (format: "drink object", "quaff object", "swallow object")
         if command.verb == "DRINK" and command.object:
-            return self.handle_drink(command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            return self.handle_drink(object_id, state)
 
         # Handle wear commands (format: "wear object", "put on object", "don object")
         if command.verb == "WEAR" and command.object:
-            return self.handle_wear(command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have any {command.object}."
+                )
+            return self.handle_wear(object_id, state)
 
         # Handle remove commands (format: "remove object", "take off object", "doff object")
         if command.verb == "REMOVE" and command.object:
-            return self.handle_remove(command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"You're not wearing any {command.object}."
+                )
+            return self.handle_remove(object_id, state)
 
         # Handle move commands (object repositioning, separate from player movement)
         if command.verb == "MOVE" and command.object:
-            return self.handle_move(command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            return self.handle_move(object_id, state)
 
         # Handle raise/lower commands
         if command.verb == "RAISE" and command.object:
-            return self.handle_raise(command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            return self.handle_raise(object_id, state)
 
         if command.verb == "LOWER" and command.object:
-            return self.handle_lower(command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            return self.handle_lower(object_id, state)
 
         # Handle slide commands
         if command.verb == "SLIDE" and command.object:
-            return self.handle_slide(command.object, command.target, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            # Also resolve the target if specified
+            target_id = None
+            if command.target:
+                target_id = self.resolve_object_reference(command.target, state)
+                if not target_id:
+                    return ActionResult(
+                        success=False,
+                        message=f"I don't see any {command.target} here."
+                    )
+            return self.handle_slide(object_id, target_id, state)
 
         # Handle special object manipulation commands
         if command.verb == "SPRING" and command.object:
-            return self.handle_spring(command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            return self.handle_spring(object_id, state)
 
         if command.verb == "HATCH" and command.object:
-            return self.handle_hatch(command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            return self.handle_hatch(object_id, state)
 
         if command.verb == "APPLY" and command.object:
-            return self.handle_apply(command.object, command.target, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have any {command.object}."
+                )
+            # Also resolve the target if specified
+            target_id = None
+            if command.target:
+                target_id = self.resolve_object_reference(command.target, state)
+                if not target_id:
+                    return ActionResult(
+                        success=False,
+                        message=f"I don't see any {command.target} here."
+                    )
+            return self.handle_apply(object_id, target_id, state)
 
         if command.verb == "BRUSH" and command.object:
-            return self.handle_brush(command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have any {command.object}."
+                )
+            return self.handle_brush(object_id, state)
 
         # Handle object interaction commands (OPEN, CLOSE)
         if command.verb in ["OPEN", "CLOSE"] and command.object:
-            return self.handle_object_interaction(command.verb, command.object, state)
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            return self.handle_object_interaction(command.verb, object_id, state)
         
         # Handle lamp commands (LIGHT, TURN ON)
-        if command.verb in ["LIGHT", "TURN_ON"] and command.object == "lamp":
-            return self.handle_lamp_on(state)
-        
+        if command.verb in ["LIGHT", "TURN_ON"] and command.object:
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            # Check if it's a lamp-like object
+            try:
+                obj = self.world.get_object(object_id)
+                if "lamp" in obj.name.lower() or obj.type == "light":
+                    return self.handle_lamp_on(object_id, state)
+            except ValueError:
+                pass
+            return ActionResult(
+                success=False,
+                message=f"That's not something you can light."
+            )
+
         # Handle lamp off commands (EXTINGUISH, TURN OFF)
-        if command.verb in ["EXTINGUISH", "TURN_OFF"] and command.object == "lamp":
-            return self.handle_lamp_off(state)
+        if command.verb in ["EXTINGUISH", "TURN_OFF"] and command.object:
+            # Resolve object reference (ID or name)
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+            # Check if it's a lamp-like object
+            try:
+                obj = self.world.get_object(object_id)
+                if "lamp" in obj.name.lower() or obj.type == "light":
+                    return self.handle_lamp_off(object_id, state)
+            except ValueError:
+                pass
+            return ActionResult(
+                success=False,
+                message=f"That's not something you can extinguish."
+            )
         
         # Handle look under commands
         if command.verb == "LOOK_UNDER" and command.object:
@@ -12218,26 +12558,73 @@ class GameEngine:
         
         # Handle attack commands (format: "attack creature" or "attack creature with weapon")
         if command.verb in ["ATTACK", "KILL"] and command.object:
-            # Target is the weapon (if specified with WITH preposition)
-            return self.handle_attack(command.object, command.target, state)
+            # Resolve object reference (ID or name) for the creature
+            target_id = self.resolve_object_reference(command.object, state)
+            if not target_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.object} here."
+                )
+
+            # Resolve weapon if specified with WITH preposition
+            weapon_id = None
+            if command.target:
+                weapon_id = self.resolve_object_reference(command.target, state)
+                if not weapon_id:
+                    return ActionResult(
+                        success=False,
+                        message=f"You don't have any {command.target}."
+                    )
+
+            return self.handle_attack(target_id, weapon_id, state)
         
         # Handle throw commands (format: "throw object at target")
         if command.verb == "THROW" and command.object:
+            # Resolve object reference (ID or name) for what to throw
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have any {command.object}."
+                )
+
             if not command.target:
                 return ActionResult(
                     success=False,
                     message=f"What do you want to throw the {command.object} at?"
                 )
-            return self.handle_throw(command.object, command.target, state)
-        
+            # Also resolve the target
+            target_id = self.resolve_object_reference(command.target, state)
+            if not target_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.target} here."
+                )
+            return self.handle_throw(object_id, target_id, state)
+
         # Handle give commands (format: "give object to npc")
         if command.verb == "GIVE" and command.object:
+            # Resolve object reference (ID or name) for what to give
+            object_id = self.resolve_object_reference(command.object, state)
+            if not object_id:
+                return ActionResult(
+                    success=False,
+                    message=f"You don't have any {command.object}."
+                )
+
             if not command.target:
                 return ActionResult(
                     success=False,
                     message=f"Who do you want to give the {command.object} to?"
                 )
-            return self.handle_give(command.object, command.target, state)
+            # Also resolve the target NPC
+            target_id = self.resolve_object_reference(command.target, state)
+            if not target_id:
+                return ActionResult(
+                    success=False,
+                    message=f"I don't see any {command.target} here."
+                )
+            return self.handle_give(object_id, target_id, state)
         
         # Handle tell/ask commands (format: "tell npc about topic" or "ask npc about topic")
         if command.verb in ["TELL", "ASK"] and command.object:

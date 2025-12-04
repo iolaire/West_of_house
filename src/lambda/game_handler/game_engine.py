@@ -102,7 +102,83 @@ class GameEngine:
             pass
         
         return matches
-    
+
+    def resolve_object_reference(self, object_ref: str, state: GameState) -> Optional[str]:
+        """
+        Resolve an object reference (ID or name) to an object ID.
+
+        This method allows objects to be referenced by either their ID or any of their names.
+        For example, both "teeth" and "vampire fangs" would resolve to the same object.
+
+        Args:
+            object_ref: The object reference (ID or name)
+            state: Current game state
+
+        Returns:
+            Object ID if found, None otherwise
+        """
+        if not object_ref:
+            return None
+
+        # First try direct ID match (case-insensitive)
+        try:
+            current_room = self.world.get_room(state.current_room)
+            available_objects = list(current_room.items) + list(state.inventory)
+
+            # Check if it's a direct object ID
+            for obj_id in available_objects:
+                if object_ref.lower() == obj_id.lower():
+                    return obj_id
+
+            # Use the existing flexible name matching
+            return self.world.find_object_by_name(object_ref, available_objects)
+        except Exception:
+            return None
+
+    def get_full_room_description(self, state: GameState) -> str:
+        """
+        Get the full room description including visible objects.
+
+        Args:
+            state: Current game state
+
+        Returns:
+            Complete room description with objects listed
+        """
+        # Check if room is lit
+        is_lit = self.is_room_lit(state.current_room, state)
+
+        if not is_lit:
+            # Return darkness description for unlit rooms
+            return self.get_darkness_description(state.current_room)
+
+        # Get room description with objects
+        description = self.world.get_room_description(
+            state.current_room,
+            state.sanity,
+            include_objects=True
+        )
+
+        return description
+
+    def handle_look(self, state: GameState) -> ActionResult:
+        """
+        Handle LOOK command (look around current room).
+
+        Returns full room description with visible objects.
+
+        Args:
+            state: Current game state
+
+        Returns:
+            ActionResult with room description
+        """
+        description = self.get_full_room_description(state)
+        return ActionResult(
+            success=True,
+            message=description
+        )
+
     def create_disambiguation_prompt(self, matches: List[str]) -> str:
         """
         Create a prompt asking the player to clarify which object they mean.
@@ -456,7 +532,7 @@ class GameEngine:
             if not is_lit:
                 description = self.get_darkness_description(entry_destination)
             else:
-                description = self.world.get_room_description(entry_destination, state.sanity)
+                description = self.world.get_room_description(entry_destination, state.sanity, include_objects=True)
             
             # Apply room effects
             sanity_change = 0
@@ -576,7 +652,7 @@ class GameEngine:
             if not is_lit:
                 description = self.get_darkness_description(exit_destination)
             else:
-                description = self.world.get_room_description(exit_destination, state.sanity)
+                description = self.world.get_room_description(exit_destination, state.sanity, include_objects=True)
             
             # Apply room effects
             sanity_change = 0
@@ -12000,6 +12076,10 @@ class GameEngine:
         # Handle WAIT command (wait and observe)
         if command.verb == "WAIT":
             return self.handle_wait(state)
+
+        # Handle LOOK command (look around current room)
+        if command.verb == "LOOK" and not command.object:
+            return self.handle_look(state)
 
         # Handle movement commands
         if command.verb == "GO" and command.direction:
