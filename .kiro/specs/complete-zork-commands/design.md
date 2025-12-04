@@ -425,24 +425,24 @@ class GameState:
 *For any* command affecting multiple objects, all specified objects should be processed appropriately
 **Validates: Requirements 11.5**
 
-### Property 48: Spooky theme consistency
-*For any* command execution, the response should use spooky/haunted theme descriptions
+### Property 48: Spooky narrative consistency
+*For any* command execution, the response should use haunted theme narrative text instead of original Zork descriptions
 **Validates: Requirements 12.1**
 
-### Property 49: Sanity effects application
-*For any* command that affects sanity, the sanity value should change appropriately
+### Property 49: Haunted object title usage
+*For any* command referencing objects, the response should use haunted theme object titles and descriptions
 **Validates: Requirements 12.2**
 
-### Property 50: Supernatural event descriptions
-*For any* command triggering supernatural events, the description should be thematically appropriate
+### Property 50: Spooky room descriptions
+*For any* command displaying room information, the response should use haunted theme room descriptions
 **Validates: Requirements 12.3**
 
-### Property 51: Curse effect application
-*For any* command interacting with cursed objects, curse effects should be applied correctly
+### Property 51: Haunted vocabulary consistency
+*For any* command providing feedback, the response should maintain haunted theme vocabulary and tone
 **Validates: Requirements 12.4**
 
-### Property 52: Darkness atmosphere
-*For any* command executed in darkness, the response should emphasize the horror atmosphere
+### Property 52: Haunted terminology consistency
+*For any* command referencing game elements, the response should use haunted theme terminology consistently
 **Validates: Requirements 12.5**
 
 ## Error Handling

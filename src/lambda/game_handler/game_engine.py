@@ -508,7 +508,7 @@ class GameEngine:
             # Unexpected error
             return ActionResult(
                 success=False,
-                message="Something went wrong while entering.",
+                message="The shadows twist and writhe, preventing your passage into the unknown.",
                 room_changed=False
             )
     
@@ -628,7 +628,7 @@ class GameEngine:
             # Unexpected error
             return ActionResult(
                 success=False,
-                message="Something went wrong while exiting.",
+                message="The darkness clings to you, refusing to release its grip as you try to leave.",
                 room_changed=False
             )
     
@@ -726,7 +726,7 @@ class GameEngine:
             # Unexpected error
             return ActionResult(
                 success=False,
-                message="Something went wrong while boarding.",
+                message="An unseen force prevents you from boarding the cursed vessel.",
                 room_changed=False
             )
     
@@ -789,7 +789,7 @@ class GameEngine:
             # Unexpected error
             return ActionResult(
                 success=False,
-                message="Something went wrong while disembarking.",
+                message="The cursed vessel seems reluctant to release you from its cold embrace.",
                 room_changed=False
             )
     
@@ -946,7 +946,7 @@ class GameEngine:
             # Unexpected error
             return ActionResult(
                 success=False,
-                message="Something went wrong while climbing.",
+                message="The ancient structure groans and shifts, denying your ascent into the gloom.",
                 room_changed=False
             )
     
@@ -1091,7 +1091,7 @@ class GameEngine:
             # Unexpected error
             return ActionResult(
                 success=False,
-                message="Something went wrong. Please try again.",
+                message="The spectral forces of this place resist your efforts. Perhaps try another approach.",
                 room_changed=False
             )
     
@@ -1124,11 +1124,11 @@ class GameEngine:
                 if object_id in state.inventory:
                     return ActionResult(
                         success=False,
-                        message="You already have that."
+                        message="The cursed object already weighs heavy in your possession."
                     )
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"The shadows reveal no {object_id} in this forsaken place."
                 )
             
             # Get object data
@@ -1146,11 +1146,11 @@ class GameEngine:
                 # Default message for non-takeable objects
                 return ActionResult(
                     success=False,
-                    message="You can't take that."
+                    message="The cursed object resists your grasp, as if bound to this place by dark forces."
                 )
             
             # Find TAKE interaction for response message
-            take_message = "Taken."
+            take_message = "You grasp the object with trembling hands, feeling its cold weight."
             sanity_change = 0
             notifications = []
             
@@ -1208,12 +1208,12 @@ class GameEngine:
         except ValueError as e:
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"The shadows reveal no {object_id} in this forsaken place."
             )
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while taking that."
+                message="The cursed object slips through your trembling fingers like smoke."
             )
     
     def handle_drop(
@@ -1240,14 +1240,14 @@ class GameEngine:
             if object_id not in state.inventory:
                 return ActionResult(
                     success=False,
-                    message="You don't have that."
+                    message="Your trembling hands find no such cursed thing among your possessions."
                 )
             
             # Get object data
             game_object = self.world.get_object(object_id)
             
             # Find DROP interaction for response message
-            drop_message = "Dropped."
+            drop_message = "You release the object, watching it fall into the darkness below."
             sanity_change = 0
             notifications = []
             
@@ -1304,12 +1304,12 @@ class GameEngine:
         except ValueError as e:
             return ActionResult(
                 success=False,
-                message="You don't have that."
+                message="Your trembling hands find no such cursed thing among your possessions."
             )
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while dropping that."
+                message="The object seems to resist being released, clinging to your grasp with unnatural force."
             )
     
     def handle_object_interaction(
@@ -1481,7 +1481,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong with that action."
+                message="The malevolent forces of this place thwart your attempt."
             )
     
     def handle_examine(
@@ -1569,12 +1569,12 @@ class GameEngine:
         except ValueError as e:
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"The shadows reveal no {object_id} in this forsaken place."
             )
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while examining that."
+                message="The shadows obscure your vision, hiding the object's true nature."
             )
     
     def handle_put(
@@ -1718,7 +1718,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while putting that."
+                message="The cursed container resists your attempt to place the object within its depths."
             )
     
     def handle_take_from_container(
@@ -1993,7 +1993,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong with the lamp."
+                message="The cursed lamp flickers and resists your command, as if possessed by malevolent spirits."
             )
     
     def handle_lamp_off(
@@ -2041,7 +2041,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong with the lamp."
+                message="The cursed lamp flickers and resists your command, as if possessed by malevolent spirits."
             )
     
     def apply_lamp_battery_drain(
@@ -2248,7 +2248,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while locking that."
+                message="The ancient lock resists your efforts, as if cursed to remain forever sealed."
             )
     
     def handle_unlock(
@@ -2354,7 +2354,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while unlocking that."
+                message="The cursed lock refuses to yield, its mechanism twisted by dark enchantments."
             )
     
     def handle_turn(
@@ -2456,7 +2456,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while turning that."
+                message="The object resists your attempt to turn it, held fast by spectral forces."
             )
     
     def handle_push(
@@ -2558,7 +2558,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while pushing that."
+                message="The object refuses to budge, as if rooted in place by unseen hands."
             )
     
     def handle_pull(
@@ -2660,7 +2660,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while pulling that."
+                message="The object resists your pull, held fast by malevolent forces."
             )
     
     def handle_tie(
@@ -2788,7 +2788,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while tying that."
+                message="The rope slips through your fingers like a serpent, refusing to be bound."
             )
     
     def handle_untie(
@@ -2899,7 +2899,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while untying that."
+                message="The knot tightens impossibly, as if cursed to remain forever bound."
             )
     
     def handle_fill(
@@ -3022,7 +3022,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while filling that."
+                message="The liquid refuses to flow, as if repelled by dark enchantments."
             )
     
     def handle_pour(
@@ -3165,7 +3165,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while pouring that."
+                message="The liquid clings to the container, refusing to pour as if alive."
             )
     
     def handle_look_under(
@@ -3279,7 +3279,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while looking under that."
+                message="The shadows beneath writhe and twist, obscuring your view."
             )
     
     def handle_look_inside(
@@ -3385,7 +3385,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while looking inside that."
+                message="The interior is shrouded in unnatural darkness that defies your gaze."
             )
     
     def handle_look_behind(
@@ -3499,7 +3499,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while looking behind that."
+                message="The shadows behind the object seem to shift and hide from your sight."
             )
     
     def handle_search(
@@ -3614,7 +3614,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while searching."
+                message="The darkness seems to swallow your search, revealing nothing."
             )
     
     def handle_read(
@@ -3716,7 +3716,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while reading."
+                message="The text blurs and shifts before your eyes, as if cursed to remain unreadable."
             )
     
     def handle_listen(
@@ -3903,7 +3903,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while listening."
+                message="An unnatural silence falls, as if the very air refuses to carry sound."
             )
     
     def handle_smell(
@@ -4090,7 +4090,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while smelling."
+                message="Your senses are overwhelmed by a nauseating miasma that defies description."
             )
     
     def handle_burn(
@@ -4214,7 +4214,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while burning that."
+                message="The flames sputter and die, as if the object is protected by dark magic."
             )
     
     def handle_cut(
@@ -4307,7 +4307,7 @@ class GameEngine:
         except Exception:
             return ActionResult(
                 success=False,
-                message="Something went wrong while cutting that."
+                message="Your blade passes through the object as if cutting through smoke."
             )
     
     def handle_dig(
@@ -4436,7 +4436,7 @@ class GameEngine:
         except Exception:
             return ActionResult(
                 success=False,
-                message="Something went wrong while digging."
+                message="The ground resists your efforts, as if the earth itself rejects your intrusion."
             )
     
     def handle_inflate(
@@ -4475,9 +4475,9 @@ class GameEngine:
             
             return ActionResult(success=True, message=message)
         except ValueError:
-            return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+            return ActionResult(success=False, message=f"The shadows reveal no {object_id} in this forsaken place.")
         except Exception:
-            return ActionResult(success=False, message="Something went wrong.")
+            return ActionResult(success=False, message="The object resists inflation, as if cursed to remain deflated.")
     
     def handle_deflate(
         self,
@@ -4515,9 +4515,9 @@ class GameEngine:
             
             return ActionResult(success=True, message=message)
         except ValueError:
-            return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+            return ActionResult(success=False, message=f"The shadows reveal no {object_id} in this forsaken place.")
         except Exception:
-            return ActionResult(success=False, message="Something went wrong.")
+            return ActionResult(success=False, message="The object clings to its inflated form, resisting your efforts.")
     
     def handle_wave(self, object_id: str, state: GameState) -> ActionResult:
         """Handle waving an object."""
@@ -4541,9 +4541,9 @@ class GameEngine:
             
             return ActionResult(success=True, message=message)
         except ValueError:
-            return ActionResult(success=False, message=f"You don't have the {object_id}.")
+            return ActionResult(success=False, message=f"Your trembling hands find no {object_id} among your cursed possessions.")
         except Exception:
-            return ActionResult(success=False, message="Something went wrong.")
+            return ActionResult(success=False, message="The object slips from your grasp as you attempt to wave it.")
     
     def handle_rub(self, object_id: str, state: GameState) -> ActionResult:
         """Handle rubbing/touching an object."""
@@ -4568,9 +4568,9 @@ class GameEngine:
             
             return ActionResult(success=True, message=message)
         except ValueError:
-            return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+            return ActionResult(success=False, message=f"The shadows reveal no {object_id} in this forsaken place.")
         except Exception:
-            return ActionResult(success=False, message="Something went wrong.")
+            return ActionResult(success=False, message="Your touch upon the object sends a chill through your bones.")
     
     def handle_shake(self, object_id: str, state: GameState) -> ActionResult:
         """Handle shaking an object."""
@@ -4595,9 +4595,9 @@ class GameEngine:
             
             return ActionResult(success=True, message=message)
         except ValueError:
-            return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+            return ActionResult(success=False, message=f"The shadows reveal no {object_id} in this forsaken place.")
         except Exception:
-            return ActionResult(success=False, message="Something went wrong.")
+            return ActionResult(success=False, message="The object rattles ominously, as if something within stirs.")
     
     def handle_squeeze(self, object_id: str, state: GameState) -> ActionResult:
         """Handle squeezing an object."""
@@ -4622,9 +4622,9 @@ class GameEngine:
             
             return ActionResult(success=True, message=message)
         except ValueError:
-            return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+            return ActionResult(success=False, message=f"The shadows reveal no {object_id} in this forsaken place.")
         except Exception:
-            return ActionResult(success=False, message="Something went wrong.")
+            return ActionResult(success=False, message="The object resists your grip, as if it has a will of its own.")
     
     def handle_xyzzy(self, state: GameState) -> ActionResult:
         """Handle XYZZY easter egg command."""
@@ -4757,7 +4757,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while placing that treasure."
+                message="The cursed treasure resists being placed, as if it yearns to remain with you."
             )
     
     def check_win_condition(
@@ -4957,7 +4957,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong during combat."
+                message="The spectral forces intervene, disrupting your attack in a swirl of darkness."
             )
     
     def handle_throw(
@@ -5101,7 +5101,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while throwing."
+                message="The object slips from your grasp mid-throw, vanishing into the shadows."
             )
     
     def handle_give(
@@ -5234,7 +5234,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while giving that."
+                message="The cursed object refuses to leave your possession, clinging to you with unnatural force."
             )
     
     def handle_tell(
@@ -5338,7 +5338,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong during conversation."
+                message="Your words seem to dissolve into the air, unheard by mortal or spirit."
             )
     
     def handle_wake(
@@ -5450,7 +5450,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong while waking that."
+                message="The creature remains in its cursed slumber, beyond the reach of mortal intervention."
             )
     
     def handle_kiss(
@@ -5533,7 +5533,7 @@ class GameEngine:
         except Exception as e:
             return ActionResult(
                 success=False,
-                message="Something went wrong during that awkward moment."
+                message="The shadows seem to recoil from your advance, leaving only cold emptiness."
             )
     
     def handle_save(
@@ -6005,72 +6005,392 @@ class GameEngine:
     def _handle_missing_object(
         self,
         object_name: str,
-        state: GameState
+        state: GameState,
+        verb: Optional[str] = None
     ) -> ActionResult:
         """
-        Handle commands referencing missing objects.
-        
-        Clearly states when an object is not present and suggests
-        looking around to find available objects.
-        
+        Handle commands referencing missing objects with enhanced guidance.
+
+        Provides clear, contextual information about missing objects
+        and suggests alternatives based on the current location and verb.
+
         Args:
             object_name: The name of the missing object
             state: Current game state
-            
+            verb: Optional verb for contextual suggestions
+
         Returns:
-            ActionResult with clear error message
-            
+            ActionResult with enhanced error message
+
         Requirements: 9.3
         """
+        # Get current room information
+        try:
+            current_room = self.world.get_room(state.current_room)
+            room_items = current_room.items
+            inventory_items = state.inventory
+        except Exception:
+            room_items = []
+            inventory_items = []
+
         # Check if object exists in the game world at all
         try:
             obj = self.world.get_object(object_name)
             # Object exists but not here
             message = f"You don't see any {object_name} here."
+
+            # Check if object might be in inventory
+            if object_name.lower() in [item.lower() for item in inventory_items]:
+                message = f"You already have the {object_name}."
+            # Check if object is in room but different name used
+            elif any(object_name.lower() in self._get_object_names(item).lower()
+                     for item in room_items):
+                message = f"Be more specific. What {object_name} do you mean?"
+            # Provide contextual hints
+            else:
+                # Check for similar objects in room
+                similar_objects = self._find_similar_objects(object_name, room_items)
+                if similar_objects:
+                    if len(similar_objects) == 1:
+                        message += f"\n\nDo you mean the {similar_objects[0]}?"
+                    else:
+                        obj_list = ", ".join(similar_objects)
+                        message += f"\n\nI see: {obj_list}"
+
+                # Suggest looking around
+                if room_items:
+                    message += f"\n\nTake a look around - you might find what you're seeking."
+                else:
+                    message += f"\n\nThe shadows here seem to swallow everything whole..."
+
         except ValueError:
-            # Object doesn't exist in game
+            # Object doesn't exist in game - try to suggest alternatives
             message = f"I don't know what '{object_name}' is."
-        
-        # Add helpful suggestion
-        message += "\n\nTry 'look' to see what's around you, or 'inventory' to check what you're carrying."
-        
+
+            # Look for similar object names in room and inventory
+            all_objects = room_items + inventory_items
+            similar_objects = self._find_similar_objects(object_name, all_objects)
+
+            if similar_objects:
+                if len(similar_objects) == 1:
+                    message += f" Do you mean the {similar_objects[0]}?"
+                else:
+                    obj_list = ", ".join(similar_objects)
+                    message += f" Perhaps you mean one of: {obj_list}"
+
+        # Add verb-specific suggestions
+        if verb:
+            if verb.lower() in ['take', 'get', 'carry']:
+                if room_items:
+                    message += f"\n\nYou could try taking: {', '.join(room_items[:3])}"
+            elif verb.lower() in ['open', 'close']:
+                openable_objects = [self._get_object_names(item) for item in room_items + inventory_items
+                                  if self._is_openable(item)]
+                if openable_objects:
+                    message += f"\n\nYou might try opening: {', '.join(openable_objects[:3])}"
+            elif verb.lower() in ['examine', 'look', 'check']:
+                if room_items:
+                    message += f"\n\nYou can examine: {', '.join(room_items[:3])}"
+
+        # General help
+        message += "\n\nType 'look' to see your surroundings or 'inventory' to check your possessions."
+
         return ActionResult(
             success=False,
             message=message
         )
-    
+
+    def _get_object_names(self, object_id: str) -> str:
+        """Get display names for an object."""
+        try:
+            obj = self.world.get_object(object_id)
+            return obj.name if obj.name else object_id
+        except:
+            return object_id
+
+    def _is_openable(self, object_id: str) -> bool:
+        """Check if object can be opened."""
+        try:
+            obj = self.world.get_object(object_id)
+            return obj.type == "container" or obj.state.get('can_open', False)
+        except:
+            return False
+
+    def _find_similar_objects(self, target: str, object_list: List[str]) -> List[str]:
+        """Find objects with similar names to target."""
+        target_lower = target.lower()
+        similar = []
+
+        for obj_id in object_list:
+            try:
+                obj = self.world.get_object(obj_id)
+                obj_names = [obj.name.lower()] if obj.name else [obj_id.lower()]
+
+                # Check for partial matches or contains
+                for name in obj_names:
+                    if (target_lower in name or name in target_lower or
+                        (len(target) > 3 and name.startswith(target_lower[:3]))):
+                        if obj.name not in similar:
+                            similar.append(obj.name)
+            except:
+                # If object not found, check ID directly
+                if target_lower in obj_id.lower() or obj_id.lower().startswith(target_lower[:3]):
+                    if obj_id not in similar:
+                        similar.append(obj_id)
+
+        return similar[:3]  # Limit to 3 suggestions
+
+    def _should_validate_object(self, verb: str) -> bool:
+        """
+        Determine if an object should be validated for this verb.
+
+        Some verbs like 'LOOK' or 'INVENTORY' don't require object validation
+        as they have their own special handling.
+        """
+        # Verbs that don't need object validation
+        no_validation_verbs = {
+            'LOOK', 'INVENTORY', 'I', 'SCORE', 'RESTART', 'SAVE', 'RESTORE',
+            'VERBOSE', 'BRIEF', 'SUPERBRIEF', 'HELP', 'QUIT', 'XYZZY', 'PLUGH',
+            'HELLO', 'PRAY', 'JUMP', 'YELL', 'CURSE', 'LISTEN', 'SMELL'
+        }
+
+        # Verbs that handle their own validation internally
+        self_validating_verbs = {
+            'GO', 'EXIT', 'ENTER', 'BOARD', 'DISEMBARK'
+        }
+
+        return verb not in no_validation_verbs and verb not in self_validating_verbs
+
     def _handle_impossible_action(
         self,
         action: str,
         reason: str,
-        hint: Optional[str] = None
+        hint: Optional[str] = None,
+        object_id: Optional[str] = None,
+        state: Optional[GameState] = None
     ) -> ActionResult:
         """
-        Handle impossible actions with explanations.
-        
-        Explains why an action cannot be performed and optionally
-        provides hints on how to proceed.
-        
+        Handle impossible actions with enhanced explanations.
+
+        Explains why an action cannot be performed with thematic
+        language and contextual hints for the haunted setting.
+
         Args:
             action: Description of the attempted action
             reason: Why the action is impossible
             hint: Optional hint for the player
-            
+            object_id: Optional object being acted upon for context
+            state: Optional game state for additional context
+
         Returns:
-            ActionResult with explanation
-            
+            ActionResult with enhanced explanation
+
         Requirements: 9.4
         """
-        message = f"You can't {action}. {reason}"
-        
+        # Add haunted atmosphere to explanations
+        haunted_reasons = [
+            "the shadows resist your will",
+            "otherworldly forces prevent it",
+            "the very air grows cold at the thought",
+            "ancient curses bind this place",
+            "the spirits will not allow it",
+            "dark magic holds it fast",
+            "your fingers pass through like smoke",
+            "an invisible barrier blocks your way"
+        ]
+
+        # Create thematic explanation
+        if "locked" in reason.lower():
+            message = f"The {object_id if object_id else 'object'} is sealed tight."
+            if hint:
+                message += f" {hint}"
+            else:
+                message += " Perhaps there's a key hidden somewhere in these haunted halls."
+        elif "heavy" in reason.lower():
+            message = f"Your supernatural strength isn't enough to {action}."
+            message += f" The object seems anchored by more than mere weight."
+        elif "darkness" in reason.lower() or "can't see" in reason.lower():
+            message = f"You grope blindly in the oppressive darkness."
+            message += " Who knows what horrors await the unwary in this blackness?"
+        else:
+            # Add haunted flavor to generic reasons
+            if state and state.sanity < 30:
+                # Low sanity adds to the atmosphere
+                message = f"You try to {action}, but {reason}."
+                message += f" The walls seem to whisper mocking laughter..."
+            else:
+                message = f"You cannot {action}. {reason}"
+
+        # Add contextual hints based on action type
+        if not hint:
+            action_lower = action.lower()
+            if any(word in action_lower for word in ['open', 'unlock']):
+                message += "\n\nPerhaps you need to find something to help with that."
+            elif any(word in action_lower for word in ['move', 'push', 'pull']):
+                message += "\n\nSometimes the solution requires thinking rather than force."
+            elif any(word in action_lower for word in ['read', 'examine']):
+                message += "\n\nYour eyes strain in the gloom. Perhaps more light would help?"
+
+        # Add hint if provided
         if hint:
-            message += f"\n\nHint: {hint}"
-        
+            message += f"\n\n{hint}"
+
         return ActionResult(
             success=False,
             message=message
         )
     
+    def _validate_command_syntax(
+        self,
+        command: ParsedCommand,
+        state: GameState
+    ) -> Optional[ActionResult]:
+        """
+        Validate command syntax and provide usage guidance.
+
+        Detects common syntax errors and provides helpful suggestions
+        for correct usage based on command patterns.
+
+        Args:
+            command: The parsed command to validate
+            state: Current game state
+
+        Returns:
+            ActionResult with usage guidance if syntax error detected,
+            None if command syntax is valid
+
+        Requirements: 9.2
+        """
+        verb = command.verb
+
+        # Commands that require an object
+        object_required_verbs = {
+            'TAKE', 'DROP', 'EXAMINE', 'OPEN', 'CLOSE', 'READ', 'LOCK', 'UNLOCK',
+            'TURN', 'PUSH', 'PULL', 'TIE', 'UNTIE', 'FILL', 'POUR', 'BURN', 'CUT',
+            'DIG', 'INFLATE', 'DEFLATE', 'WAVE', 'RUB', 'SHAKE', 'SQUEEZE',
+            'ATTACK', 'THROW', 'GIVE', 'TELL', 'ASK', 'WAKE', 'KISS', 'BOARD',
+            'ENTER', 'CLIMB'
+        }
+
+        # Commands that can accept optional object
+        object_optional_verbs = {
+            'LOOK', 'SEARCH', 'LISTEN', 'SMELL', 'ECHO'
+        }
+
+        # Commands that require a target/preposition
+        target_required_verbs = {
+            'GIVE': 'Who do you want to give the object to?',
+            'PUT': 'Where do you want to put the object?',
+            'THROW': 'What do you want to throw the object at?',
+            'TELL': 'Who do you want to talk to?',
+            'ASK': 'Who do you want to ask?'
+        }
+
+        # Check if verb requires an object but none provided
+        if verb in object_required_verbs and not command.object and not command.objects:
+            return self._handle_missing_parameter(
+                verb.lower(),
+                f"an object to {verb.lower()}",
+                self._get_usage_examples(verb),
+                state
+            )
+
+        # Check if verb requires specific preposition structure
+        if verb in ['TAKE'] and command.preposition == 'FROM' and not command.target:
+            return self._handle_missing_parameter(
+                verb.lower(),
+                "a container to take from",
+                ["take key from chest", "get sword from pedestal"],
+                state
+            )
+
+        # Check for GO command without direction
+        if verb == 'GO' and not command.direction:
+            return self._handle_missing_parameter(
+                verb.lower(),
+                "a direction to go",
+                ["go north", "go south", "go up", "go down"],
+                state
+            )
+
+        # Check for invalid preposition usage
+        if verb == 'TAKE' and command.preposition and command.preposition not in ['FROM']:
+            return self._handle_incorrect_usage(
+                f'take {command.preposition.lower()}',
+                'TAKE <object> [FROM <container>]',
+                'take key, take sword from chest'
+            )
+
+        # Check for GIVE without target
+        if verb == 'GIVE' and not command.target:
+            return self._handle_missing_parameter(
+                verb.lower(),
+                "someone to give the object to",
+                ["give lantern to thief", "give leaflet to ghost"],
+                state
+            )
+
+        # Check for TURN without object
+        if verb == 'TURN' and not command.object and not command.direction:
+            return self._handle_missing_parameter(
+                verb.lower(),
+                "something to turn or a direction",
+                ["turn dial", "turn wheel", "turn left", "turn right"],
+                state
+            )
+
+        # Check for LOOK with invalid structure
+        if verb == 'LOOK' and command.preposition:
+            valid_look_preps = ['IN', 'INSIDE', 'UNDER', 'BEHIND', 'AT', 'ON']
+            if command.preposition not in valid_look_preps:
+                return self._handle_incorrect_usage(
+                    f'look {command.preposition.lower()}',
+                    'LOOK [IN/INSIDE/UNDER/BEHIND/AT/ON] <object>',
+                    'look in chest, look under table, look at painting'
+                )
+
+        return None
+
+    def _get_usage_examples(self, verb: str) -> List[str]:
+        """Get usage examples for a given verb."""
+        examples = {
+            'TAKE': ['take lantern', 'get sword', 'take key from chest'],
+            'DROP': ['drop lantern', 'put down sword'],
+            'EXAMINE': ['examine table', 'look at painting', 'check door'],
+            'OPEN': ['open door', 'open chest'],
+            'CLOSE': ['close door', 'shut chest'],
+            'READ': ['read parchment', 'read sign'],
+            'LOCK': ['lock door with key'],
+            'UNLOCK': ['unlock door with key'],
+            'TURN': ['turn dial', 'turn wheel', 'rotate crank'],
+            'PUSH': ['push button', 'push stone'],
+            'PULL': ['pull lever', 'pull rope'],
+            'TIE': ['tie rope to post'],
+            'UNTIE': ['untie rope'],
+            'FILL': ['fill bottle with water'],
+            'POUR': ['pour water on plant'],
+            'BURN': ['burn paper with torch'],
+            'CUT': ['cut rope with knife'],
+            'DIG': ['dig with shovel'],
+            'INFLATE': ['inflate boat'],
+            'DEFLATE': ['deflate boat'],
+            'WAVE': ['wave wand'],
+            'RUB': ['rub lamp', 'touch statue'],
+            'SHAKE': ['shake tree'],
+            'SQUEEZE': ['squeeze sponge'],
+            'ATTACK': ['attack goblin with sword'],
+            'THROW': ['throw rock at window'],
+            'GIVE': ['give coin to merchant'],
+            'TELL': ['tell ghost about treasure'],
+            'ASK': ['ask wizard about spell'],
+            'WAKE': ['wake sleeping guard'],
+            'KISS': ['kiss princess'],
+            'BOARD': ['board boat'],
+            'ENTER': ['enter house', 'go inside'],
+            'CLIMB': ['climb ladder', 'climb up']
+        }
+        return examples.get(verb, [f'{verb.lower()} <object>'])
+
     def _handle_incorrect_usage(
         self,
         verb: str,
@@ -6107,31 +6427,93 @@ class GameEngine:
         self,
         verb: str,
         missing_param: str,
-        examples: Optional[List[str]] = None
+        examples: Optional[List[str]] = None,
+        state: Optional[GameState] = None
     ) -> ActionResult:
         """
-        Handle commands with missing parameters.
-        
-        Prompts for missing information and guides the player
-        to complete the command correctly.
-        
+        Handle commands with missing parameters with enhanced guidance.
+
+        Prompts for missing information with context-aware suggestions
+        and interactive guidance to help complete the command correctly.
+
         Args:
             verb: The verb being used
             missing_param: Description of what's missing
             examples: Optional list of example commands
-            
+            state: Optional game state for context-aware suggestions
+
         Returns:
-            ActionResult with prompt for missing information
-            
+            ActionResult with enhanced prompt for missing information
+
         Requirements: 9.5
         """
-        message = f"What do you want to {verb.lower()} {missing_param}?"
-        
+        # Create contextual prompt based on verb type
+        verb_lower = verb.lower()
+
+        if verb_lower in ['take', 'get', 'carry', 'pick up']:
+            message = f"What would you like to {verb_lower}?"
+        elif verb_lower in ['examine', 'look at', 'check', 'search']:
+            message = f"What catches your eye in the gloom?"
+        elif verb_lower in ['open', 'unlock', 'break']:
+            message = f"What do you seek to {verb_lower}?"
+        elif verb_lower in ['give', 'offer', 'show']:
+            message = f"What do you wish to {verb_lower}, and to whom?"
+        elif verb_lower in ['put', 'place', 'set']:
+            message = f"Where do you intend to {verb_lower} it?"
+        elif verb_lower in ['turn', 'rotate', 'move']:
+            message = f"What mysterious mechanism calls to you?"
+        elif verb_lower in ['attack', 'hit', 'strike']:
+            message = f"What stirs your anger in this haunted place?"
+        else:
+            message = f"What do you want to {verb_lower} {missing_param}?"
+
+        # Add context-aware suggestions if we have game state
+        if state:
+            try:
+                current_room = self.world.get_room(state.current_room)
+
+                # Suggest visible objects
+                if current_room.items and verb_lower in ['take', 'examine', 'open']:
+                    visible_items = current_room.items[:3]  # Limit to 3
+                    message += f"\n\nYou can see: {', '.join(visible_items)}"
+
+                # Suggest inventory items for certain verbs
+                if state.inventory and verb_lower in ['drop', 'give', 'put']:
+                    inv_items = state.inventory[:3]
+                    message += f"\n\nYou carry: {', '.join(inv_items)}"
+
+            except Exception:
+                # If we can't get context, continue without it
+                pass
+
+        # Add haunted atmosphere
+        haunted_intros = [
+            "The shadows wait patiently...",
+            "Your voice echoes slightly in the still air.",
+            "Even the dust seems to hold its breath.",
+            "The house listens to your every word.",
+            "Something stirs just beyond your sight."
+        ]
+
+        # Randomly add atmosphere for certain verbs
+        import random
+        if verb_lower in ['examine', 'search', 'listen'] and random.random() < 0.3:
+            message += f"\n\n{random.choice(haunted_intros)}"
+
+        # Add examples if provided
         if examples:
-            message += "\n\nExamples:"
-            for example in examples:
+            message += "\n\nFor example:"
+            for example in examples[:3]:  # Limit to 3 examples
                 message += f"\n  • {example}"
-        
+
+        # Add helpful hint
+        if verb_lower in ['go', 'move']:
+            message += "\n\nTry: north, south, east, west, up, down, in, out"
+        elif verb_lower in ['inventory', 'i']:
+            message += "\n\nJust type 'inventory' or 'i' to see what you carry."
+        elif verb_lower in ['look']:
+            message += "\n\nType 'look' for a detailed description of your surroundings."
+
         return ActionResult(
             success=False,
             message=message
@@ -6242,6 +6624,17 @@ class GameEngine:
         if disambiguation_result:
             return disambiguation_result
         
+        # Validate command syntax and provide usage guidance
+        syntax_validation = self._validate_command_syntax(command, state)
+        if syntax_validation:
+            return syntax_validation
+
+        # Validate objects exist and provide enhanced missing object messages
+        if command.object and self._should_validate_object(command.verb):
+            resolved_object = self.resolve_object_name(command.object, state)
+            if not resolved_object:
+                return self._handle_missing_object(command.object, state, command.verb)
+
         # Check prerequisites
         prerequisite_result = self.check_prerequisites(command.verb, command.object, state)
         if prerequisite_result:

@@ -431,54 +431,54 @@
   - **Property 34: Echo repeats input**
   - **Validates: Requirements 8.7**
 
-- [-] 11. Enhance error handling and feedback
+- [x] 11. Enhance error handling and feedback
 - [x] 11.1 Improve unimplemented command messages
   - Update execute_command to provide specific messages
   - Indicate command is recognized but not yet available
   - Suggest alternative commands
   - _Requirements: 9.1_
 
-- [ ] 11.2 Write property test for unimplemented messages
+- [x] 11.2 Write property test for unimplemented messages
   - **Property 35: Unimplemented command messages**
   - **Validates: Requirements 9.1**
 
-- [ ] 11.3 Add incorrect usage guidance
+- [x] 11.3 Add incorrect usage guidance
   - Detect common syntax errors
   - Provide usage examples
   - Suggest correct syntax
   - _Requirements: 9.2_
 
-- [ ] 11.4 Write property test for usage guidance
+- [x] 11.4 Write property test for usage guidance
   - **Property 36: Incorrect usage guidance**
   - **Validates: Requirements 9.2**
 
-- [ ] 11.5 Improve missing object messages
+- [x] 11.5 Improve missing object messages
   - Clearly state object not present
   - Check both room and inventory
   - Suggest looking around
   - _Requirements: 9.3_
 
-- [ ] 11.6 Write property test for missing object messages
+- [x] 11.6 Write property test for missing object messages
   - **Property 37: Missing object messages**
   - **Validates: Requirements 9.3**
 
-- [ ] 11.7 Add impossible action explanations
+- [x] 11.7 Add impossible action explanations
   - Explain why action cannot be done
   - Provide hints when appropriate
   - Maintain immersion
   - _Requirements: 9.4_
 
-- [ ] 11.8 Write property test for impossible action explanations
+- [x] 11.8 Write property test for impossible action explanations
   - **Property 38: Impossible action explanations**
   - **Validates: Requirements 9.4**
 
-- [ ] 11.9 Add missing parameter prompts
+- [x] 11.9 Add missing parameter prompts
   - Detect incomplete commands
   - Prompt for missing objects
   - Guide player to complete command
   - _Requirements: 9.5_
 
-- [ ] 11.10 Write property test for missing parameter prompts
+- [x] 11.10 Write property test for missing parameter prompts
   - **Property 39: Missing parameter prompts**
   - **Validates: Requirements 9.5**
 
@@ -563,55 +563,60 @@
   - **Property 47: Multi-object handling**
   - **Validates: Requirements 11.5**
 
-- [ ] 14. Ensure haunted theme consistency across all commands
-- [ ] 14.1 Review all command responses for theme
+- [-] 14. Ensure haunted theme consistency across all commands
+- [-] 14.1 Review all command responses for haunted narrative
   - Audit all response messages
-  - Ensure spooky/haunted language
-  - Update any generic messages
+  - Replace original Zork descriptions with haunted theme equivalents
+  - Ensure spooky/haunted language in all text
+  - Update any generic messages to use haunted vocabulary
   - _Requirements: 12.1_
 
-- [ ] 14.2 Write property test for spooky theme consistency
-  - **Property 48: Spooky theme consistency**
+- [ ] 14.2 Write property test for spooky narrative consistency
+  - **Property 48: Spooky narrative consistency**
   - **Validates: Requirements 12.1**
 
-- [ ] 14.3 Add sanity effects to appropriate commands
-  - Identify commands that should affect sanity
-  - Add sanity changes to command handlers
-  - Test sanity mechanics
+- [ ] 14.3 Update object references to use haunted titles
+  - Review all commands that reference objects
+  - Ensure haunted theme object titles are used
+  - Update object descriptions to haunted equivalents
+  - Test object name consistency
   - _Requirements: 12.2_
 
-- [ ] 14.4 Write property test for sanity effects
-  - **Property 49: Sanity effects application**
+- [ ] 14.4 Write property test for haunted object titles
+  - **Property 49: Haunted object title usage**
   - **Validates: Requirements 12.2**
 
-- [ ] 14.5 Add supernatural event descriptions
-  - Identify commands that trigger supernatural events
-  - Write thematic descriptions
-  - Test event triggers
+- [ ] 14.5 Update room descriptions to haunted theme
+  - Review all commands that display room information
+  - Replace original room descriptions with spooky versions
+  - Ensure consistency with room data JSON
+  - Test room description display
   - _Requirements: 12.3_
 
-- [ ] 14.6 Write property test for supernatural descriptions
-  - **Property 50: Supernatural event descriptions**
+- [ ] 14.6 Write property test for spooky room descriptions
+  - **Property 50: Spooky room descriptions**
   - **Validates: Requirements 12.3**
 
-- [ ] 14.7 Add curse effect handling
-  - Identify commands that interact with cursed objects
-  - Implement curse effects
-  - Test curse mechanics
+- [ ] 14.7 Ensure haunted vocabulary in feedback messages
+  - Review all command feedback messages
+  - Replace generic terms with haunted theme vocabulary
+  - Maintain consistent tone across all messages
+  - Test vocabulary consistency
   - _Requirements: 12.4_
 
-- [ ] 14.8 Write property test for curse effects
-  - **Property 51: Curse effect application**
+- [ ] 14.8 Write property test for haunted vocabulary
+  - **Property 51: Haunted vocabulary consistency**
   - **Validates: Requirements 12.4**
 
-- [ ] 14.9 Enhance darkness atmosphere
-  - Review darkness descriptions
-  - Emphasize horror atmosphere
-  - Test darkness responses
+- [ ] 14.9 Update game element terminology
+  - Review all references to game elements (items, locations, actions)
+  - Replace with haunted theme terminology
+  - Ensure consistency across all commands
+  - Test terminology usage
   - _Requirements: 12.5_
 
-- [ ] 14.10 Write property test for darkness atmosphere
-  - **Property 52: Darkness atmosphere**
+- [ ] 14.10 Write property test for haunted terminology
+  - **Property 52: Haunted terminology consistency**
   - **Validates: Requirements 12.5**
 
 - [ ] 15. Final checkpoint - Ensure all tests pass

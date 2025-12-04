@@ -35,6 +35,12 @@ def game_engine(world_data):
     return GameEngine(world_data)
 
 
+@pytest.fixture
+def fresh_state(world_data):
+    """Create a fresh game state for each test."""
+    return GameState.create_new_game()
+
+
 # Custom strategies for generating test data
 @st.composite
 def valid_room_and_direction(draw, world_data):
@@ -1787,3 +1793,294 @@ def test_push_pull_twice_fails_second_time(data):
         # Should have appropriate error message
         assert "already" in result2.message.lower(), \
             "Error message should indicate object has already been pulled"
+
+
+# Feature: game-backend-api, Property 36: Incorrect usage guidance
+@settings(max_examples=100)
+@given(
+    verb=st.sampled_from(['TAKE', 'DROP', 'EXAMINE', 'OPEN', 'CLOSE', 'GIVE', 'GO', 'TURN']),
+    missing_elements=st.lists(st.sampled_from(['object', 'direction', 'target']), min_size=1, max_size=3)
+)
+def test_incorrect_usage_guidance(game_engine, fresh_state, verb, missing_elements):
+    """
+    For any command missing required elements, the system should provide specific usage guidance.
+
+    **Validates: Requirements 9.2**
+
+    This property ensures that when players use commands incorrectly or omit required
+    parameters, they receive helpful guidance on correct syntax rather than generic errors.
+    """
+    # Create a command with missing required elements
+    if verb == 'GO' and 'direction' in missing_elements:
+        command = ParsedCommand(verb='GO', direction=None)
+    elif verb in ['TAKE', 'DROP', 'EXAMINE', 'OPEN', 'CLOSE'] and 'object' in missing_elements:
+        command = ParsedCommand(verb=verb, object=None)
+    elif verb == 'GIVE' and 'target' in missing_elements:
+        command = ParsedCommand(verb='GIVE', object='lantern', target=None)
+    elif verb == 'TURN' and ('object' in missing_elements and 'direction' in missing_elements):
+        command = ParsedCommand(verb='TURN', object=None, direction=None)
+    else:
+        # Skip invalid combinations
+        assume(False)
+
+    # Execute the command
+    result = game_engine.execute_command(command, fresh_state)
+
+    # Should fail due to missing elements
+    assert result.success is False, \
+        f"Command '{verb}' with missing elements should fail"
+
+    # Should provide specific guidance
+    assert len(result.message) > 20, \
+        "Error message should be detailed and provide guidance"
+
+    # Should include usage information
+    message_lower = result.message.lower()
+    assert any(keyword in message_lower for keyword in ['usage', 'example', 'try:', 'what', 'who', 'where']), \
+        f"Error message should include guidance keywords. Got: {result.message}"
+
+    # Should not be a generic "I don't understand" message
+    assert "don't understand" not in message_lower, \
+        "Should provide specific usage guidance, not generic confusion"
+
+    # For verb-specific tests, check verb appears in guidance
+    if verb != 'GO':  # GO might be handled differently
+        assert verb.lower() in message_lower or any(word in message_lower for word in ['object', 'direction', 'target']), \
+            "Guidance should be relevant to the command type"
+
+
+# Feature: game-backend-api, Property 37: Missing object messages
+@settings(max_examples=100)
+@given(
+    verb=st.sampled_from(['TAKE', 'EXAMINE', 'OPEN', 'DROP', 'READ', 'PUSH', 'PULL']),
+    object_name=st.text(min_size=1, max_size=20)
+)
+def test_missing_object_messages(game_engine, fresh_state, verb, object_name):
+    """
+    For any command referencing a missing object, the system should provide clear, helpful messages.
+
+    **Validates: Requirements 9.3**
+
+    This property ensures that when players try to interact with objects that don't exist
+    or aren't present, they receive clear feedback with contextual suggestions.
+    """
+    # Ensure object doesn't exist in current room or inventory
+    assume(object_name.lower() not in [item.lower() for item in fresh_state.inventory])
+
+    # Get current room
+    current_room = game_engine.world.get_room(fresh_state.current_room)
+    assume(object_name.lower() not in [item.lower() for item in current_room.items])
+
+    # Create command for missing object
+    command = ParsedCommand(verb=verb, object=object_name)
+
+    # Execute the command
+    result = game_engine.execute_command(command, fresh_state)
+
+    # Should fail due to missing object
+    assert result.success is False, \
+        f"Command '{verb} {object_name}' should fail when object doesn't exist"
+
+    # Should provide clear error message
+    assert len(result.message) > 20, \
+        "Error message should be detailed and helpful"
+
+    message_lower = result.message.lower()
+
+    # Should indicate the problem clearly
+    assert any(phrase in message_lower for phrase in [
+        "don't see", "don't know", "not here", "can't find", "no.*here"
+    ]), f"Message should clearly state object is missing. Got: {result.message}"
+
+    # Should provide helpful suggestions
+    assert any(keyword in message_lower for keyword in [
+        'try', 'look', 'inventory', 'examine', 'check', 'around'
+    ]), f"Message should include helpful suggestions. Got: {result.message}"
+
+    # Should be contextual to the verb
+    if verb.lower() in ['take', 'get', 'carry']:
+        assert any(keyword in message_lower for keyword in ['take', 'carry', 'get']) or \
+               'inventory' in message_lower, \
+               "TAKE commands should suggest inventory or takable items"
+    elif verb.lower() in ['examine', 'look', 'check']:
+        assert any(keyword in message_lower for keyword in ['examine', 'look', 'see']) or \
+               'around' in message_lower, \
+               "EXAMINE commands should suggest looking around"
+    elif verb.lower() in ['open', 'close']:
+        assert any(keyword in message_lower for keyword in ['open', 'container']) or \
+               'try' in message_lower, \
+               "OPEN commands should suggest openable objects"
+
+    # Should maintain haunted atmosphere
+    haunted_words = ['shadow', 'dark', 'strange', 'eerie', 'haunted', 'mysterious']
+    is_haunted = any(word in message_lower for word in haunted_words)
+
+    # Not all messages need to be haunted, but some atmospheric elements help
+    if len(current_room.items) == 0:  # Empty rooms should have atmosphere
+        assert is_haunted or any(word in message_lower for word in ['empty', 'nothing', 'void']), \
+            "Empty room messages should have atmospheric elements"
+
+
+# Feature: game-backend-api, Property 38: Impossible action explanations
+@settings(max_examples=100)
+@given(
+    verb=st.sampled_from(['OPEN', 'LOCK', 'PUSH', 'PULL', 'TAKE', 'ATTACK']),
+    reason=st.sampled_from([
+        'it is locked tight',
+        'it is too heavy',
+        'you can\'t see anything in the darkness',
+        'it is bolted to the wall',
+        'it is sealed by magic',
+        'it is out of reach'
+    ])
+)
+def test_impossible_action_explanations(game_engine, fresh_state, verb, reason):
+    """
+    For any impossible action, the system should provide clear explanations and hints.
+
+    **Validates: Requirements 9.4**
+
+    This property ensures that when players attempt actions that cannot be performed,
+    they receive thematic explanations of why the action fails and sometimes hints
+    for how they might succeed.
+    """
+    # Test the impossible action handler directly
+    action_description = f"{verb.lower()} the mysterious object"
+
+    result = game_engine._handle_impossible_action(
+        action=action_description,
+        reason=reason,
+        object_id="mysterious_object",
+        state=fresh_state
+    )
+
+    # Should fail as expected
+    assert result.success is False, \
+        "Impossible action should return failure result"
+
+    # Should provide clear explanation
+    assert len(result.message) > 20, \
+        "Impossible action message should be detailed"
+
+    message_lower = result.message.lower()
+
+    # Should indicate the action cannot be done
+    assert any(phrase in message_lower for phrase in [
+        "can't", "cannot", "unable", "impossible", "sealed", "blocked"
+    ]), f"Message should clearly state action is impossible. Got: {result.message}"
+
+    # Should be thematic to the reason
+    if "locked" in reason.lower():
+        assert any(word in message_lower for word in ['lock', 'key', 'sealed', 'tight']), \
+            "Locked objects should mention locks or keys"
+    elif "heavy" in reason.lower():
+        assert any(word in message_lower for word in ['heavy', 'weight', 'strength', 'move']), \
+            "Heavy objects should mention weight or strength"
+    elif "darkness" in reason.lower() or "see" in reason.lower():
+        assert any(word in message_lower for word in ['dark', 'gloom', 'blind', 'shadows', 'see']), \
+            "Darkness should mention visibility issues"
+
+    # Should maintain haunted atmosphere
+    haunted_words = ['shadow', 'dark', 'strange', 'eerie', 'haunted', 'mystery', 'spirits']
+    is_haunted = any(word in message_lower for word in haunted_words)
+
+    # Low sanity should enhance the atmosphere
+    if fresh_state.sanity < 30:
+        assert is_haunted or any(word in message_lower for word in ['whisper', 'mock', 'laugh', 'walls']), \
+            "Low sanity should add more atmospheric elements"
+
+    # Should provide some form of guidance or hint
+    assert any(keyword in message_lower for keyword in [
+        'perhaps', 'might', 'maybe', 'try', 'could', 'suggest', 'hint'
+    ]) or len(result.message.split('\n')) > 1, \
+        "Impossible actions should provide some guidance or context"
+
+    # Should not be a generic message
+    assert "I don't understand" not in message_lower, \
+        "Should not use generic 'I don't understand' message"
+
+
+# Feature: game-backend-api, Property 39: Missing parameter prompts
+@settings(max_examples=100)
+@given(
+    verb=st.sampled_from(['TAKE', 'DROP', 'EXAMINE', 'GIVE', 'PUT', 'TURN']),
+    missing_element=st.sampled_from(['object', 'target', 'direction'])
+)
+def test_missing_parameter_prompts(game_engine, fresh_state, verb, missing_element):
+    """
+    For any command missing required parameters, the system should prompt for missing information.
+
+    **Validates: Requirements 9.5**
+
+    This property ensures that when players enter incomplete commands,
+    they receive clear prompts for the missing information with helpful examples.
+    """
+    # Create command with missing element
+    if missing_element == 'object':
+        command = ParsedCommand(verb=verb, object=None)
+    elif missing_element == 'target' and verb == 'GIVE':
+        command = ParsedCommand(verb=verb, object='lantern', target=None)
+    elif missing_element == 'direction' and verb == 'GO':
+        command = ParsedCommand(verb=verb, direction=None)
+    else:
+        # Skip invalid combinations
+        assume(False)
+
+    # Test the missing parameter handler
+    if missing_element == 'object':
+        result = game_engine._handle_missing_parameter(
+            verb.lower(),
+            f"an object to {verb.lower()}",
+            None,  # No examples for this test
+            fresh_state
+        )
+    elif missing_element == 'target':
+        result = game_engine._handle_missing_parameter(
+            verb.lower(),
+            "someone to give the object to",
+            None,
+            fresh_state
+        )
+    else:  # direction
+        result = game_engine._handle_missing_parameter(
+            verb.lower(),
+            "a direction to go",
+            None,
+            fresh_state
+        )
+
+    # Should fail due to missing parameter
+    assert result.success is False, \
+        "Missing parameter should return failure result"
+
+    # Should prompt for missing information
+    assert len(result.message) > 10, \
+        "Missing parameter message should be substantial"
+
+    message_lower = result.message.lower()
+
+    # Should ask a question or make a request
+    assert any(char in message for char in ['?', '.']) and \
+           any(keyword in message_lower for keyword in [
+               'what', 'which', 'where', 'who', 'how', 'would you', 'do you'
+           ]), \
+        f"Should prompt for missing information. Got: {result.message}"
+
+    # Should be contextually appropriate to the verb
+    if verb.lower() in ['take', 'get', 'carry']:
+        assert any(keyword in message_lower for keyword in ['take', 'like', 'want']), \
+            "TAKE commands should ask what to take"
+    elif verb.lower() in ['examine', 'look']:
+        assert any(keyword in message_lower for keyword in ['eye', 'gloom', 'see', 'look']), \
+            "EXAMINE commands should have visual context"
+    elif verb.lower() in ['give', 'offer']:
+        assert any(keyword in message_lower for keyword in ['give', 'wish', 'whom']), \
+            "GIVE commands should ask about recipient"
+
+    # Should maintain haunted atmosphere (optional but nice to have)
+    atmospheric_words = ['shadows', 'gloom', 'haunted', 'mystery', 'strange']
+    has_atmosphere = any(word in message_lower for word in atmospheric_words)
+
+    # Should not be generic
+    assert "error" not in message_lower and "invalid" not in message_lower, \
+        "Should use natural language, not technical error terms"

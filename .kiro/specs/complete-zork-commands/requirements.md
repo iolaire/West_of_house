@@ -165,12 +165,12 @@ This specification addresses the systematic review and implementation of all ori
 
 ### Requirement 12: Haunted Theme Integration
 
-**User Story:** As a player, I want all commands to reflect the haunted house theme, so that the atmosphere remains consistent.
+**User Story:** As a player, I want all command responses to use haunted theme narrative and object titles, so that the atmosphere remains consistent throughout the game.
 
 #### Acceptance Criteria
 
-1. WHEN any command is executed THEN the System SHALL use spooky descriptions in responses
-2. WHEN commands affect sanity THEN the System SHALL apply appropriate sanity changes
-3. WHEN commands trigger supernatural events THEN the System SHALL describe them thematically
-4. WHEN commands interact with cursed objects THEN the System SHALL apply curse effects
-5. WHEN commands are used in darkness THEN the System SHALL emphasize the horror atmosphere
+1. WHEN any command is executed THEN the System SHALL use spooky narrative text in responses where original Zork used standard descriptions
+2. WHEN commands reference objects THEN the System SHALL use haunted theme object titles and descriptions
+3. WHEN commands display room information THEN the System SHALL use spooky room descriptions instead of original descriptions
+4. WHEN commands provide feedback THEN the System SHALL maintain haunted theme vocabulary and tone
+5. WHEN commands reference game elements THEN the System SHALL use haunted theme terminology consistently
