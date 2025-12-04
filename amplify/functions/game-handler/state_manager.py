@@ -52,6 +52,7 @@ class GameState:
     lamp_battery: int = 200
     lucky: bool = False
     thief_here: bool = False
+    won_flag: bool = False
     
     # Session metadata
     created_at: Optional[str] = None
@@ -161,7 +162,9 @@ class GameState:
         """
         Deserialize game state from a dictionary.
         
-        Converts lists back to sets where appropriate.
+        Converts lists back to sets where appropriate and handles field name mapping
+        from DynamoDB camelCase to Python snake_case. Filters out GraphQL metadata
+        fields like __typename.
         
         Args:
             data: Dictionary containing game state data
@@ -169,11 +172,41 @@ class GameState:
         Returns:
             GameState instance
         """
-        # Convert rooms_visited list back to set
-        if 'rooms_visited' in data and isinstance(data['rooms_visited'], list):
-            data['rooms_visited'] = set(data['rooms_visited'])
+        # Map DynamoDB camelCase field names to Python snake_case
+        field_mapping = {
+            'sessionId': 'session_id',
+            'currentRoom': 'current_room',
+            'currentVehicle': 'current_vehicle',
+            'roomsVisited': 'rooms_visited',
+            'turnCount': 'turn_count',
+            'bloodMoonActive': 'blood_moon_active',
+            'soulsCollected': 'souls_collected',
+            'curseDuration': 'curse_duration',
+            'lampBattery': 'lamp_battery',
+            'thiefHere': 'thief_here',
+            'wonFlag': 'won_flag',
+            'createdAt': 'created_at',
+            'lastAccessed': 'last_accessed',
+        }
         
-        return cls(**data)
+        # Define fields to skip (GraphQL auto-generated fields)
+        skip_fields = {'__typename', 'id', 'updatedAt'}
+        
+        # Create new dict with mapped field names, filtering out GraphQL metadata
+        mapped_data = {}
+        for key, value in data.items():
+            # Skip GraphQL metadata and auto-generated fields
+            if key in skip_fields or key.startswith('__'):
+                continue
+            # Use mapped name if available, otherwise use original
+            mapped_key = field_mapping.get(key, key)
+            mapped_data[mapped_key] = value
+        
+        # Convert rooms_visited list back to set
+        if 'rooms_visited' in mapped_data and isinstance(mapped_data['rooms_visited'], list):
+            mapped_data['rooms_visited'] = set(mapped_data['rooms_visited'])
+        
+        return cls(**mapped_data)
     
     def to_json(self) -> str:
         """
@@ -232,6 +265,7 @@ class GameState:
             lamp_battery=200,
             lucky=False,
             thief_here=False,
+            won_flag=False,
             created_at=now.isoformat(),
             last_accessed=now.isoformat(),
             expires=expires
