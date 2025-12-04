@@ -189,7 +189,7 @@ class GameState:
             'lastAccessed': 'last_accessed',
         }
         
-        # Define fields to skip (GraphQL auto-generated fields)
+        # Define fields to skip (GraphQL auto-generated fields and unmapped fields)
         skip_fields = {'__typename', 'id', 'updatedAt'}
         
         # Create new dict with mapped field names, filtering out GraphQL metadata

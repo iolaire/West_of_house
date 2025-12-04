@@ -53,6 +53,26 @@ class GameEngine:
         """
         self.world = world_data
     
+    def resolve_object_name(self, name: str, state: GameState) -> Optional[str]:
+        """
+        Resolve a flexible object name to an object ID.
+        
+        Searches in current room and inventory for objects matching the name.
+        
+        Args:
+            name: The name to resolve (e.g., "parchment", "cursed", "leaflet")
+            state: Current game state
+            
+        Returns:
+            Object ID if found, None otherwise
+        """
+        try:
+            current_room = self.world.get_room(state.current_room)
+            available_objects = list(current_room.items) + list(state.inventory)
+            return self.world.find_object_by_name(name, available_objects)
+        except Exception:
+            return None
+    
     def handle_enter(
         self,
         object_id: Optional[str],
@@ -1036,6 +1056,32 @@ class GameEngine:
             # Get object data
             game_object = self.world.get_object(object_id)
             
+            # Check current state before attempting action
+            if verb == "OPEN":
+                if game_object.state.get('is_open', False):
+                    return ActionResult(
+                        success=False,
+                        message=f"The {object_id} is already open."
+                    )
+            elif verb == "CLOSE":
+                if not game_object.state.get('is_open', True):
+                    return ActionResult(
+                        success=False,
+                        message=f"The {object_id} is already closed."
+                    )
+            elif verb == "LOCK":
+                if game_object.state.get('is_locked', False):
+                    return ActionResult(
+                        success=False,
+                        message=f"The {object_id} is already locked."
+                    )
+            elif verb == "UNLOCK":
+                if not game_object.state.get('is_locked', False):
+                    return ActionResult(
+                        success=False,
+                        message=f"The {object_id} is already unlocked."
+                    )
+            
             # Find matching interaction
             matching_interaction = None
             for interaction in game_object.interactions:
@@ -1304,7 +1350,7 @@ class GameEngine:
             # Check container capacity
             if container.capacity > 0:
                 # Calculate current contents size
-                contents = container.state.get('contents', [])
+                contents = container.contents
                 current_size = 0
                 for obj_id in contents:
                     try:
@@ -1436,7 +1482,7 @@ class GameEngine:
                 )
             
             # Check if object is in container
-            contents = container.state.get('contents', [])
+            contents = container.contents
             if object_id not in contents:
                 return ActionResult(
                     success=False,
@@ -1445,13 +1491,6 @@ class GameEngine:
             
             # Get object data
             game_object = self.world.get_object(object_id)
-            
-            # Check if object is takeable
-            if not game_object.is_takeable:
-                return ActionResult(
-                    success=False,
-                    message="You can't take that."
-                )
             
             # Find TAKE interaction for response message
             take_message = "Taken."
@@ -1476,7 +1515,7 @@ class GameEngine:
                     break
             
             # Remove from container
-            container.state['contents'].remove(object_id)
+            container.contents.remove(object_id)
             
             # Add to inventory
             state.add_to_inventory(object_id)
@@ -1562,7 +1601,7 @@ class GameEngine:
             
             # Build description with contents if visible
             if is_open or is_transparent:
-                contents = container.state.get('contents', [])
+                contents = container.contents
                 if contents:
                     contents_names = []
                     for obj_id in contents:
@@ -3001,7 +3040,7 @@ class GameEngine:
                 )
             
             # Get contents
-            contents = container.state.get('contents', [])
+            contents = container.contents
             
             if not contents:
                 return ActionResult(
@@ -3293,7 +3332,7 @@ class GameEngine:
         Returns "nothing to read" if the object is not readable.
         
         Args:
-            object_id: The object to read
+            object_id: The object to read (can be ID, name, or spooky name)
             state: Current game state
             
         Returns:
@@ -3302,21 +3341,16 @@ class GameEngine:
         Requirements: 4.5
         """
         try:
-            # Get current room
-            current_room = self.world.get_room(state.current_room)
-            
-            # Check if object is in current room or inventory
-            object_in_room = object_id in current_room.items
-            object_in_inventory = object_id in state.inventory
-            
-            if not object_in_room and not object_in_inventory:
+            # Resolve flexible object name
+            resolved_id = self.resolve_object_name(object_id, state)
+            if not resolved_id:
                 return ActionResult(
                     success=False,
                     message=f"You don't see any {object_id} here."
                 )
             
             # Get object data
-            game_object = self.world.get_object(object_id)
+            game_object = self.world.get_object(resolved_id)
             
             # Check if object has a READ interaction
             read_interaction = None

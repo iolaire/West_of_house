@@ -123,3 +123,5 @@ package.json
 
 #sandbox test should be excluded
 test-sandbox.mjs
+playwright-report/data/*.md
+test-results/*/error-context.md

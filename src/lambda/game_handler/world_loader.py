@@ -55,6 +55,7 @@ class GameObject:
     treasure_value: int = 0
     size: int = 1
     capacity: int = 0
+    contents: List[str] = field(default_factory=list)
     soul_value: int = 0
 
 
@@ -232,6 +233,7 @@ class WorldData:
                     treasure_value=object_dict.get('treasure_value', 0),
                     size=object_dict.get('size', 1),
                     capacity=object_dict.get('capacity', 0),
+                    contents=object_dict.get('contents', []),
                     soul_value=object_dict.get('soul_value', 0)
                 )
                 self.objects[object_id] = game_object
@@ -279,6 +281,76 @@ class WorldData:
             raise ValueError(f"Object not found: {object_id}")
         
         return self.objects[object_id]
+    
+    def find_object_by_name(self, name: str, available_objects: List[str]) -> Optional[str]:
+        """
+        Find object ID by flexible name matching.
+        
+        Matches against:
+        - Object ID (exact or partial)
+        - Display name (exact or partial)
+        - Spooky name (exact or partial)
+        
+        Args:
+            name: The name to search for (e.g., "parchment", "cursed", "leaflet")
+            available_objects: List of object IDs to search within
+            
+        Returns:
+            Object ID if found, None otherwise
+        """
+        if not self._loaded:
+            return None
+        
+        name_lower = name.lower().strip()
+        
+        # First pass: exact ID match
+        if name_lower in available_objects:
+            return name_lower
+        
+        # Second pass: check if name matches object ID, display name, or spooky name
+        for obj_id in available_objects:
+            if obj_id not in self.objects:
+                continue
+            
+            obj = self.objects[obj_id]
+            
+            # Check object ID (with underscores replaced by spaces)
+            if name_lower == obj_id.replace('_', ' '):
+                return obj_id
+            
+            # Check display name
+            if obj.name and name_lower == obj.name.lower():
+                return obj_id
+            
+            # Check spooky name
+            if obj.name_spooky and name_lower == obj.name_spooky.lower():
+                return obj_id
+        
+        # Third pass: partial matches (any word in the name)
+        for obj_id in available_objects:
+            if obj_id not in self.objects:
+                continue
+            
+            obj = self.objects[obj_id]
+            
+            # Check if name is a word in object ID
+            obj_id_words = obj_id.replace('_', ' ').lower().split()
+            if name_lower in obj_id_words:
+                return obj_id
+            
+            # Check if name is a word in display name
+            if obj.name:
+                name_words = obj.name.lower().split()
+                if name_lower in name_words:
+                    return obj_id
+            
+            # Check if name is a word in spooky name
+            if obj.name_spooky:
+                spooky_words = obj.name_spooky.lower().split()
+                if name_lower in spooky_words:
+                    return obj_id
+        
+        return None
     
     def get_room_description(self, room_id: str, sanity_level: int) -> str:
         """
