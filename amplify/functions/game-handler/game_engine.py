@@ -623,32 +623,27 @@ class GameEngine:
             if not object_id:
                 return self.handle_movement("IN", state)
 
-            # Resolve object name if not matching global/room items directly
-            # This handles cases like "window" -> "boarded_window"
+            # Check if object is directly in room, inventory, or global items
             current_room = self.world.get_room(state.current_room)
-            if object_id not in current_room.items and \
-               object_id not in state.inventory and \
-               object_id not in current_room.global_items:
+            is_direct_id = (object_id in current_room.items or 
+                            object_id in state.inventory or 
+                            object_id in current_room.global_items)
+            
+            # If not direct, try to resolve name (includes containers)
+            if not is_direct_id:
                 resolved_id = self.resolve_object_name(object_id, state)
                 if resolved_id:
                     object_id = resolved_id
+                else:
+                    return ActionResult(
+                        success=False,
+                        message=f"You don't see any {object_id} here.",
+                        room_changed=False
+                    )
             
-            # Get current room
+            # At this point, object_id is valid and accessible
+            # Get current room (refresh not needed but kept for safety if needed later)
             current_room = self.world.get_room(state.current_room)
-            
-            # Check if object is in current room, inventory, or global items
-            object_in_room = object_id in current_room.items
-            object_in_inventory = object_id in state.inventory
-            object_is_global = object_id in current_room.global_items
-            
-            if not object_in_room and not object_in_inventory and not object_is_global:
-                display_name = self._get_object_names(object_id)
-                return ActionResult(
-                    success=False,
-                    message=f"You don't see any {display_name} here.",
-                    room_changed=False
-                )
-            
             # Get object data
             game_object = self.world.get_object(object_id)
             

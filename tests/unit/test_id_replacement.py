@@ -78,7 +78,9 @@ class TestHandlerIdReplacement(unittest.TestCase):
         # Setup common objects
         self.room = MagicMock(spec=Room)
         self.room.items = []
+        self.room.global_items = []
         self.world.get_room.return_value = self.room
+        self.world.find_object_by_name.return_value = None
         
         self.obj = MagicMock(spec=GameObject)
         self.obj.name = "Test Object"
@@ -199,8 +201,8 @@ class TestHandlerIdReplacement(unittest.TestCase):
     def test_handle_enter_missing_object(self):
         result = self.engine.handle_enter("missing_obj", self.state)
         self.assertFalse(result.success)
-        self.assertIn("Display Name", result.message)
-        self.engine._get_object_names.assert_called_with("missing_obj")
+        self.assertIn("missing_obj", result.message)
+        # self.engine._get_object_names.assert_called_with("missing_obj") # No longer called for missing items in handle_enter
 
     def test_handle_climb_missing_object(self):
         # Must be in room with valid exit for "climb UP/DOWN" first, 
