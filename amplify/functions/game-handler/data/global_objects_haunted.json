@@ -112,7 +112,9 @@
     "kitchen_window": {
         "name": "broken window",
         "type": "door",
-        "state": {},
+        "state": {
+            "is_open": false
+        },
         "interactions": [
             {
                 "verb": "EXAMINE",

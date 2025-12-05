@@ -2043,47 +2043,60 @@ class GameEngine:
             # Get current room
             current_room = self.world.get_room(state.current_room)
             
-            # Check if object is in current room or inventory
+            # Check if object is in current room, inventory, or global items
             object_in_room = object_id in current_room.items
+            object_in_global = object_id in current_room.global_items
             object_in_inventory = object_id in state.inventory
             
-            if not object_in_room and not object_in_inventory:
+            if not object_in_room and not object_in_inventory and not object_in_global:
+                # Try to get object name for better error message
+                try:
+                    obj = self.world.get_object(object_id)
+                    display_name = obj.name
+                except ValueError:
+                    display_name = object_id
+
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Get object data
             game_object = self.world.get_object(object_id)
             
             # Check current state before attempting action
+            # Check current state before attempting action
             if verb == "OPEN":
                 is_open = state.get_object_state(object_id, 'is_open', game_object.state.get('is_open', False))
                 if is_open:
+                    display_name = self._get_object_names(object_id)
                     return ActionResult(
                         success=False,
-                        message=f"The {object_id} is already open."
+                        message=f"The {display_name} is already open."
                     )
             elif verb == "CLOSE":
                 is_open = state.get_object_state(object_id, 'is_open', game_object.state.get('is_open', False))
                 if not is_open:
+                    display_name = self._get_object_names(object_id)
                     return ActionResult(
                         success=False,
-                        message=f"The {object_id} is already closed."
+                        message=f"The {display_name} is already closed."
                     )
             elif verb == "LOCK":
                 is_locked = state.get_object_state(object_id, 'is_locked', game_object.state.get('is_locked', False))
                 if is_locked:
+                    display_name = self._get_object_names(object_id)
                     return ActionResult(
                         success=False,
-                        message=f"The {object_id} is already locked."
+                        message=f"The {display_name} is already locked."
                     )
             elif verb == "UNLOCK":
                 is_locked = state.get_object_state(object_id, 'is_locked', game_object.state.get('is_locked', False))
                 if not is_locked:
+                    display_name = self._get_object_names(object_id)
                     return ActionResult(
                         success=False,
-                        message=f"The {object_id} is already unlocked."
+                        message=f"The {display_name} is already unlocked."
                     )
             
             # Find matching interaction
@@ -2363,9 +2376,11 @@ class GameEngine:
             container_in_inventory = container_id in state.inventory
             
             if not container_in_room and not container_in_inventory:
+                # Try to get object name for better error message
+                display_name = self._get_object_names(container_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {container_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Get container object
@@ -2930,16 +2945,18 @@ class GameEngine:
             object_in_inventory = object_id in state.inventory
             
             if not object_in_room and not object_in_inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Check if key is in inventory
             if key_id not in state.inventory:
+                display_name = self._get_object_names(key_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't have the {key_id}."
+                    message=f"You don't have the {display_name}."
                 )
             
             # Get object and key data
@@ -2950,27 +2967,30 @@ class GameEngine:
             is_lockable = game_object.state.get('is_lockable', False)
             
             if not is_lockable:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {object_id} cannot be locked."
+                    message=f"The {display_name} cannot be locked."
                 )
             
             # Check if object is already locked
             is_locked = game_object.state.get('is_locked', False)
             
             if is_locked:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {object_id} is already locked."
+                    message=f"The {display_name} is already locked."
                 )
             
             # Check if key matches the lock
             required_key = game_object.state.get('required_key', None)
             
             if required_key and required_key != key_id:
+                key_name = self._get_object_names(key_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {key_id} doesn't fit the lock."
+                    message=f"The {key_name} doesn't fit the lock."
                 )
             
             # Lock the object
@@ -2995,9 +3015,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -3036,16 +3057,18 @@ class GameEngine:
             object_in_inventory = object_id in state.inventory
             
             if not object_in_room and not object_in_inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Check if key is in inventory
             if key_id not in state.inventory:
+                display_name = self._get_object_names(key_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't have the {key_id}."
+                    message=f"You don't have the {display_name}."
                 )
             
             # Get object and key data
@@ -3056,27 +3079,30 @@ class GameEngine:
             is_lockable = game_object.state.get('is_lockable', False)
             
             if not is_lockable:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {object_id} cannot be unlocked."
+                    message=f"The {display_name} cannot be unlocked."
                 )
             
             # Check if object is already unlocked
             is_locked = game_object.state.get('is_locked', False)
             
             if not is_locked:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {object_id} is already unlocked."
+                    message=f"The {display_name} is already unlocked."
                 )
             
             # Check if key matches the lock
             required_key = game_object.state.get('required_key', None)
             
             if required_key and required_key != key_id:
+                key_name = self._get_object_names(key_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {key_id} doesn't fit the lock."
+                    message=f"The {key_name} doesn't fit the lock."
                 )
             
             # Unlock the object
@@ -3101,9 +3127,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -3140,9 +3167,10 @@ class GameEngine:
             object_in_inventory = object_id in state.inventory
             
             if not object_in_room and not object_in_inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Get object data
@@ -3152,9 +3180,10 @@ class GameEngine:
             is_turnable = game_object.state.get('is_turnable', False)
             
             if not is_turnable:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You can't turn the {object_id}."
+                    message=f"You can't turn the {display_name}."
                 )
             
             # Get current rotation state
@@ -3251,18 +3280,20 @@ class GameEngine:
             is_moveable = game_object.state.get('is_moveable', False)
             
             if not is_moveable:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {object_id} won't budge."
+                    message=f"The {display_name} won't budge."
                 )
             
             # Check if already pushed
             is_pushed = game_object.state.get('is_pushed', False)
             
             if is_pushed:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {object_id} has already been pushed as far as it will go."
+                    message=f"The {display_name} has already been pushed as far as it will go."
                 )
             
             # Push the object
@@ -3305,9 +3336,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -3353,18 +3385,20 @@ class GameEngine:
             is_moveable = game_object.state.get('is_moveable', False)
             
             if not is_moveable:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {object_id} won't budge."
+                    message=f"The {display_name} won't budge."
                 )
             
             # Check if already pulled
             is_pulled = game_object.state.get('is_pulled', False)
             
             if is_pulled:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {object_id} has already been pulled as far as it will go."
+                    message=f"The {display_name} has already been pulled as far as it will go."
                 )
             
             # Pull the object
@@ -3407,9 +3441,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -3442,9 +3477,10 @@ class GameEngine:
         try:
             # Check if rope object is in inventory
             if object_id not in state.inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't have the {object_id}."
+                    message=f"You don't have the {display_name}."
                 )
             
             # Get current room
@@ -3455,9 +3491,10 @@ class GameEngine:
             target_in_inventory = target_id in state.inventory
             
             if not target_in_room and not target_in_inventory:
+                target_name = self._get_object_names(target_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {target_id} here."
+                    message=f"You don't see any {target_name} here."
                 )
             
             # Get rope and target objects
@@ -3468,38 +3505,52 @@ class GameEngine:
             is_rope = rope_object.state.get('is_rope', False)
             can_tie = rope_object.state.get('can_tie', False)
             
+
+            
+            # Check if rope is already tied
+            is_tied = rope_object.state.get('is_tied', False)
+            
             if not is_rope or not can_tie:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You can't tie the {object_id}."
+                    message=f"You can't tie the {display_name}."
                 )
+            
+
             
             # Check if rope is already tied
             is_tied = rope_object.state.get('is_tied', False)
             
             if is_tied:
                 tied_to = rope_object.state.get('tied_to', 'something')
+                display_name = self._get_object_names(object_id)
+                # Try to resolve tied_to name if it's an ID
+                tied_to_name = self._get_object_names(tied_to) if self.world.objects.get(tied_to) else tied_to
                 return ActionResult(
                     success=False,
-                    message=f"The {object_id} is already tied to {tied_to}."
+                    message=f"The {display_name} is already tied to {tied_to_name}."
                 )
             
             # Check if target is valid for tying
             tie_targets = rope_object.state.get('tie_targets', [])
             
             if tie_targets and target_id not in tie_targets:
+                display_name = self._get_object_names(object_id)
+                target_name = self._get_object_names(target_id)
                 return ActionResult(
                     success=False,
-                    message=f"You can't tie the {object_id} to the {target_id}."
+                    message=f"You can't tie the {display_name} to the {target_name}."
                 )
             
             # Check if target can be tied to
             can_be_tied_to = target_object.state.get('can_be_tied_to', True)
             
             if not can_be_tied_to:
+                target_name = self._get_object_names(target_id)
                 return ActionResult(
                     success=False,
-                    message=f"You can't tie anything to the {target_id}."
+                    message=f"You can't tie anything to the {target_name}."
                 )
             
             # Tie the rope to the target
@@ -3518,7 +3569,9 @@ class GameEngine:
                 state.set_flag(tie_flag, True)
             
             # Create success message with haunted theme
-            tie_message = f"You tie the {object_id} to the {target_id}. The knot holds fast, though your fingers tremble."
+            display_name = self._get_object_names(object_id)
+            target_name = self._get_object_names(target_id)
+            tie_message = f"You tie the {display_name} to the {target_name}. The knot holds fast, though your fingers tremble."
             
             # Add custom tie message if available
             custom_message = rope_object.state.get('tie_message', None)
@@ -3535,9 +3588,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            target_name = self._get_object_names(target_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {target_id} here."
+                message=f"You don't see any {target_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -3572,9 +3626,10 @@ class GameEngine:
             object_in_inventory = object_id in state.inventory
             
             if not object_in_room and not object_in_inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Get rope object
@@ -3584,18 +3639,20 @@ class GameEngine:
             is_rope = rope_object.state.get('is_rope', False)
             
             if not is_rope:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You can't untie the {object_id}."
+                    message=f"You can't untie the {display_name}."
                 )
             
             # Check if rope is tied
             is_tied = rope_object.state.get('is_tied', False)
             
             if not is_tied:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {object_id} is not tied to anything."
+                    message=f"The {display_name} is not tied to anything."
                 )
             
             # Get what it's tied to
@@ -3629,7 +3686,8 @@ class GameEngine:
                 state.set_flag(tie_flag, False)
             
             # Create success message with haunted theme
-            untie_message = f"You untie the {object_id}. The knot comes loose with an eerie whisper."
+            display_name = self._get_object_names(object_id)
+            untie_message = f"You untie the {display_name}. The knot comes loose with an eerie whisper."
             
             # Add custom untie message if available
             custom_message = rope_object.state.get('untie_message', None)
@@ -3687,9 +3745,10 @@ class GameEngine:
             container_in_inventory = container_id in state.inventory
             
             if not container_in_room and not container_in_inventory:
+                container_name = self._get_object_names(container_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't have the {container_id}."
+                    message=f"You don't have the {container_name}."
                 )
             
             # Check if source is in current room or inventory
@@ -3697,9 +3756,10 @@ class GameEngine:
             source_in_inventory = source_id in state.inventory
             
             if not source_in_room and not source_in_inventory:
+                source_name = self._get_object_names(source_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {source_id} here."
+                    message=f"You don't see any {source_name} here."
                 )
             
             # Get container and source objects
@@ -3710,9 +3770,10 @@ class GameEngine:
             can_hold_liquid = container_object.state.get('can_hold_liquid', False)
             
             if not can_hold_liquid:
+                container_name = self._get_object_names(container_id)
                 return ActionResult(
                     success=False,
-                    message=f"You can't fill the {container_id} with liquid."
+                    message=f"You can't fill the {container_name} with liquid."
                 )
             
             # Check if source has liquid
@@ -3720,9 +3781,10 @@ class GameEngine:
             is_liquid_source = source_object.state.get('is_liquid_source', False)
             
             if not has_liquid and not is_liquid_source:
+                source_name = self._get_object_names(source_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {source_id} has no liquid to fill from."
+                    message=f"The {source_name} has no liquid to fill from."
                 )
             
             # Check if container is already full
@@ -3731,9 +3793,10 @@ class GameEngine:
             max_capacity = container_object.state.get('liquid_capacity', 100)
             
             if is_full or liquid_level >= max_capacity:
+                container_name = self._get_object_names(container_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {container_id} is already full."
+                    message=f"The {container_name} is already full."
                 )
             
             # Get liquid type from source
@@ -3752,7 +3815,9 @@ class GameEngine:
                 state.set_flag(fill_flag, True)
             
             # Create success message with haunted theme
-            fill_message = f"You fill the {container_id} with {liquid_type} from the {source_id}. The liquid swirls with an unnatural darkness."
+            container_name = self._get_object_names(container_id)
+            source_name = self._get_object_names(source_id)
+            fill_message = f"You fill the {container_name} with {liquid_type} from the {source_name}. The liquid swirls with an unnatural darkness."
             
             # Add custom fill message if available
             custom_message = container_object.state.get('fill_message', None)
@@ -3811,9 +3876,10 @@ class GameEngine:
             container_in_inventory = container_id in state.inventory
             
             if not container_in_room and not container_in_inventory:
+                container_name = self._get_object_names(container_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't have the {container_id}."
+                    message=f"You don't have the {container_name}."
                 )
             
             # Get container object
@@ -3823,9 +3889,10 @@ class GameEngine:
             can_hold_liquid = container_object.state.get('can_hold_liquid', False)
             
             if not can_hold_liquid:
+                container_name = self._get_object_names(container_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {container_id} doesn't contain any liquid."
+                    message=f"The {container_name} doesn't contain any liquid."
                 )
             
             # Check if container has liquid
@@ -3833,9 +3900,10 @@ class GameEngine:
             liquid_level = container_object.state.get('liquid_level', 0)
             
             if is_empty or liquid_level <= 0:
+                container_name = self._get_object_names(container_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {container_id} is empty."
+                    message=f"The {container_name} is empty."
                 )
             
             # Get liquid type
@@ -3848,9 +3916,10 @@ class GameEngine:
                 target_in_inventory = target_id in state.inventory
                 
                 if not target_in_room and not target_in_inventory:
+                    target_name = self._get_object_names(target_id)
                     return ActionResult(
                         success=False,
-                        message=f"You don't see any {target_id} here."
+                        message=f"You don't see any {target_name} here."
                     )
                 
                 # Get target object
@@ -3861,7 +3930,8 @@ class GameEngine:
                 
                 if not target_can_hold_liquid:
                     # Pouring onto an object that can't hold liquid
-                    pour_message = f"You pour the {liquid_type} onto the {target_id}. It spills away into the shadows."
+                    target_name = self._get_object_names(target_id)
+                    pour_message = f"You pour the {liquid_type} onto the {target_name}. It spills away into the shadows."
                 else:
                     # Check if target is full
                     target_is_full = target_object.state.get('is_full', False)
@@ -3869,9 +3939,10 @@ class GameEngine:
                     target_max_capacity = target_object.state.get('liquid_capacity', 100)
                     
                     if target_is_full or target_liquid_level >= target_max_capacity:
+                        target_name = self._get_object_names(target_id)
                         return ActionResult(
                             success=False,
-                            message=f"The {target_id} is already full."
+                            message=f"The {target_name} is already full."
                         )
                     
                     # Pour into target container
@@ -3880,7 +3951,9 @@ class GameEngine:
                     target_object.state['liquid_type'] = liquid_type
                     target_object.state['is_empty'] = False
                     
-                    pour_message = f"You pour the {liquid_type} from the {container_id} into the {target_id}."
+                    container_name = self._get_object_names(container_id)
+                    target_name = self._get_object_names(target_id)
+                    pour_message = f"You pour the {liquid_type} from the {container_name} into the {target_name}."
             else:
                 # Pouring onto the ground
                 pour_message = f"You pour the {liquid_type} onto the ground. It seeps away into the darkness."
@@ -3981,7 +4054,8 @@ class GameEngine:
                 # Mark as revealed so it doesn't happen again
                 game_object.state['reveals_under'] = []
                 
-                message = f"You look under the {object_id}."
+                display_name = self._get_object_names(object_id)
+                message = f"You look under the {display_name}."
                 if under_description:
                     message = under_description
                 
@@ -4009,11 +4083,12 @@ class GameEngine:
                 )
             
             # Default: nothing there
+            display_name = self._get_object_names(object_id)
             default_messages = [
-                f"You peer beneath the {object_id}. Nothing but shadows and dust.",
-                f"There's nothing under the {object_id} but darkness.",
-                f"You find nothing of interest beneath the {object_id}.",
-                f"The space under the {object_id} is empty, save for cobwebs."
+                f"You peer beneath the {display_name}. Nothing but shadows and dust.",
+                f"There's nothing under the {display_name} but darkness.",
+                f"You find nothing of interest beneath the {display_name}.",
+                f"The space under the {display_name} is empty, save for cobwebs."
             ]
             
             # Use a consistent message based on object_id hash for consistency
@@ -4075,9 +4150,10 @@ class GameEngine:
             
             # Check if object is actually a container
             if container.type != "container":
+                container_name = self._get_object_names(container_id)
                 return ActionResult(
                     success=False,
-                    message=f"You can't look inside the {container_id}."
+                    message=f"You can't look inside the {container_name}."
                 )
             
             # Check if container is open or transparent
@@ -4085,9 +4161,10 @@ class GameEngine:
             is_open = container.state.get('is_open', False)
             
             if not is_open and not is_transparent:
+                container_name = self._get_object_names(container_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {container_id} is closed. You can't see inside."
+                    message=f"The {container_name} is closed. You can't see inside."
                 )
             
             # Get contents
@@ -4132,9 +4209,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            container_name = self._get_object_names(container_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {container_id} here."
+                message=f"You don't see any {container_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -4201,7 +4279,8 @@ class GameEngine:
                 # Mark as revealed so it doesn't happen again
                 game_object.state['reveals_behind'] = []
                 
-                message = f"You look behind the {object_id}."
+                display_name = self._get_object_names(object_id)
+                message = f"You look behind the {display_name}."
                 if behind_description:
                     message = behind_description
                 
@@ -4229,11 +4308,12 @@ class GameEngine:
                 )
             
             # Default: nothing there
+            display_name = self._get_object_names(object_id)
             default_messages = [
-                f"You peer behind the {object_id}. Nothing but empty space.",
-                f"There's nothing behind the {object_id} but cold air.",
-                f"You find nothing of interest behind the {object_id}.",
-                f"The space behind the {object_id} is empty and foreboding."
+                f"You peer behind the {display_name}. Nothing but empty space.",
+                f"There's nothing behind the {display_name} but cold air.",
+                f"You find nothing of interest behind the {display_name}.",
+                f"The space behind the {display_name} is empty and foreboding."
             ]
             
             # Use a consistent message based on object_id hash for consistency
@@ -4246,9 +4326,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -4315,7 +4396,8 @@ class GameEngine:
                 # Mark as searched so it doesn't happen again
                 game_object.state['search_reveals'] = []
                 
-                message = f"You search the {object_id} thoroughly."
+                display_name = self._get_object_names(object_id)
+                message = f"You search the {display_name} thoroughly."
                 if search_description:
                     message = search_description
                 
@@ -4343,12 +4425,13 @@ class GameEngine:
                 )
             
             # Default: nothing found
+            display_name = self._get_object_names(object_id)
             default_messages = [
-                f"You search the {object_id} carefully but find nothing of interest.",
-                f"Your thorough search of the {object_id} reveals nothing unusual.",
-                f"Despite your careful examination, the {object_id} yields no secrets.",
-                f"You find nothing hidden in or on the {object_id}.",
-                f"The {object_id} holds no hidden surprises, only shadows and dust."
+                f"You search the {display_name} carefully but find nothing of interest.",
+                f"Your thorough search of the {display_name} reveals nothing unusual.",
+                f"Despite your careful examination, the {display_name} yields no secrets.",
+                f"You find nothing hidden in or on the {display_name}.",
+                f"The {display_name} holds no hidden surprises, only shadows and dust."
             ]
             
             # Use a consistent message based on object_id hash for consistency
@@ -4361,9 +4444,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -4423,9 +4507,10 @@ class GameEngine:
             
             if not read_interaction:
                 # No READ interaction defined - object is not readable
+                display_name = game_object.name_spooky if game_object.name_spooky else game_object.name
                 return ActionResult(
                     success=False,
-                    message=f"There's nothing to read on the {object_id}."
+                    message=f"There's nothing to read on the {display_name}."
                 )
             
             # Get the text content (always use spooky version)
@@ -4463,9 +4548,14 @@ class GameEngine:
             )
             
         except ValueError as e:
+            # Try to resolve name if possible, otherwise use ID
+            try:
+                display_name = self._get_object_names(object_id)
+            except:
+                display_name = object_id
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -4546,9 +4636,10 @@ class GameEngine:
             object_in_inventory = object_id in state.inventory
             
             if not object_in_room and not object_in_inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Get object data
@@ -4633,12 +4724,13 @@ class GameEngine:
                 )
             
             # Default: nothing to hear
+            display_name = self._get_object_names(object_id)
             default_messages = [
-                f"You listen carefully to the {object_id}, but hear nothing unusual.",
-                f"The {object_id} is silent, revealing no audible secrets.",
-                f"You press your ear close to the {object_id}, but it makes no sound.",
-                f"The {object_id} offers no sounds, only an eerie silence.",
-                f"Listening to the {object_id} yields nothing but the ambient sounds of this place."
+                f"You listen carefully to the {display_name}, but hear nothing unusual.",
+                f"The {display_name} is silent, revealing no audible secrets.",
+                f"You press your ear close to the {display_name}, but it makes no sound.",
+                f"The {display_name} offers no sounds, only an eerie silence.",
+                f"Listening to the {display_name} yields nothing but the ambient sounds of this place."
             ]
             
             # Use a consistent message based on object_id hash for consistency
@@ -4650,9 +4742,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -4733,9 +4826,10 @@ class GameEngine:
             object_in_inventory = object_id in state.inventory
             
             if not object_in_room and not object_in_inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Get object data
@@ -4820,12 +4914,13 @@ class GameEngine:
                 )
             
             # Default: nothing to smell
+            display_name = self._get_object_names(object_id)
             default_messages = [
-                f"You smell the {object_id}, but detect nothing unusual.",
-                f"The {object_id} has no particular scent.",
-                f"You sniff the {object_id}, but it smells unremarkable.",
-                f"The {object_id} offers no distinctive odor.",
-                f"Smelling the {object_id} reveals nothing but the ambient scents of this place."
+                f"You smell the {display_name}, but detect nothing unusual.",
+                f"The {display_name} has no particular scent.",
+                f"You sniff the {display_name}, but it smells unremarkable.",
+                f"The {display_name} offers no distinctive odor.",
+                f"Smelling the {display_name} reveals nothing but the ambient scents of this place."
             ]
             
             # Use a consistent message based on object_id hash for consistency
@@ -4837,9 +4932,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -4872,9 +4968,10 @@ class GameEngine:
             
             # Check if object exists and is accessible
             if object_id not in current_room.items and object_id not in state.inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Get the object
@@ -4882,18 +4979,20 @@ class GameEngine:
             
             # Check if object is flammable
             if not game_object.state.get('is_flammable', False):
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"The {object_id} won't burn."
+                    message=f"The {display_name} won't burn."
                 )
             
             # If fire source specified, validate it
             if fire_source_id:
                 # Check if fire source is in inventory or room
                 if fire_source_id not in state.inventory and fire_source_id not in current_room.items:
+                    fire_source_name = self._get_object_names(fire_source_id)
                     return ActionResult(
                         success=False,
-                        message=f"You don't have any {fire_source_id}."
+                        message=f"You don't have any {fire_source_name}."
                     )
                 
                 # Get fire source object
@@ -4901,9 +5000,10 @@ class GameEngine:
                 
                 # Check if it's actually a fire source
                 if not fire_source.state.get('is_fire_source', False):
+                    fire_source_name = self._get_object_names(fire_source_id)
                     return ActionResult(
                         success=False,
-                        message=f"You can't burn things with the {fire_source_id}."
+                        message=f"You can't burn things with the {fire_source_name}."
                     )
                 
                 # Check if fire source is lit (for lamp)
@@ -4927,7 +5027,8 @@ class GameEngine:
             game_object.state['is_destroyed'] = True
             
             # Get burn message
-            burn_message = f"The {object_id} catches fire and burns to ashes, leaving nothing but a faint smell of smoke and decay."
+            display_name = self._get_object_names(object_id)
+            burn_message = f"The {display_name} catches fire and burns to ashes, leaving nothing but a faint smell of smoke and decay."
             
             # Check for BURN interaction with custom message
             for interaction in game_object.interactions:
@@ -4961,9 +5062,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -4994,36 +5096,41 @@ class GameEngine:
             current_room = self.world.get_room(state.current_room)
             
             if object_id not in current_room.items and object_id not in state.inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             game_object = self.world.get_object(object_id)
             
             if not game_object.state.get('is_cuttable', False):
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You can't cut the {object_id}."
+                    message=f"You can't cut the {display_name}."
                 )
             
             if tool_id:
                 if tool_id not in state.inventory and tool_id not in current_room.items:
+                    tool_name = self._get_object_names(tool_id)
                     return ActionResult(
                         success=False,
-                        message=f"You don't have any {tool_id}."
+                        message=f"You don't have any {tool_name}."
                     )
                 
                 tool = self.world.get_object(tool_id)
                 
                 if not tool.state.get('is_cutting_tool', False):
+                    tool_name = self._get_object_names(tool_id)
                     return ActionResult(
                         success=False,
-                        message=f"You can't cut things with the {tool_id}."
+                        message=f"You can't cut things with the {tool_name}."
                     )
             
             notifications = []
-            cut_message = f"You cut the {object_id}."
+            display_name = self._get_object_names(object_id)
+            cut_message = f"You cut the {display_name}."
             
             for interaction in game_object.interactions:
                 if interaction.verb == "CUT":
@@ -5054,9 +5161,10 @@ class GameEngine:
             )
             
         except ValueError:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception:
             return ActionResult(
@@ -5126,35 +5234,40 @@ class GameEngine:
             
             # Digging at specific object
             if location_id not in current_room.items:
+                display_name = self._get_object_names(location_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {location_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             game_object = self.world.get_object(location_id)
             
             if not game_object.state.get('is_diggable', False):
+                display_name = self._get_object_names(location_id)
                 return ActionResult(
                     success=False,
-                    message=f"You can't dig at the {location_id}."
+                    message=f"You can't dig at the {display_name}."
                 )
             
             if tool_id:
                 if tool_id not in state.inventory:
+                    tool_name = self._get_object_names(tool_id)
                     return ActionResult(
                         success=False,
-                        message=f"You don't have any {tool_id}."
+                        message=f"You don't have any {tool_name}."
                     )
                 
                 tool = self.world.get_object(tool_id)
                 if not tool.state.get('is_digging_tool', False):
+                    tool_name = self._get_object_names(tool_id)
                     return ActionResult(
                         success=False,
-                        message=f"You can't dig with the {tool_id}."
+                        message=f"You can't dig with the {tool_name}."
                     )
             
             notifications = []
-            dig_message = f"You dig at the {location_id}."
+            display_name = self._get_object_names(location_id)
+            dig_message = f"You dig at the {display_name}."
             
             for interaction in game_object.interactions:
                 if interaction.verb == "DIG":
@@ -5228,9 +5341,10 @@ class GameEngine:
             object_in_inventory = object_id in state.inventory
 
             if not object_in_room and not object_in_inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"There is no {object_id} here for you to destroy.",
+                    message=f"There is no {display_name} here for you to destroy.",
                     room_changed=False
                 )
 
@@ -5347,19 +5461,23 @@ class GameEngine:
             current_room = self.world.get_room(state.current_room)
             
             if object_id not in current_room.items and object_id not in state.inventory:
-                return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+                display_name = self._get_object_names(object_id)
+                return ActionResult(success=False, message=f"You don't see any {display_name} here.")
             
             game_object = self.world.get_object(object_id)
             
             if not game_object.state.get('is_inflatable', False):
-                return ActionResult(success=False, message=f"You can't inflate the {object_id}.")
+                display_name = self._get_object_names(object_id)
+                return ActionResult(success=False, message=f"You can't inflate the {display_name}.")
             
             if game_object.state.get('is_inflated', False):
-                return ActionResult(success=False, message=f"The {object_id} is already inflated.")
+                display_name = self._get_object_names(object_id)
+                return ActionResult(success=False, message=f"The {display_name} is already inflated.")
             
             game_object.state['is_inflated'] = True
             
-            message = f"You inflate the {object_id}."
+            display_name = self._get_object_names(object_id)
+            message = f"You inflate the {display_name}."
             for interaction in game_object.interactions:
                 if interaction.verb == "INFLATE":
                     message = interaction.response_spooky
@@ -5373,7 +5491,8 @@ class GameEngine:
             
             return ActionResult(success=True, message=message)
         except ValueError:
-            return ActionResult(success=False, message=f"The shadows reveal no {object_id} in this forsaken place.")
+            display_name = self._get_object_names(object_id)
+            return ActionResult(success=False, message=f"The shadows reveal no {display_name} in this forsaken place.")
         except Exception:
             return ActionResult(success=False, message="The object resists inflation, as if cursed to remain deflated.")
     
@@ -5387,19 +5506,23 @@ class GameEngine:
             current_room = self.world.get_room(state.current_room)
             
             if object_id not in current_room.items and object_id not in state.inventory:
-                return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+                display_name = self._get_object_names(object_id)
+                return ActionResult(success=False, message=f"You don't see any {display_name} here.")
             
             game_object = self.world.get_object(object_id)
             
             if not game_object.state.get('is_inflatable', False):
-                return ActionResult(success=False, message=f"You can't deflate the {object_id}.")
+                display_name = self._get_object_names(object_id)
+                return ActionResult(success=False, message=f"You can't deflate the {display_name}.")
             
             if not game_object.state.get('is_inflated', False):
-                return ActionResult(success=False, message=f"The {object_id} is already deflated.")
+                display_name = self._get_object_names(object_id)
+                return ActionResult(success=False, message=f"The {display_name} is already deflated.")
             
             game_object.state['is_inflated'] = False
             
-            message = f"You deflate the {object_id}."
+            display_name = self._get_object_names(object_id)
+            message = f"You deflate the {display_name}."
             for interaction in game_object.interactions:
                 if interaction.verb == "DEFLATE":
                     message = interaction.response_spooky
@@ -5413,7 +5536,8 @@ class GameEngine:
             
             return ActionResult(success=True, message=message)
         except ValueError:
-            return ActionResult(success=False, message=f"The shadows reveal no {object_id} in this forsaken place.")
+            display_name = self._get_object_names(object_id)
+            return ActionResult(success=False, message=f"The shadows reveal no {display_name} in this forsaken place.")
         except Exception:
             return ActionResult(success=False, message="The object clings to its inflated form, resisting your efforts.")
     
@@ -5421,10 +5545,12 @@ class GameEngine:
         """Handle waving an object."""
         try:
             if object_id not in state.inventory:
-                return ActionResult(success=False, message=f"You don't have the {object_id}.")
+                display_name = self._get_object_names(object_id)
+                return ActionResult(success=False, message=f"You don't have the {display_name}.")
             
             game_object = self.world.get_object(object_id)
-            message = f"You wave the {object_id}. Nothing happens."
+            display_name = self._get_object_names(object_id)
+            message = f"You wave the {display_name}. Nothing happens."
             
             for interaction in game_object.interactions:
                 if interaction.verb == "WAVE":
@@ -5439,7 +5565,8 @@ class GameEngine:
             
             return ActionResult(success=True, message=message)
         except ValueError:
-            return ActionResult(success=False, message=f"Your trembling hands find no {object_id} among your cursed possessions.")
+            display_name = self._get_object_names(object_id)
+            return ActionResult(success=False, message=f"Your trembling hands find no {display_name} among your cursed possessions.")
         except Exception:
             return ActionResult(success=False, message="The object slips from your grasp as you attempt to wave it.")
     
@@ -5448,10 +5575,12 @@ class GameEngine:
         try:
             current_room = self.world.get_room(state.current_room)
             if object_id not in current_room.items and object_id not in state.inventory:
-                return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+                display_name = self._get_object_names(object_id)
+                return ActionResult(success=False, message=f"You don't see any {display_name} here.")
             
             game_object = self.world.get_object(object_id)
-            message = f"You rub the {object_id}. Nothing happens."
+            display_name = self._get_object_names(object_id)
+            message = f"You rub the {display_name}. Nothing happens."
             
             for interaction in game_object.interactions:
                 if interaction.verb == "RUB":
@@ -5466,7 +5595,8 @@ class GameEngine:
             
             return ActionResult(success=True, message=message)
         except ValueError:
-            return ActionResult(success=False, message=f"The shadows reveal no {object_id} in this forsaken place.")
+            display_name = self._get_object_names(object_id)
+            return ActionResult(success=False, message=f"The shadows reveal no {display_name} in this forsaken place.")
         except Exception:
             return ActionResult(success=False, message="Your touch upon the object sends a chill through your bones.")
     
@@ -5475,10 +5605,12 @@ class GameEngine:
         try:
             current_room = self.world.get_room(state.current_room)
             if object_id not in current_room.items and object_id not in state.inventory:
-                return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+                display_name = self._get_object_names(object_id)
+                return ActionResult(success=False, message=f"You don't see any {display_name} here.")
             
             game_object = self.world.get_object(object_id)
-            message = f"You shake the {object_id}. Nothing happens."
+            display_name = self._get_object_names(object_id)
+            message = f"You shake the {display_name}. Nothing happens."
             
             for interaction in game_object.interactions:
                 if interaction.verb == "SHAKE":
@@ -5493,7 +5625,8 @@ class GameEngine:
             
             return ActionResult(success=True, message=message)
         except ValueError:
-            return ActionResult(success=False, message=f"The shadows reveal no {object_id} in this forsaken place.")
+            display_name = self._get_object_names(object_id)
+            return ActionResult(success=False, message=f"The shadows reveal no {display_name} in this forsaken place.")
         except Exception:
             return ActionResult(success=False, message="The object rattles ominously, as if something within stirs.")
     
@@ -5502,10 +5635,12 @@ class GameEngine:
         try:
             current_room = self.world.get_room(state.current_room)
             if object_id not in current_room.items and object_id not in state.inventory:
-                return ActionResult(success=False, message=f"You don't see any {object_id} here.")
+                display_name = self._get_object_names(object_id)
+                return ActionResult(success=False, message=f"You don't see any {display_name} here.")
             
             game_object = self.world.get_object(object_id)
-            message = f"You squeeze the {object_id}. Nothing happens."
+            display_name = self._get_object_names(object_id)
+            message = f"You squeeze the {display_name}. Nothing happens."
             
             for interaction in game_object.interactions:
                 if interaction.verb == "SQUEEZE":
@@ -5520,7 +5655,8 @@ class GameEngine:
             
             return ActionResult(success=True, message=message)
         except ValueError:
-            return ActionResult(success=False, message=f"The shadows reveal no {object_id} in this forsaken place.")
+            display_name = self._get_object_names(object_id)
+            return ActionResult(success=False, message=f"The shadows reveal no {display_name} in this forsaken place.")
         except Exception:
             return ActionResult(success=False, message="The object resists your grip, as if it has a will of its own.")
 
@@ -7182,7 +7318,7 @@ class GameEngine:
         In haunted context, may interact with supernatural mechanics.
 
         Args:
-            object_id: The object to wind up (can be None for general winding)
+            object_id: The object to windup (can be None for general winding)
             state: Current game state
 
         Returns:
@@ -7704,9 +7840,10 @@ class GameEngine:
             
             # Check if target is in current room
             if target_id not in current_room.items:
+                display_name = self._get_object_names(target_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {target_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Get target object
@@ -7716,9 +7853,10 @@ class GameEngine:
             is_creature = target.state.get('is_creature', False)
             
             if not is_creature:
+                display_name = self._get_object_names(target_id)
                 return ActionResult(
                     success=False,
-                    message=f"You can't attack the {target_id}."
+                    message=f"You can't attack the {display_name}."
                 )
             
             # Check if weapon is specified and in inventory
@@ -7728,9 +7866,10 @@ class GameEngine:
             
             if weapon_id:
                 if weapon_id not in state.inventory:
+                    display_name = self._get_object_names(weapon_id)
                     return ActionResult(
                         success=False,
-                        message=f"You don't have the {weapon_id}."
+                        message=f"You don't have the {display_name}."
                     )
                 
                 weapon = self.world.get_object(weapon_id)
@@ -7739,9 +7878,10 @@ class GameEngine:
                 is_weapon = weapon.state.get('is_weapon', False)
                 
                 if not is_weapon:
+                    display_name = self._get_object_names(weapon_id)
                     return ActionResult(
                         success=False,
-                        message=f"The {weapon_id} is not a weapon."
+                        message=f"The {display_name} is not a weapon."
                     )
                 
                 weapon_damage = weapon.state.get('damage', 5)
@@ -8025,9 +8165,10 @@ class GameEngine:
         try:
             # Check if object is in inventory
             if object_id not in state.inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't have the {object_id}."
+                    message=f"You don't have the {display_name}."
                 )
             
             # Get current room
@@ -8035,9 +8176,10 @@ class GameEngine:
             
             # Check if NPC is in current room
             if npc_id not in current_room.items:
+                display_name = self._get_object_names(npc_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {npc_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Get object and NPC
@@ -8049,9 +8191,10 @@ class GameEngine:
             is_creature = npc.state.get('is_creature', False)
             
             if not is_npc and not is_creature:
+                display_name = self._get_object_names(npc_id)
                 return ActionResult(
                     success=False,
-                    message=f"You can't give things to the {npc_id}."
+                    message=f"You can't give things to the {display_name}."
                 )
             
             # Remove from player inventory
@@ -8123,9 +8266,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(npc_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {npc_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -11620,6 +11764,14 @@ class GameEngine:
 
             # Check if object is enchanted
             is_enchanted = game_object.state.get('enchanted', False)
+            is_moveable = game_object.state.get('moveable', True) # Assuming default is moveable
+
+            if not is_moveable:
+                display_name = self._get_object_names(object_id)
+                return ActionResult(
+                    success=False,
+                    message=f"The {display_name} won't budge."
+                )
 
             if not is_enchanted:
                 return ActionResult(
@@ -11982,7 +12134,7 @@ class GameEngine:
             'SPRAY': ['spray bottle at target', 'spray water on plant', 'spray acid on lock'],
             'STAY': ['stay'],
             'WIND': ['wind clockwork toy', 'wind music box', 'wind device'],
-            'WIND UP': ['wind up toy', 'wind up clock', 'wind up mechanism'],
+            'windup': ['windup toy', 'windup clock', 'windup mechanism'],
             'BLOW OUT': ['blow out candle', 'blow out torch', 'blow out'],
             'BLOW UP': ['blow up balloon', 'blow up explosive'],
             'SEND FOR': ['send for help', 'send for ghost', 'send for servant']
@@ -12685,7 +12837,7 @@ class GameEngine:
         if command.verb == "WIND" and command.object:
             return self.handle_wind(command.object, state)
 
-        if command.verb == "WIND UP" and command.object:
+        if command.verb == "windup" and command.object:
             return self.handle_wind(command.object, state)
 
         if command.verb == "BLOW OUT" and command.object:

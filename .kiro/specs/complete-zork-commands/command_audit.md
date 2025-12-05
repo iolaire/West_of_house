@@ -88,7 +88,7 @@ This document provides a comprehensive audit of all commands from the original Z
 | POUR | ❌ | 🔵 | Medium | Pour liquids from containers |
 | RAISE | ❌ | 🟢 | Low | Raise objects |
 | LOWER | ❌ | 🟢 | Low | Lower objects |
-| WIND | ❌ | 🟢 | Low | Wind up objects |
+| WIND | ❌ | 🟢 | Low | Windup objects |
 
 **Category Priority:** HIGH - Essential for puzzle solving
 
