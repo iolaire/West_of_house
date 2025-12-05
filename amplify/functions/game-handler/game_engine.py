@@ -262,6 +262,39 @@ class GameEngine:
             message=description
         )
 
+    def handle_inventory(self, state: GameState) -> ActionResult:
+        """
+        Handle INVENTORY command.
+
+        Lists items in player's inventory.
+
+        Args:
+            state: Current game state
+
+        Returns:
+            ActionResult with inventory listing
+        """
+        if not state.inventory:
+            return ActionResult(
+                success=True,
+                message="You are empty-handed. The void claims all."
+            )
+        
+        # Get display names for all items
+        items = []
+        for item_id in state.inventory:
+            name = self._get_object_names(item_id)
+            # Capitalize first letter
+            name = name[0].upper() + name[1:] if name else name
+            items.append(f"  A {name}")
+            
+        message = "You are carrying:\n" + "\n".join(items)
+        
+        return ActionResult(
+            success=True,
+            message=message
+        )
+
     def create_disambiguation_prompt(self, matches: List[str]) -> str:
         """
         Create a prompt asking the player to clarify which object they mean.
@@ -12191,6 +12224,10 @@ class GameEngine:
         # Handle LOOK command (look around current room)
         if command.verb == "LOOK" and not command.object:
             return self.handle_look(state)
+
+        # Handle INVENTORY command
+        if command.verb in ["INVENTORY", "I"]:
+            return self.handle_inventory(state)
 
         # Handle movement commands
         if command.verb == "GO" and command.direction:
