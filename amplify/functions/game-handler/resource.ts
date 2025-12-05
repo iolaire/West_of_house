@@ -40,13 +40,13 @@ export const gameHandler = defineFunction(
        * Points to the handler function in index.py
        */
       handler: 'index.handler',
-      
+
       /**
        * Runtime: Python 3.12
        * Using the latest stable Python runtime for Lambda
        */
       runtime: Runtime.PYTHON_3_12,
-      
+
       /**
        * Architecture: ARM64 for Graviton2 processors
        * Provides 20% better price-performance compared to x86_64
@@ -54,7 +54,7 @@ export const gameHandler = defineFunction(
        * Requirements: 22.1, 22.7
        */
       architecture: Architecture.ARM_64,
-      
+
       /**
        * Resource allocation
        * - 128MB memory: Sufficient for text adventure logic, minimizes cost
@@ -64,7 +64,7 @@ export const gameHandler = defineFunction(
        */
       memorySize: 128,
       timeout: Duration.seconds(30),
-      
+
       /**
        * Code bundling configuration
        * Bundles Python code, dependencies, and game data files
@@ -79,17 +79,17 @@ export const gameHandler = defineFunction(
                 `python3 -m pip install -r ${path.join(functionDir, 'requirements.txt')} -t ${outputDir} --platform manylinux2014_aarch64 --only-binary=:all:`,
                 { stdio: 'inherit' }
               );
-              
+
               // Copy all Python files and data directory
               execSync(`cp -r ${functionDir}/*.py ${outputDir}/`, { stdio: 'inherit' });
               execSync(`cp -r ${functionDir}/data ${outputDir}/`, { stdio: 'inherit' });
-              
+
               return true;
             },
           },
         },
       }),
-      
+
       /**
        * Environment variables
        * 
@@ -170,3 +170,4 @@ export const gameHandler = defineFunction(
  * 
  * Requirements: 24.1, 24.2, 24.3
  */
+

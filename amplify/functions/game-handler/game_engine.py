@@ -69,6 +69,20 @@ class GameEngine:
         try:
             current_room = self.world.get_room(state.current_room)
             available_objects = list(current_room.items) + list(state.inventory)
+            
+            # Add objects from open containers in room and inventory
+            for container_id in list(current_room.items) + list(state.inventory):
+                try:
+                    container = self.world.get_object(container_id)
+                    if container.type == 'container':
+                        # Check GameState first, then fall back to World data
+                        is_open = state.get_object_state(container_id, 'is_open', container.state.get('is_open', False))
+                        if is_open:
+                            contents = state.get_object_state(container_id, 'contents', container.state.get('contents', []))
+                            available_objects.extend(contents)
+                except (ValueError, AttributeError):
+                    continue
+            
             return self.world.find_object_by_name(name, available_objects)
         except Exception:
             return None
@@ -97,7 +111,8 @@ class GameEngine:
                         # Check GameState first, then fall back to World data
                         is_open = state.get_object_state(container_id, 'is_open', container.state.get('is_open', False))
                         if is_open:
-                            available_objects.extend(container.state.get('contents', []))
+                            contents = state.get_object_state(container_id, 'contents', container.state.get('contents', []))
+                            available_objects.extend(contents)
                 except (ValueError, AttributeError):
                     continue
             
@@ -146,7 +161,8 @@ class GameEngine:
                         # Check GameState first, then fall back to World data
                         is_open = state.get_object_state(container_id, 'is_open', container.state.get('is_open', False))
                         if is_open:
-                            available_objects.extend(container.state.get('contents', []))
+                            contents = state.get_object_state(container_id, 'contents', container.state.get('contents', []))
+                            available_objects.extend(contents)
                 except (ValueError, AttributeError):
                     continue
 
@@ -159,6 +175,47 @@ class GameEngine:
             return self.world.find_object_by_name(object_ref, available_objects)
         except Exception:
             return None
+
+    def is_object_accessible(self, object_id: str, state: GameState) -> bool:
+        """
+        Check if an object is accessible (visible/interactable) to the player.
+        
+        Checks:
+        1. In current room
+        2. In inventory
+        3. Inside an open container in room or inventory
+        
+        Args:
+            object_id: The object identifier
+            state: Current game state
+            
+        Returns:
+            True if accessible, False otherwise
+        """
+        try:
+            current_room = self.world.get_room(state.current_room)
+            
+            # 1. Check direct presence
+            if object_id in current_room.items or object_id in state.inventory:
+                return True
+            
+            # 2. Check inside containers
+            for container_id in list(current_room.items) + list(state.inventory):
+                try:
+                    container = self.world.get_object(container_id)
+                    if container.type == 'container':
+                        # Check GameState first, then fall back to World data
+                        is_open = state.get_object_state(container_id, 'is_open', container.state.get('is_open', False))
+                        if is_open:
+                            contents = state.get_object_state(container_id, 'contents', container.state.get('contents', []))
+                            if object_id in contents:
+                                return True
+                except (ValueError, AttributeError):
+                    continue
+            
+            return False
+        except Exception:
+            return False
 
     def get_full_room_description(self, state: GameState) -> str:
         """
@@ -1638,16 +1695,18 @@ class GameEngine:
                         message="The cursed object already weighs heavy in your possession."
                     )
                 
-                # Check if object is in an open container in the room
+                # Check if object is in an open container in the room or inventory
                 found_in_container = None
-                for item_id in current_room.items:
+                for item_id in list(current_room.items) + list(state.inventory):
                     try:
                         item = self.world.get_object(item_id)
                         if item.type == "container":
-                            is_open = item.state.get('is_open', False)
-                            is_transparent = item.state.get('is_transparent', False)
+                            # Check GameState first, then fall back to World data
+                            is_open = state.get_object_state(item_id, 'is_open', item.state.get('is_open', False))
+                            is_transparent = state.get_object_state(item_id, 'is_transparent', item.state.get('is_transparent', False))
+                            
                             if is_open or is_transparent:
-                                contents = item.state.get('contents', [])
+                                contents = state.get_object_state(item_id, 'contents', item.state.get('contents', []))
                                 if object_id in contents:
                                     found_in_container = item_id
                                     break
@@ -2092,11 +2151,8 @@ class GameEngine:
             # Get current room
             current_room = self.world.get_room(state.current_room)
             
-            # Check if object is in current room or inventory
-            object_in_room = object_id in current_room.items
-            object_in_inventory = object_id in state.inventory
-            
-            if not object_in_room and not object_in_inventory:
+            # Check if object is accessible
+            if not self.is_object_accessible(object_id, state):
                 return ActionResult(
                     success=False,
                     message=f"You don't see any {object_id} here."
@@ -2482,8 +2538,8 @@ class GameEngine:
                     break
             
             # Check if container is open or transparent
-            is_transparent = container.state.get('is_transparent', False)
-            is_open = container.state.get('is_open', False)
+            is_transparent = state.get_object_state(container_id, 'is_transparent', container.state.get('is_transparent', False))
+            is_open = state.get_object_state(container_id, 'is_open', container.state.get('is_open', False))
             
             # Build description with contents if visible
             if is_open or is_transparent:
@@ -8418,6 +8474,9 @@ class GameEngine:
             # Clear visited rooms
             state.rooms_visited.clear()
             
+            # Clear object states (reset containers, etc.)
+            state.object_states.clear()
+            
             # Move to starting room
             state.move_to_room(starting_room)
             
@@ -12062,6 +12121,8 @@ class GameEngine:
             resolved_object = self.resolve_object_name(command.object, state)
             if not resolved_object:
                 return self._handle_missing_object(command.object, state, command.verb)
+            # Update command object with resolved ID
+            command.object = resolved_object
 
         # Check prerequisites
         prerequisite_result = self.check_prerequisites(command.verb, command.object, state)
@@ -12561,3 +12622,4 @@ class GameEngine:
         
         # Placeholder for other command types (to be implemented in future tasks)
         return self._handle_unimplemented_command(command, state)
+

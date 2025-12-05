@@ -1822,6 +1822,10 @@ def test_missing_object_messages(game_engine, fresh_state, verb, object_name):
     current_room = game_engine.world.get_room(fresh_state.current_room)
     assume(object_name.lower() not in [item.lower() for item in current_room.items])
 
+    # Ensure object doesn't resolve to anything (handling fuzzy matching)
+    resolved = game_engine.resolve_object_name(object_name, fresh_state)
+    assume(resolved is None)
+
     # Create command for missing object
     command = ParsedCommand(verb=verb, object=object_name)
 
