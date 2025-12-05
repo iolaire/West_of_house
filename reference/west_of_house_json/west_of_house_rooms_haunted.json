@@ -15,6 +15,11 @@
     "items": [
       "front_door",
       "mailbox"
+    ],
+    "global_items": [
+      "white_house",
+      "board",
+      "forest"
     ]
   },
   "stone_barrow": {
@@ -40,7 +45,13 @@
       "EAST": "east_of_house",
       "NORTH": "path"
     },
-    "items": []
+    "items": [],
+    "global_items": [
+      "white_house",
+      "board",
+      "forest",
+      "boarded_window"
+    ]
   },
   "south_of_house": {
     "name": "South of Haunted Manor",
@@ -53,7 +64,13 @@
       "NW": "west_of_house",
       "SOUTH": "forest_3"
     },
-    "items": []
+    "items": [],
+    "global_items": [
+      "white_house",
+      "board",
+      "forest",
+      "boarded_window"
+    ]
   },
   "east_of_house": {
     "name": "Behind the Manor",
@@ -68,7 +85,12 @@
       "WEST": "kitchen",
       "IN": "kitchen"
     },
-    "items": []
+    "items": [],
+    "global_items": [
+      "white_house",
+      "forest",
+      "kitchen_window"
+    ]
   },
   "forest_1": {
     "name": "Dead Forest",
@@ -81,6 +103,12 @@
     },
     "items": [
       "bauble"
+    ],
+    "global_items": [
+      "forest",
+      "tree",
+      "songbird",
+      "white_house"
     ]
   },
   "forest_2": {
@@ -92,7 +120,13 @@
       "SOUTH": "clearing",
       "WEST": "path"
     },
-    "items": []
+    "items": [],
+    "global_items": [
+      "forest",
+      "tree",
+      "songbird",
+      "white_house"
+    ]
   },
   "mountains": {
     "name": "Cursed Peaks",
@@ -114,7 +148,13 @@
       "WEST": "forest_1",
       "NW": "south_of_house"
     },
-    "items": []
+    "items": [],
+    "global_items": [
+      "forest",
+      "tree",
+      "songbird",
+      "white_house"
+    ]
   },
   "path": {
     "name": "Corpse Path",
@@ -127,7 +167,13 @@
       "SOUTH": "north_of_house",
       "WEST": "forest_1"
     },
-    "items": []
+    "items": [],
+    "global_items": [
+      "forest",
+      "tree",
+      "songbird",
+      "white_house"
+    ]
   },
   "up_a_tree": {
     "name": "In the Gallows Tree",

@@ -21,6 +21,7 @@ class Room:
     description_spooky: str
     exits: Dict[str, str]
     items: List[str]
+    global_items: List[str] = field(default_factory=list)
     flags_required: Optional[Dict[str, bool]] = None
     sanity_effect: int = 0
     is_safe_room: bool = False
@@ -116,7 +117,15 @@ class WorldData:
             # Load objects
             with open(objects_path, 'r') as f:
                 objects_data = json.load(f)
-                self._load_objects(objects_data)
+
+            # Load global objects
+            global_objects_path = os.path.join(data_dir, 'global_objects_haunted.json')
+            if os.path.exists(global_objects_path):
+                with open(global_objects_path, 'r') as f:
+                    global_objects_data = json.load(f)
+                    # Merge global objects into main objects data
+                    objects_data.update(global_objects_data)
+            self._load_objects(objects_data)
             
             # Load flags
             with open(flags_path, 'r') as f:
@@ -178,6 +187,7 @@ class WorldData:
                     description_spooky=room_dict['description_spooky'],
                     exits=room_dict['exits'],
                     items=room_dict['items'],
+                    global_items=room_dict.get('global_items', []),
                     flags_required=room_dict.get('flags_required'),
                     sanity_effect=room_dict.get('sanity_effect', 0),
                     is_safe_room=room_dict.get('is_safe_room', False),

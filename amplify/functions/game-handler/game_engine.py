@@ -68,10 +68,11 @@ class GameEngine:
         """
         try:
             current_room = self.world.get_room(state.current_room)
-            available_objects = list(current_room.items) + list(state.inventory)
+            # Include global items in available objects
+            available_objects = list(current_room.items) + list(state.inventory) + list(current_room.global_items)
             
-            # Add objects from open containers in room and inventory
-            for container_id in list(current_room.items) + list(state.inventory):
+            # Add objects from open containers in room, inventory, and global items
+            for container_id in list(current_room.items) + list(state.inventory) + list(current_room.global_items):
                 try:
                     container = self.world.get_object(container_id)
                     if container.type == 'container':
@@ -196,11 +197,11 @@ class GameEngine:
             current_room = self.world.get_room(state.current_room)
             
             # 1. Check direct presence
-            if object_id in current_room.items or object_id in state.inventory:
+            if object_id in current_room.items or object_id in state.inventory or object_id in current_room.global_items:
                 return True
             
             # 2. Check inside containers
-            for container_id in list(current_room.items) + list(state.inventory):
+            for container_id in list(current_room.items) + list(state.inventory) + list(current_room.global_items):
                 try:
                     container = self.world.get_object(container_id)
                     if container.type == 'container':
@@ -1687,7 +1688,8 @@ class GameEngine:
             current_room = self.world.get_room(state.current_room)
             
             # Check if object is in current room
-            if object_id not in current_room.items:
+            # Check if object is in current room or global items
+            if object_id not in current_room.items and object_id not in current_room.global_items:
                 # Check if already in inventory
                 if object_id in state.inventory:
                     return ActionResult(
@@ -1697,7 +1699,7 @@ class GameEngine:
                 
                 # Check if object is in an open container in the room or inventory
                 found_in_container = None
-                for item_id in list(current_room.items) + list(state.inventory):
+                for item_id in list(current_room.items) + list(state.inventory) + list(current_room.global_items):
                     try:
                         item = self.world.get_object(item_id)
                         if item.type == "container":
@@ -1717,9 +1719,16 @@ class GameEngine:
                     # Delegate to handle_take_from_container
                     return self.handle_take_from_container(object_id, found_in_container, state)
                 
+                # Try to get object name for better error message
+                try:
+                    obj = self.world.get_object(object_id)
+                    display_name = obj.name
+                except ValueError:
+                    display_name = object_id
+
                 return ActionResult(
                     success=False,
-                    message=f"The shadows reveal no {object_id} in this forsaken place."
+                    message=f"The shadows reveal no {display_name} in this forsaken place."
                 )
             
             # Get object data
@@ -2152,10 +2161,18 @@ class GameEngine:
             current_room = self.world.get_room(state.current_room)
             
             # Check if object is accessible
+            # Check if object is accessible
             if not self.is_object_accessible(object_id, state):
+                # Try to get object name for better error message
+                try:
+                    obj = self.world.get_object(object_id)
+                    display_name = obj.name
+                except ValueError:
+                    display_name = object_id
+                    
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Get object data
@@ -8827,7 +8844,8 @@ class GameEngine:
         try:
             obj = self.world.get_object(object_name)
             # Object exists but not here
-            message = f"You don't see any {object_name} here."
+            display_name = obj.name if obj.name else object_name
+            message = f"You don't see any {display_name} here."
 
             # Check if object might be in inventory
             if object_name.lower() in [item.lower() for item in inventory_items]:
@@ -8869,10 +8887,10 @@ class GameEngine:
                     message += f" Perhaps you mean one of: {obj_list}"
 
         # Add verb-specific suggestions
-        if verb:
             if verb.lower() in ['take', 'get', 'carry']:
                 if room_items:
-                    message += f"\n\nYou could try taking: {', '.join(room_items[:3])}"
+                    takeable_names = [self._get_object_names(item) for item in room_items[:3]]
+                    message += f"\n\nYou could try taking: {', '.join(takeable_names)}"
             elif verb.lower() in ['open', 'close']:
                 openable_objects = [self._get_object_names(item) for item in room_items + inventory_items
                                   if self._is_openable(item)]
@@ -8880,7 +8898,8 @@ class GameEngine:
                     message += f"\n\nYou might try opening: {', '.join(openable_objects[:3])}"
             elif verb.lower() in ['examine', 'look', 'check']:
                 if room_items:
-                    message += f"\n\nYou can examine: {', '.join(room_items[:3])}"
+                    examine_names = [self._get_object_names(item) for item in room_items[:3]]
+                    message += f"\n\nYou can examine: {', '.join(examine_names)}"
 
         # General help
         message += "\n\nType 'look' to see your surroundings or 'inventory' to check your possessions."

@@ -1,0 +1,273 @@
+{
+    "board": {
+        "name": "coffin boards",
+        "type": "item",
+        "state": {},
+        "interactions": []
+    },
+    "boarded_window": {
+        "name": "boarded window",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "The windows are boarded and can't be opened.",
+                "response_spooky": "The windows are boarded and can't be creaked open. The hinges scream in protest."
+            }
+        ]
+    },
+    "bodies": {
+        "name": "piles of corpses",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "The bodies of previous adventurers are piled here.",
+                "response_spooky": "Mangled corpses of those who came before you are heaped in the shadows. Some of them look... fresh."
+            }
+        ]
+    },
+    "chimney": {
+        "name": "crematorium chimney",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "The chimney leads down.",
+                "response_spooky": "The crematorium chimney leads down into the abyss. Shadows cling to it unnaturally."
+            }
+        ]
+    },
+    "climbable_cliff": {
+        "name": "jagged bone cliff",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "The cliff looks climbable.",
+                "response_spooky": "The cliff face is composed of sharp, jagged bones. It looks climbable, if you don't mind the cuts."
+            }
+        ]
+    },
+    "crack": {
+        "name": "fissure in reality",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "There is a crack in the wall.",
+                "response_spooky": "A jagged fissure tears through the wall, leaking a cold, void-like darkness."
+            }
+        ]
+    },
+    "forest": {
+        "name": "dead forest",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "The forest surrounds you.",
+                "response_spooky": "The dead forest surrounds you, its skeletal branches reaching out like grasping claws."
+            }
+        ]
+    },
+    "global_water": {
+        "name": "blood water",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "The water looks cold.",
+                "response_spooky": "The liquid is thick, dark red, and warm. It smells of copper and death."
+            },
+            {
+                "verb": "DRINK",
+                "response_original": "You drink the water.",
+                "response_spooky": "You dare not drink the blood of the damned."
+            }
+        ]
+    },
+    "grate": {
+        "name": "rusted iron grate",
+        "type": "door",
+        "state": {
+            "is_open": false,
+            "is_locked": true
+        },
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "A grating covers the opening.",
+                "response_spooky": "A heavy, rusted iron grate bars the way. It looks like it was designed to keep something *in*."
+            }
+        ]
+    },
+    "kitchen_window": {
+        "name": "broken window",
+        "type": "door",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "The window is slightly ajar, but not enough to allow entry.",
+                "response_spooky": "The window hangs ajar, its glass cracked and stained. Through it, you see flickering candlelight and shadows that move wrong."
+            },
+            {
+                "verb": "LOOK-INSIDE",
+                "response_original": "You can see",
+                "response_spooky": "You can see"
+            },
+            {
+                "verb": "OPEN",
+                "condition": {
+                    "is_open": false
+                },
+                "response_original": "With great effort, you open the window far enough to allow entry.",
+                "response_spooky": "With great effort, you pry the window open. The glass is cracked and stained with something dark. Cold air and the smell of decay flow from within.",
+                "state_change": {
+                    "is_open": true
+                }
+            },
+            {
+                "verb": "CLOSE",
+                "condition": {
+                    "is_open": true
+                },
+                "response_original": "The window closes (more easily than it opened).",
+                "response_spooky": "The window slams shut with a sound like breaking glass.",
+                "state_change": {
+                    "is_open": false
+                }
+            }
+        ]
+    },
+    "ladder": {
+        "name": "rickety bone ladder",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "A ladder leads down.",
+                "response_spooky": "A ladder made of femurs and ribs descends into the darkness. It rattles when you touch it."
+            }
+        ]
+    },
+    "rainbow": {
+        "name": "crimson arc",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "A beautiful rainbow spans the falls.",
+                "response_spooky": "A shimmering arc of crimson mist spans the blood falls. It looks solid enough to walk on, if you have a death wish."
+            }
+        ]
+    },
+    "river": {
+        "name": "river of blood",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "The river flows quickly here.",
+                "response_spooky": "The river of blood churns and boils, carrying the remains of the unfortunate downstream."
+            }
+        ]
+    },
+    "slide": {
+        "name": "slick chute",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "A steep metal slide twists downward.",
+                "response_spooky": "A steep chute, slick with slime and blood, twists downward into the unknown."
+            }
+        ]
+    },
+    "songbird": {
+        "name": "skeletal bird",
+        "type": "npc",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "A songbird sings in the tree.",
+                "response_spooky": "A skeletal bird with rotting feathers perches silently, watching you with empty sockets."
+            }
+        ]
+    },
+    "stairs": {
+        "name": "stairs",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "stairs",
+                "response_spooky": "stairs They seem to groan under an invisible weight."
+            }
+        ]
+    },
+    "trap_door": {
+        "name": "hidden hatch",
+        "type": "door",
+        "state": {
+            "is_open": false
+        },
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "A trap door is in the floor.",
+                "response_spooky": "A heavy wooden hatch is set into the floor. Scratches on the underside suggest something tried to get out."
+            }
+        ]
+    },
+    "tree": {
+        "name": "gnarled tree",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "A large tree stands here.",
+                "response_spooky": "A massive, gnarled tree dominates the area. Its bark looks like twisted faces."
+            }
+        ]
+    },
+    "white_cliff": {
+        "name": "cliffs of bone",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "White cliffs loom above.",
+                "response_spooky": "Towering cliffs made of bleached bones loom above you, casting long, skeletal shadows."
+            }
+        ]
+    },
+    "white_house": {
+        "name": "white house",
+        "type": "scenery",
+        "state": {},
+        "interactions": [
+            {
+                "verb": "EXAMINE",
+                "response_original": "The house is a beautiful colonial house which is painted white.\nIt is clear that the owners must have been extremely wealthy.",
+                "response_spooky": "The manor is a rotting husk of its former glory. The white paint is peeling like dead skin, revealing the blackened wood beneath."
+            }
+        ]
+    }
+}
