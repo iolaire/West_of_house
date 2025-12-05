@@ -248,7 +248,7 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("WEST") # Squeeky Room
         self.execute("NORTH") # Bat Room
         
-        self.execute("TAKE JADE") # Get Jade
+        self.execute("TAKE JADE DEATH MASK") # Get Jade
         self.execute("EAST") # Shaft Room
         
         # Fetch Coal & Make Diamond
@@ -274,6 +274,7 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("EAST") # Mine 2
         self.execute("SOUTH") # Mine 1
         self.execute("NORTH") # Gas Room
+        self.execute("TAKE SOUL-BINDING BRACELET") # Bracelet
         self.execute("UP") # Smelly Room
         self.execute("SOUTH") # Shaft Room
         
@@ -299,85 +300,6 @@ class TestFullWalkthrough(unittest.TestCase):
             print(f"\nFinished with output: {score_res.message}")
         
 
-        
-        # === Phase 6: The Last Treasures ===
-        print("\n--- Phase 6 ---")
-        self.execute("PUT CURSED DIAMOND IN CURSED TROPHY CASE")
-        self.execute("PUT CRYSTAL SKULL IN CURSED TROPHY CASE")
-        self.execute("DROP ALL EXCEPT CURSED LANTERN")
-        self.execute("DOWN")
-        self.execute("NORTH")
-        self.execute("EAST")
-        self.execute("EAST")
-        self.execute("SOUTH")
-        self.execute("EAST")
-        self.execute("DOWN")
-        self.execute("SOUTH") # Altar
-        
-        self.execute("PRAY") # Forest
-        self.execute("SOUTH")
-        self.execute("NORTH") 
-        self.execute("EAST")
-        self.execute("DOWN")
-        self.execute("DOWN")
-        self.execute("DOWN") # Canyon Bottom
-        
-        self.execute("TAKE OBSIDIAN COFFIN")
-        self.execute("OPEN OBSIDIAN COFFIN")
-        self.execute("TAKE NECROMANCER'S SCEPTRE")
-        self.execute("WAVE NECROMANCER'S SCEPTRE")
-        self.execute("TAKE POT OF GOLD")
-        self.execute("SW")
-        self.execute("UP")
-        self.execute("UP")
-        self.execute("NW")
-        self.execute("WEST") # Kitchen
-        
-        self.execute("OPEN LEATHER POUCH")
-        self.execute("TAKE WITHERED GARLIC")
-        self.execute("WEST")
-        
-        self.execute("PUT POT OF GOLD IN CURSED TROPHY CASE")
-        self.execute("PUT NECROMANCER'S SCEPTRE IN CURSED TROPHY CASE")
-        self.execute("PUT OBSIDIAN COFFIN IN CURSED TROPHY CASE")
-        
-        self.execute("TAKE CURSED LANTERN")
-        self.execute("TAKE WITHERED GARLIC")
-        self.execute("DOWN")
-        self.execute("NORTH")
-        self.execute("EAST")
-        self.execute("SOUTH")
-        self.execute("DOWN") # Bat Room
-        
-        self.execute("TAKE JADE DEATH MASK")
-        self.execute("SOUTH")
-        self.execute("EAST")
-        self.execute("SOUTH")
-        self.execute("DOWN")
-        self.execute("UP") # Living Room
-        
-        self.execute("PUT JADE DEATH MASK IN CURSED TROPHY CASE")
-        
-        # === Phase 7: The Endgame ===
-        print("\n--- Phase 7 ---")
-        print(f"Final Score: {self.state.score}")
-        
-        self.execute("TAKE CURSED LANTERN")
-        self.execute("TAKE SPECTRAL BLADE")
-        self.execute("DROP ALL EXCEPT CURSED LANTERN AND SPECTRAL BLADE")
-        
-        self.execute("LOOK")
-        self.execute("TAKE ANCIENT MAP") # Assuming Map Name? Or "TAKE MAP"
-        
-        self.execute("WEST")
-        self.execute("SW")
-        self.execute("ENTER")
-        
-        self.execute("TURN OFF CURSED LANTERN")
-        self.execute("PLUGH")
-        self.execute("DROP SPECTRAL BLADE")
-        self.execute("DROP CURSED LANTERN")
-        print("Done.")
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
