@@ -222,20 +222,6 @@
             }
         ]
     },
-    "trap_door": {
-        "name": "hidden hatch",
-        "type": "door",
-        "state": {
-            "is_open": false
-        },
-        "interactions": [
-            {
-                "verb": "EXAMINE",
-                "response_original": "A trap door is in the floor.",
-                "response_spooky": "A heavy wooden hatch is set into the floor. Scratches on the underside suggest something tried to get out."
-            }
-        ]
-    },
     "tree": {
         "name": "gnarled tree",
         "type": "scenery",

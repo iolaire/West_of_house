@@ -622,15 +622,26 @@ class GameEngine:
             # If no object specified, try to move IN
             if not object_id:
                 return self.handle_movement("IN", state)
+
+            # Resolve object name if not matching global/room items directly
+            # This handles cases like "window" -> "boarded_window"
+            current_room = self.world.get_room(state.current_room)
+            if object_id not in current_room.items and \
+               object_id not in state.inventory and \
+               object_id not in current_room.global_items:
+                resolved_id = self.resolve_object_name(object_id, state)
+                if resolved_id:
+                    object_id = resolved_id
             
             # Get current room
             current_room = self.world.get_room(state.current_room)
             
-            # Check if object is in current room or inventory
+            # Check if object is in current room, inventory, or global items
             object_in_room = object_id in current_room.items
             object_in_inventory = object_id in state.inventory
+            object_is_global = object_id in current_room.global_items
             
-            if not object_in_room and not object_in_inventory:
+            if not object_in_room and not object_in_inventory and not object_is_global:
                 display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
@@ -2134,6 +2145,7 @@ class GameEngine:
                         for key, required_value in interaction.condition.items():
                             # Get current value from GameState, falling back to WorldData
                             current_value = state.get_object_state(object_id, key, game_object.state.get(key, None))
+
                             if current_value != required_value:
                                 conditions_met = False
                                 break

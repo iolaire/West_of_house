@@ -229,6 +229,9 @@ def test_error_messages_use_haunted_vocabulary(game_engine, fresh_state, error_t
     """
     from command_parser import ParsedCommand
     
+    # Reset inventory to prevent state pollution from previous examples
+    fresh_state.inventory = []
+    
     # Generate commands that will produce specific error types
     if error_type == 'missing_object':
         cmd = ParsedCommand(verb='TAKE', object='nonexistent_object')
