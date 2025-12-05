@@ -117,6 +117,13 @@ const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
               • Some areas may require specific items to access
             </p>
 
+            <h3>The Creator</h3>
+            <p>
+              • Iolaire McFadden created this<br/>
+              • To provide feedback visit the <a href="https://www.geeksforgeeks.org/">West of House</a> project on github and submit an issue.
+
+            </p>
+
             <p className="about-footer-text">
               <em>Enter if you dare... The spirits await your arrival.</em>
             </p>

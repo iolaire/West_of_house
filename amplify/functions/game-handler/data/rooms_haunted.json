@@ -221,11 +221,13 @@
       "EAST": "east_of_house",
       "WEST": "living_room",
       "OUT": "east_of_house",
-      "UP": "attic"
+      "UP": "attic",
+      "DOWN": "slide_room"
     },
     "items": [
       "kitchen_table",
-      "kitchen_window"
+      "kitchen_window",
+      "chimney"
     ]
   },
   "attic": {

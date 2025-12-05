@@ -34,7 +34,7 @@ const PageHeader: React.FC = () => {
         <div className="header-content">
           <div className="header-logo-section">
             <img
-              src="/images/assets/WestofHauntedHouse_logo.jpg"
+              src="/images/assets/WestofHauntedHouse_logo.png"
               alt="West of Haunted House Logo"
               className="header-logo"
             />

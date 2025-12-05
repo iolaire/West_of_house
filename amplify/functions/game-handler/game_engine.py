@@ -3253,6 +3253,11 @@ class GameEngine:
             # Get object data
             game_object = self.world.get_object(object_id)
             
+            # Check for matching interaction first
+            for interaction in game_object.interactions:
+                if interaction.verb == "TURN":
+                    return self.handle_object_interaction("TURN", object_id, state)
+            
             # Check if object is turnable
             is_turnable = game_object.state.get('is_turnable', False)
             
@@ -3354,6 +3359,11 @@ class GameEngine:
             
             # Get object data
             game_object = self.world.get_object(object_id)
+            
+            # Check for matching interaction first
+            for interaction in game_object.interactions:
+                if interaction.verb == "PUSH":
+                    return self.handle_object_interaction("PUSH", object_id, state)
             
             # Check if object is moveable
             is_moveable = game_object.state.get('is_moveable', False)

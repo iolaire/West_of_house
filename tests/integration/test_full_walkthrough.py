@@ -163,6 +163,7 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("EAST")
         self.execute("EAST") # Living Room
         
+        # Put Treasures
         self.execute("PUT CHALICE OF SOULS IN CURSED TROPHY CASE")
         self.execute("PUT OLD BAG IN CURSED TROPHY CASE")
         
@@ -171,7 +172,7 @@ class TestFullWalkthrough(unittest.TestCase):
              # Assume it's in Living Room
              self.execute("TAKE RAVEN'S EGG", require_success=False) # Might already be there?
              have_egg = True
-
+    
         if have_raven:
             self.execute("PUT MECHANICAL RAVEN IN CURSED TROPHY CASE")
         else:
@@ -191,6 +192,16 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("TIE HANGMAN'S ROPE TO RAILING")
         self.execute("DOWN")
         self.execute("TAKE CURSED TORCH")
+        
+        # Egypt Room Excursion
+        self.execute("SOUTH") # North Temple
+        self.execute("DOWN") # Egypt Room
+        self.execute("TAKE OBSIDIAN COFFIN") # Coffin
+        self.execute("OPEN OBSIDIAN COFFIN")
+        self.execute("TAKE NECROMANCER'S SCEPTRE") # Sceptre
+        self.execute("UP") # North Temple
+        self.execute("NORTH") # Torch Room
+        
         self.execute("UP") # Back to Dome Room
         
         # Navigate to Maintenance Room
@@ -200,6 +211,7 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("NE") # Deep Canyon
         self.execute("EAST") # Dam Room
         self.execute("NORTH") # Dam Lobby
+        self.execute("TAKE CURSED MATCHES") # Matches
         self.execute("NORTH") # Maintenance Room
         
         self.execute("TAKE BLOOD-STAINED WRENCH") # Wrench
@@ -214,45 +226,77 @@ class TestFullWalkthrough(unittest.TestCase):
         
         self.execute("ECHO")
         self.execute("TAKE CURSED PLATINUM BAR")
-        self.execute("WEST")
-        self.execute("WEST")
-        self.execute("SOUTH")
+        self.execute("WEST") # Round Room
+        self.execute("WEST") # EW Passage
+        self.execute("WEST") # Troll Room
+        self.execute("SOUTH") # Cellar
         self.execute("UP")
-        self.execute("WEST") # Living Room
+        # self.execute("WEST") # Removed: UP from Cellar lands in Living Room
         
         self.execute("PUT CURSED TORCH IN CURSED TROPHY CASE")
         self.execute("PUT CURSED PLATINUM BAR IN CURSED TROPHY CASE")
+        self.execute("PUT OBSIDIAN COFFIN IN CURSED TROPHY CASE")
+        self.execute("PUT NECROMANCER'S SCEPTRE IN CURSED TROPHY CASE")
         self.execute("DOWN") # Cellar
         
         # === Phase 5: The Coal Mine & Hades ===
         print("\n--- Phase 5 ---")
-        self.execute("NORTH")
-        self.execute("EAST")
-        self.execute("NORTH")
-        self.execute("NE")
-        self.execute("EAST")
-        self.execute("NORTH")
-        self.execute("UP")
-        self.execute("NORTH") # Lobby
+        self.execute("UP") # Living Room
+        self.execute("EAST") # Kitchen
+        self.execute("DOWN") # Slide Room
+        self.execute("NORTH") # Mine Entrance
+        self.execute("WEST") # Squeeky Room
+        self.execute("NORTH") # Bat Room
         
-        self.execute("TAKE CURSED MATCHES")
-        self.execute("NORTH")
+        self.execute("TAKE JADE") # Get Jade
         self.execute("EAST") # Shaft Room
         
-        # Fetch Coal
-        self.execute("SOUTH")
+        # Fetch Coal & Make Diamond
+        self.execute("DOWN") # Gas Room
+        self.execute("DOWN") # Ladder Bottom
         self.execute("SOUTH") # Dead End
         self.execute("TAKE CURSED COAL")
-        self.execute("NORTH")
-        self.execute("NORTH") # Shaft Room
+        self.execute("NORTH") # Ladder Bottom
+        self.execute("WEST") # Timber Room
+        self.execute("WEST") # Lower Shaft
+        self.execute("SOUTH") # Machine Room
         
-        self.execute("PUT CURSED COAL IN BASKET")
-        self.execute("LOWER BASKET")
-        self.execute("NORTH")
-        self.execute("DOWN")
-        self.execute("EAST")
-        self.execute("NE")
-        self.execute("SE")
+        self.execute("PUT CURSED COAL IN MACHINE")
+        self.execute("TURN MACHINE SWITCH WITH RUSTED SCREWDRIVER") # Switch
+        self.execute("TAKE DARK DIAMOND") # Diamond
+        
+        self.execute("NORTH") # Lower Shaft
+        self.execute("EAST") # Timber Room
+        self.execute("EAST") # Ladder Bottom
+        self.execute("UP") # Ladder Top
+        self.execute("UP") # Mine 4
+        self.execute("NORTH") # Mine 3
+        self.execute("EAST") # Mine 2
+        self.execute("SOUTH") # Mine 1
+        self.execute("NORTH") # Gas Room
+        self.execute("UP") # Smelly Room
+        self.execute("SOUTH") # Shaft Room
+        
+        # Exit Mine
+        self.execute("WEST") # Bat Room
+        self.execute("SOUTH") # Squeeky Room
+        self.execute("EAST") # Mine Entrance
+        self.execute("SOUTH") # Slide Room
+        self.execute("DOWN") # Cellar
+        
+        self.execute("UP") # Living Room
+        
+        self.execute("PUT DARK DIAMOND IN CURSED TROPHY CASE")
+        self.execute("PUT JADE DEATH MASK IN CURSED TROPHY CASE")
+        self.execute("PUT SOUL-BINDING BRACELET IN CURSED TROPHY CASE")
+        
+        # Check Final Score
+        score_res = self.execute("SCORE")
+        # Assuming 350 is max
+        if "350" in score_res.message:
+            print("\n*** SUCCESS: REACHED 350 POINTS! ***")
+        else:
+            print(f"\nFinished with output: {score_res.message}")
         self.execute("SW")
         self.execute("DOWN") # Ladder Top
         
