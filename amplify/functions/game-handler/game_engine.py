@@ -68,8 +68,14 @@ class GameEngine:
         """
         try:
             current_room = self.world.get_room(state.current_room)
+            print(f"DEBUG: Resolving '{name}' in {state.current_room}")
+            print(f"DEBUG: Global Check: {current_room.global_items}")
             # Include global items in available objects
             available_objects = list(current_room.items) + list(state.inventory) + list(current_room.global_items)
+            print(f"DEBUG: Available: {available_objects}")
+            if 'tree' in available_objects:
+                 t = self.world.get_object('tree')
+                 print(f"DEBUG: Tree Name='{t.name}' Spooky='{t.name_spooky}' Type='{t.type}'")
             
             # Add objects from open containers in room, inventory, and global items
             for container_id in list(current_room.items) + list(state.inventory) + list(current_room.global_items):
@@ -1096,8 +1102,8 @@ class GameEngine:
             
             # If an object is specified, validate it exists and is climbable
             if object_id:
-                # Check if object is in current room
-                if object_id not in current_room.items:
+                # Check if object is in current room, global items, or inventory
+                if object_id not in current_room.items and object_id not in current_room.global_items and object_id not in state.inventory:
                     # Check if it's mentioned in the room description (scenery)
                     try:
                         game_object = self.world.get_object(object_id)

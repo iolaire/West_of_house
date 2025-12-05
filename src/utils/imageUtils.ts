@@ -89,12 +89,13 @@ export function preloadImage(imagePath: string): Promise<void> {
 
 /**
  * Extracts the room name from an image path
- * 
- * @param imagePath - The image path (e.g., "/images/west_of_house.png")
+ *
+ * @param imagePath - The image path (e.g., "/images/rooms/west_of_house.png" or "/images/webp/west_of_house.webp")
  * @returns The room name or null if extraction fails
  */
 function extractRoomNameFromPath(imagePath: string): string | null {
-  const match = imagePath.match(/\/images\/rooms\/(.+)\.png$/);
+  // Try PNG path first
+  let match = imagePath.match(/\/images\/rooms\/(.+)\.png$/);
   if (match && match[1]) {
     // Convert snake_case back to Title Case for logging
     return match[1]
@@ -102,6 +103,17 @@ function extractRoomNameFromPath(imagePath: string): string | null {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   }
+
+  // Try WebP path
+  match = imagePath.match(/\/images\/webp\/(.+)\.webp$/);
+  if (match && match[1]) {
+    // Convert snake_case back to Title Case for logging
+    return match[1]
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+
   return null;
 }
 
@@ -178,42 +190,60 @@ export function downloadUnmappedRoomsReport(): void {
 
 /**
  * Converts a PNG image path to WebP format
- * 
- * @param imagePath - The original image path (e.g., "/images/west_of_house.png")
- * @returns The WebP version of the image path
- * 
+ *
+ * @param imagePath - The original image path (e.g., "/images/rooms/west_of_house.png")
+ * @returns The WebP version of the image path in the webp subfolder
+ *
  * @example
- * getWebPPath("/images/west_of_house.png") // returns "/images/west_of_house.webp"
+ * getWebPPath("/images/rooms/west_of_house.png") // returns "/images/webp/west_of_house.webp"
  */
 export function getWebPPath(imagePath: string): string {
-  // If already WebP or not a PNG, return as-is
-  if (imagePath.endsWith('.webp') || !imagePath.endsWith('.png')) {
+  // If already WebP, return as-is
+  if (imagePath.endsWith('.webp')) {
     return imagePath;
   }
-  
-  return imagePath.replace(/\.png$/, '.webp');
+
+  // If it's a PNG in rooms folder, convert to webp subfolder
+  if (imagePath.includes('/images/rooms/') && imagePath.endsWith('.png')) {
+    const filename = imagePath.replace('/images/rooms/', '').replace('.png', '');
+    return `/images/webp/${filename}.webp`;
+  }
+
+  // For other PNG paths, just change extension
+  if (imagePath.endsWith('.png')) {
+    return imagePath.replace(/\.png$/, '.webp');
+  }
+
+  // Return as-is for non-PNG, non-WebP images
+  return imagePath;
 }
 
 /**
  * Ensures a path is in PNG format
- * 
+ *
  * @param imagePath - The image path
  * @returns The PNG version of the image path
- * 
+ *
  * @example
- * getPNGPath("/images/west_of_house.webp") // returns "/images/west_of_house.png"
+ * getPNGPath("/images/webp/west_of_house.webp") // returns "/images/rooms/west_of_house.png"
  */
 export function getPNGPath(imagePath: string): string {
   // If already PNG, return as-is
   if (imagePath.endsWith('.png')) {
     return imagePath;
   }
-  
-  // Convert WebP to PNG
+
+  // If it's a WebP in webp folder, convert to rooms PNG folder
+  if (imagePath.includes('/images/webp/') && imagePath.endsWith('.webp')) {
+    const filename = imagePath.replace('/images/webp/', '').replace('.webp', '');
+    return `/images/rooms/${filename}.png`;
+  }
+
+  // Convert WebP to PNG for other paths
   if (imagePath.endsWith('.webp')) {
     return imagePath.replace(/\.webp$/, '.png');
   }
-  
+
   // For other formats, assume PNG
   return imagePath;
 }
