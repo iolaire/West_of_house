@@ -2511,6 +2511,24 @@ class GameEngine:
             contents.append(object_id)
             state.set_object_state(container_id, 'contents', contents)
             
+            # Scoring Logic for Trophy Case
+            if container_id == "trophy_case":
+                obj_state = game_object.state
+                # Check if it's a treasure and not already scored
+                if obj_state.get('treasure', False):
+                    scored_treasures = set(state.flags.get('treasures_scored', []))
+                    if object_id not in scored_treasures:
+                        value = obj_state.get('value', 0)
+                        state.score += value
+                        
+                        # Update flags
+                        scored_treasures.add(object_id)
+                        state.set_flag('treasures_scored', list(scored_treasures))
+                        state.set_flag('total_treasure_value', state.flags.get('total_treasure_value', 0) + value)
+                        
+                        # Append score notification
+                        put_message += f"\n[The house acknowledges your offering. You gained {value} points.]"
+            
             # Apply sanity effects
             if sanity_change != 0:
                 state.sanity = max(0, min(100, state.sanity + sanity_change))

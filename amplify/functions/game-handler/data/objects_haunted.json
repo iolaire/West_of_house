@@ -347,7 +347,9 @@
     "name": "crystal skull",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -824,7 +826,9 @@
     "name": "necromancer's sceptre",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -1316,7 +1320,9 @@
     "state": {
       "is_open": false,
       "is_locked": false,
-      "is_taken": false
+      "is_taken": false,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -1422,7 +1428,9 @@
     "name": "bone trident",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -1752,7 +1760,9 @@
       "is_taken": false,
       "contents": [
         "sceptre"
-      ]
+      ],
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -1880,7 +1890,9 @@
     "name": "cursed diamond",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -1914,7 +1926,9 @@
     "name": "jade death mask",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -2032,7 +2046,9 @@
       "is_taken": false,
       "contents": [
         "coins"
-      ]
+      ],
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -2144,7 +2160,9 @@
     "name": "blood emerald",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -2514,7 +2532,9 @@
     "name": "portrait of the damned",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -2796,7 +2816,9 @@
     "name": "cursed platinum bar",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -2830,7 +2852,9 @@
     "name": "cauldron of blood",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -3114,7 +3138,9 @@
     "name": "soul-binding bracelet",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -3700,7 +3726,9 @@
     "type": "item",
     "state": {
       "is_taken": false,
-      "is_on": true
+      "is_on": true,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -3872,7 +3900,9 @@
     "name": "coffin of jewels",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -4243,7 +4273,9 @@
       "is_taken": false,
       "contents": [
         "canary"
-      ]
+      ],
+      "treasure": true,
+      "value": 5
     },
     "interactions": [
       {
@@ -4372,7 +4404,9 @@
     "name": "cursed bauble",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -4406,7 +4440,9 @@
     "name": "mechanical raven",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "treasure": true,
+      "value": 15
     },
     "interactions": [
       {
@@ -4526,7 +4562,10 @@
   "coins": {
     "name": "cursed coins",
     "type": "item",
-    "state": {},
+    "state": {
+      "treasure": true,
+      "value": 15
+    },
     "interactions": []
   },
   "guidebook": {
