@@ -470,7 +470,7 @@
         "state_change": {
           "is_taken": true
         },
-        "response_spooky": "grasped. You feel its cursed weight."
+        "response_spooky": "The hot food stinks in your hand. You feel its cursed weight."
       },
       {
         "verb": "DROP",
@@ -481,7 +481,7 @@
         "state_change": {
           "is_taken": false
         },
-        "response_spooky": "released. The object lands with an unnatural thud."
+        "response_spooky": "Hot food eleased. The sandwich lands with an unnatural thud."
       },
       {
         "verb": "EXAMINE",
@@ -1395,7 +1395,7 @@
         "state_change": {
           "is_taken": true
         },
-        "response_spooky": "grasped. You feel its cursed weight."
+        "response_spooky": "The withered garlic grasped. You feel its cursed weight."
       },
       {
         "verb": "DROP",
@@ -1406,7 +1406,7 @@
         "state_change": {
           "is_taken": false
         },
-        "response_spooky": "released. It hits the ground and seems to pulse."
+        "response_spooky": "Withered garlic released. It hits the ground and seems to pulse."
       },
       {
         "verb": "EXAMINE",
@@ -1440,7 +1440,7 @@
         "state_change": {
           "is_taken": false
         },
-        "response_spooky": "released. It hits the ground and seems to pulse."
+        "response_spooky": "Dropped withered garlic. It hits the ground and seems to pulse."
       },
       {
         "verb": "EXAMINE",
@@ -2148,7 +2148,7 @@
         "state_change": {
           "is_taken": true
         },
-        "response_spooky": "grasped. You feel its cursed weight."
+        "response_spooky": "The blood emerald broods. You feel its cursed weight."
       },
       {
         "verb": "DROP",
@@ -2159,7 +2159,7 @@
         "state_change": {
           "is_taken": false
         },
-        "response_spooky": "released. You feel relief as it leaves your hands."
+        "response_spooky": "Blood emerald released. You feel relief as it leaves your hands."
       },
       {
         "verb": "EXAMINE",
@@ -2684,13 +2684,13 @@
       },
       {
         "verb": "TAKE",
-        "response_original": "Underneath the pile of leaves is a grating. As you release the leaves,\nthe grating is once again concealed from view.",
-        "response_spooky": "Underneath the pile of bones is a grating. As you release the pile of bones,\nthe grating is once again concealed from view."
+        "response_original": "Underneath the pile of leaves is a grating. As you release the leaves, the grating is once again concealed from view.",
+        "response_spooky": "Underneath the pile of bones is a grating. As you release the pile of bones, the grating is once again concealed from view."
       },
       {
         "verb": "LOOK-UNDER",
-        "response_original": "Underneath the pile of leaves is a grating. As you release the leaves,\nthe grating is once again concealed from view.",
-        "response_spooky": "Underneath the pile of bones is a grating. As you release the pile of bones,\nthe grating is once again concealed from view."
+        "response_original": "Underneath the pile of leaves is a grating. As you release the leaves, the grating is once again concealed from view.",
+        "response_spooky": "Underneath the pile of bones is a grating. As you release the pile of bones, the grating is once again concealed from view."
       },
       {
         "verb": "TAKE",
@@ -2698,7 +2698,7 @@
         "state_change": {
           "is_taken": true
         },
-        "response_spooky": "grasped. You feel its cursed weight."
+        "response_spooky": "The pile of bones levitates. You feel its cursed weight."
       },
       {
         "verb": "DROP",
@@ -2709,7 +2709,7 @@
         "state_change": {
           "is_taken": false
         },
-        "response_spooky": "released. The object lands with an unnatural thud."
+        "response_spooky": "The pile of bones is released. The object lands with an unnatural thud."
       },
       {
         "verb": "EXAMINE",
@@ -2732,7 +2732,7 @@
         "state_change": {
           "is_taken": true
         },
-        "response_spooky": "grasped. You feel its cursed weight."
+        "response_spooky": "The wrecked ship wiggles. You feel its cursed weight."
       },
       {
         "verb": "DROP",
@@ -2743,12 +2743,12 @@
         "state_change": {
           "is_taken": false
         },
-        "response_spooky": "released. You feel relief as it leaves your hands."
+        "response_spooky": "You released the wrecked ship. You feel relief as it leaves your hands."
       },
       {
         "verb": "EXAMINE",
         "response_original": "punctured boat",
-        "response_spooky": "The punctured boat seems to pulse with malevolent energy."
+        "response_spooky": "The wrecked ship seems to pulse with malevolent energy."
       }
     ],
     "is_takeable": true
@@ -2766,7 +2766,7 @@
         "state_change": {
           "is_taken": true
         },
-        "response_spooky": "grasped. The object seems to writhe in your grasp."
+        "response_spooky": "The ghost ship grasped. The object seems to writhe in your grasp."
       },
       {
         "verb": "DROP",
@@ -2777,12 +2777,12 @@
         "state_change": {
           "is_taken": false
         },
-        "response_spooky": "released. It falls with a wet sound."
+        "response_spooky": "Ghost ship released. It falls with a wet sound."
       },
       {
         "verb": "EXAMINE",
-        "response_original": "There is a folded pile of plastic here which has a small valve\nattached.",
-        "response_spooky": "There is a folded pile of plastic here which has a small valve\nattached. It's covered in strange symbols."
+        "response_original": "There is a folded pile of plastic here which has a small valve attached.",
+        "response_spooky": "There is a folded pile of plastic here which has a small valve attached. It's covered in strange symbols."
       }
     ],
     "is_takeable": true
@@ -2800,7 +2800,7 @@
         "state_change": {
           "is_taken": true
         },
-        "response_spooky": "grasped. You feel its cursed weight."
+        "response_spooky": "The cursed platinum bar grasped. You feel its cursed weight."
       },
       {
         "verb": "DROP",
@@ -2811,7 +2811,7 @@
         "state_change": {
           "is_taken": false
         },
-        "response_spooky": "released. You feel relief as it leaves your hands."
+        "response_spooky": "Cursed platinum bar released. You feel relief as it leaves your hands."
       },
       {
         "verb": "EXAMINE",
@@ -3254,7 +3254,7 @@
         "state_change": {
           "is_taken": true
         },
-        "response_spooky": "grasped. You feel its cursed weight."
+        "response_spooky": "The cursed coal grasped. You feel its cursed weight."
       },
       {
         "verb": "DROP",
@@ -3265,7 +3265,7 @@
         "state_change": {
           "is_taken": false
         },
-        "response_spooky": "released. The object lands with an unnatural thud."
+        "response_spooky": "Cursed coal released. The object lands with an unnatural thud."
       },
       {
         "verb": "EXAMINE",

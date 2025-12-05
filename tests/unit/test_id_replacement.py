@@ -184,6 +184,41 @@ class TestHandlerIdReplacement(unittest.TestCase):
         self.assertIn("Display Name", result.message)
         self.engine._get_object_names.assert_called_with("missing_obj")
 
+    def test_handle_ring_missing_object(self):
+        result = self.engine.handle_ring("missing_obj", self.state)
+        self.assertFalse(result.success)
+        self.assertIn("Display Name", result.message)
+        self.engine._get_object_names.assert_called_with("missing_obj")
+
+    def test_handle_cross_missing_object(self):
+        result = self.engine.handle_cross("missing_obj", self.state)
+        self.assertFalse(result.success)
+        self.assertIn("Display Name", result.message)
+        self.engine._get_object_names.assert_called_with("missing_obj")
+
+    def test_handle_enter_missing_object(self):
+        result = self.engine.handle_enter("missing_obj", self.state)
+        self.assertFalse(result.success)
+        self.assertIn("Display Name", result.message)
+        self.engine._get_object_names.assert_called_with("missing_obj")
+
+    def test_handle_climb_missing_object(self):
+        # Must be in room with valid exit for "climb UP/DOWN" first, 
+        # or we just test the object not found logic.
+        # Logic says: if object_id specified, check if in room. If not, error.
+        result = self.engine.handle_climb("UP", "missing_obj", self.state)
+        self.assertFalse(result.success)
+        # The logic validates direction first (needs to be in exits).
+        # Let's assume start_room has UP exit? By default mock room has empty exits.
+        # We need to setup room exits for this test if we want to reach object check.
+        # But actually "There's nothing to climb up here" fails first.
+        # Let's add exit.
+        self.room.exits = {"UP": "some_room"}
+        result = self.engine.handle_climb("UP", "missing_obj", self.state)
+        self.assertFalse(result.success)
+        self.assertIn("Display Name", result.message)
+        self.engine._get_object_names.assert_called_with("missing_obj")
+    
     def test_handle_squeeze_missing_object(self):
         result = self.engine.handle_squeeze("missing_obj", self.state)
         self.assertFalse(result.success)
