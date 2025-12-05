@@ -1115,6 +1115,11 @@
     "state": {},
     "interactions": [
       {
+        "verb": "PUSH",
+        "response_original": "Click.",
+        "response_spooky": "Click. The machinery changes its hum to a more menacing pitch."
+      },
+      {
         "verb": "READ",
         "response_original": "They're greek to you.",
         "response_spooky": "They're greek to you. The words seem to writhe on the page."
@@ -3018,7 +3023,13 @@
     "name": "hangman's rope",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "is_rope": true,
+      "can_tie": true,
+      "tie_targets": [
+        "railing",
+        "rail"
+      ]
     },
     "interactions": [
       {

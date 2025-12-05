@@ -68,14 +68,8 @@ class GameEngine:
         """
         try:
             current_room = self.world.get_room(state.current_room)
-            print(f"DEBUG: Resolving '{name}' in {state.current_room}")
-            print(f"DEBUG: Global Check: {current_room.global_items}")
             # Include global items in available objects
             available_objects = list(current_room.items) + list(state.inventory) + list(current_room.global_items)
-            print(f"DEBUG: Available: {available_objects}")
-            if 'tree' in available_objects:
-                 t = self.world.get_object('tree')
-                 print(f"DEBUG: Tree Name='{t.name}' Spooky='{t.name_spooky}' Type='{t.type}'")
             
             # Add objects from open containers in room, inventory, and global items
             for container_id in list(current_room.items) + list(state.inventory) + list(current_room.global_items):
@@ -12609,6 +12603,13 @@ class GameEngine:
                 return self._handle_missing_object(command.object, state, command.verb)
             # Update command object with resolved ID
             command.object = resolved_object
+
+        # Resolve target if present
+        if command.target and command.verb not in ["SAY", "YELL", "ECHO"]:
+            resolved_target = self.resolve_object_name(command.target, state)
+            if resolved_target:
+                command.target = resolved_target
+
 
         # Check prerequisites
         prerequisite_result = self.check_prerequisites(command.verb, command.object, state)

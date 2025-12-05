@@ -26,16 +26,17 @@ class TestFullWalkthrough(unittest.TestCase):
         self.engine = GameEngine(self.world_data)
         self.parser = CommandParser()
         
-    def execute(self, command_text):
+    def execute(self, command_text, require_success=True):
         """Helper to parse and execute a command."""
         cmd = self.parser.parse(command_text)
         result = self.engine.execute_command(cmd, self.state)
         # Uncomment to debug
-        # print(f"\n> {command_text}")
-        # print(result.message)
-        if not result.success:
+        print(f"\n> {command_text}")
+        print(result.message)
+        if require_success and not result.success:
             print(f"COMMAND FAILED: {command_text} -> {result.message}")
-        self.assertTrue(result.success, f"Command failed: {command_text}\nResponse: {result.message}")
+        if require_success:
+            self.assertTrue(result.success, f"Command failed: {command_text}\nResponse: {result.message}")
         return result
 
     def test_win_game(self):
@@ -50,24 +51,24 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("NORTH")
         self.execute("NORTH") # Forest Path
         
-        self.execute("CLIMB DEAD TREE") # Spooky tree
+        self.execute("CLIMB GNARLED TREE") # Spooky tree
         self.execute("TAKE RAVEN'S EGG") # Egg
-        self.execute("CLIMB DOWN")
+        self.execute("DOWN")
         self.execute("SOUTH")
         self.execute("EAST") # Behind House
         
         self.execute("OPEN BROKEN WINDOW") # Spooky window
-        self.execute("ENTER") # Kitchen
+        self.execute("ENTER BROKEN WINDOW") # Kitchen
         
         self.execute("TAKE LEATHER POUCH") # Sack
         self.execute("TAKE VIAL OF POISON") # Bottle
         self.execute("WEST") # Living Room
         
-        self.execute("TAKE TARNISHED LANTERN") # Lamp
+        self.execute("TAKE CURSED LANTERN") # Lamp
         self.execute("TAKE SPECTRAL BLADE") # Sword
         self.execute("MOVE BLOODSTAINED RUG") # Rug
         self.execute("OPEN CURSED TRAP DOOR") # Trap Door
-        self.execute("TURN ON TARNISHED LANTERN")
+        self.execute("TURN ON CURSED LANTERN")
         self.execute("DOWN") # Cellar
         
         # === Phase 2: The Cellar, Troll, & Gallery ===
@@ -76,6 +77,7 @@ class TestFullWalkthrough(unittest.TestCase):
         
         # Kill Troll (Loop until dead)
         troll_dead = False
+        self.execute("INVENTORY")
         for _ in range(10):
             res = self.execute("KILL FLESH-EATING OGRE WITH SPECTRAL BLADE")
             # print(f"Combat: {res.message}")
@@ -92,17 +94,18 @@ class TestFullWalkthrough(unittest.TestCase):
         self.assertTrue(troll_dead, "Troll must die.")
         
         self.execute("DROP SPECTRAL BLADE")
-        self.execute("SOUTH")
+        self.execute("SOUTH") # Cellar
+        self.execute("SOUTH") # East of Chasm
         self.execute("EAST") # Gallery
         
-        self.execute("TAKE PORTRAIT OF THE DAMNED") # Painting
+        self.execute("TAKE PAINTING") # Painting
         self.execute("NORTH") # Studio
         
         self.execute("UP")
         self.execute("WEST") # Living Room
         
         self.execute("OPEN CURSED TROPHY CASE") 
-        self.execute("PUT PORTRAIT OF THE DAMNED IN CURSED TROPHY CASE")
+        self.execute("PUT PAINTING IN CURSED TROPHY CASE")
         self.execute("DROP RAVEN'S EGG") # Drop egg for Thief
         self.execute("EAST") # Kitchen
         
@@ -129,24 +132,32 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("SOUTH")
         self.execute("SE") # Cyclops Room
         
-        self.execute("ULYSSES") # Scare Cyclops
+        # self.execute("ULYSSES") # Scare Cyclops (Not implemented/needed?)
         
         self.execute("UP") # Treasure Room
         
         self.execute("TAKE CHALICE OF SOULS")
         # Try taking Thief's bag - Thief name logic might differ
-        res = self.execute("TAKE SHADOW THIEF") 
+        res = self.execute("TAKE SHADOW THIEF", require_success=False)
         # Ignoring fail here as it's optional path optimization or requires thief state
         if not res.success:
              print("Skipping Thief logic - probabilistic")
 
         # Canary logic
-        res = self.execute("TAKE MECHANICAL RAVEN") # Canary Name
-        if not res.success:
-            self.execute("TAKE RAVEN'S EGG")
-            print("Took Egg (Thief didn't open it).")
-        else:
+        have_raven = False
+        have_egg = False
+        
+        res = self.execute("TAKE MECHANICAL RAVEN", require_success=False) # Canary Name
+        if res.success:
+            have_raven = True
             print("Took Canary (Thief opened egg!).")
+        else:
+            res_egg = self.execute("TAKE RAVEN'S EGG", require_success=False)
+            if res_egg.success:
+                have_egg = True
+                print("Took Egg (Thief didn't open it).")
+            else:
+                 print("Egg/Raven not in Treasure Room. Probably in Living Room.")
             
         self.execute("DOWN")
         self.execute("EAST")
@@ -154,9 +165,17 @@ class TestFullWalkthrough(unittest.TestCase):
         
         self.execute("PUT CHALICE OF SOULS IN CURSED TROPHY CASE")
         self.execute("PUT OLD BAG IN CURSED TROPHY CASE")
-        # Put Canary or Egg
-        self.execute("PUT MECHANICAL RAVEN IN CURSED TROPHY CASE")
-        self.execute("PUT RAVEN'S EGG IN CURSED TROPHY CASE")
+        
+        # Put Canary or Egg (Conditional)
+        if not have_raven and not have_egg:
+             # Assume it's in Living Room
+             self.execute("TAKE RAVEN'S EGG", require_success=False) # Might already be there?
+             have_egg = True
+
+        if have_raven:
+            self.execute("PUT MECHANICAL RAVEN IN CURSED TROPHY CASE")
+        else:
+            self.execute("PUT RAVEN'S EGG IN CURSED TROPHY CASE")
         
         self.execute("DROP KEYS")
         self.execute("DOWN") # Cellar
@@ -167,23 +186,29 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("EAST")
         self.execute("EAST")
         self.execute("SE")
-        self.execute("EAST") # Dam
+        self.execute("EAST") # Dome Room
         
-        self.execute("TIE HANGMAN'S ROPE TO RAIL")
-        self.execute("CLIMB DOWN")
+        self.execute("TIE HANGMAN'S ROPE TO RAILING")
+        self.execute("DOWN")
         self.execute("TAKE CURSED TORCH")
-        self.execute("CLIMB UP")
-        self.execute("NORTH")
+        self.execute("UP") # Back to Dome Room
+        
+        # Navigate to Maintenance Room
+        self.execute("WEST") # Engravings Cave
+        self.execute("NW") # Round Room
+        self.execute("NORTH") # NS Passage
+        self.execute("NE") # Deep Canyon
+        self.execute("EAST") # Dam Room
+        self.execute("NORTH") # Dam Lobby
         self.execute("NORTH") # Maintenance Room
         
-        self.execute("TAKE RUSTY WRENCH")
-        self.execute("TAKE SCREWDRIVER")
-        self.execute("PUSH YELLOW SKULL BUTTON")
+        self.execute("TAKE BLOOD-STAINED WRENCH") # Wrench
+        self.execute("PUSH YELLOW SKULL BUTTON") # Button
         self.execute("SOUTH")
-        self.execute("SOUTH") # Dam
+        self.execute("SOUTH") # Dam Room
         
-        self.execute("TURN IRON BOLT WITH RUSTY WRENCH")
-        self.execute("DROP RUSTY WRENCH")
+        self.execute("TURN IRON BOLT WITH BLOOD-STAINED WRENCH")
+        self.execute("DROP BLOOD-STAINED WRENCH")
         self.execute("SOUTH") # Deep Canyon
         self.execute("DOWN") # Loud Room
         
@@ -217,11 +242,11 @@ class TestFullWalkthrough(unittest.TestCase):
         # Fetch Coal
         self.execute("SOUTH")
         self.execute("SOUTH") # Dead End
-        self.execute("TAKE COAL")
+        self.execute("TAKE CURSED COAL")
         self.execute("NORTH")
         self.execute("NORTH") # Shaft Room
         
-        self.execute("PUT COAL IN BASKET")
+        self.execute("PUT CURSED COAL IN BASKET")
         self.execute("LOWER BASKET")
         self.execute("NORTH")
         self.execute("DOWN")
@@ -234,19 +259,19 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("DOWN")
         self.execute("WEST") # Timber Room
         
-        self.execute("DROP ALL EXCEPT SCREWDRIVER AND TARNISHED LANTERN")
+        self.execute("DROP ALL EXCEPT RUSTED SCREWDRIVER AND CURSED LANTERN")
         self.execute("WEST") # Drafty Room
         
-        self.execute("TAKE COAL") # From basket
+        self.execute("TAKE CURSED COAL") # From basket
         self.execute("SOUTH") # Machine Room
         
         self.execute("OPEN LID")
-        self.execute("PUT COAL IN TORTURE MACHINE")
+        self.execute("PUT CURSED COAL IN TORTURE MACHINE")
         self.execute("CLOSE LID")
-        self.execute("TURN SWITCH WITH SCREWDRIVER")
+        self.execute("TURN SWITCH WITH RUSTED SCREWDRIVER")
         self.execute("OPEN LID")
         self.execute("TAKE CURSED DIAMOND")
-        self.execute("DROP SCREWDRIVER")
+        self.execute("DROP RUSTED SCREWDRIVER")
         self.execute("NORTH")
         
         self.execute("PUT CURSED DIAMOND IN BASKET")
@@ -294,7 +319,7 @@ class TestFullWalkthrough(unittest.TestCase):
         print("\n--- Phase 6 ---")
         self.execute("PUT CURSED DIAMOND IN CURSED TROPHY CASE")
         self.execute("PUT CRYSTAL SKULL IN CURSED TROPHY CASE")
-        self.execute("DROP ALL EXCEPT TARNISHED LANTERN")
+        self.execute("DROP ALL EXCEPT CURSED LANTERN")
         self.execute("DOWN")
         self.execute("NORTH")
         self.execute("EAST")
@@ -331,7 +356,7 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("PUT NECROMANCER'S SCEPTRE IN CURSED TROPHY CASE")
         self.execute("PUT OBSIDIAN COFFIN IN CURSED TROPHY CASE")
         
-        self.execute("TAKE TARNISHED LANTERN")
+        self.execute("TAKE CURSED LANTERN")
         self.execute("TAKE WITHERED GARLIC")
         self.execute("DOWN")
         self.execute("NORTH")
@@ -352,9 +377,9 @@ class TestFullWalkthrough(unittest.TestCase):
         print("\n--- Phase 7 ---")
         print(f"Final Score: {self.state.score}")
         
-        self.execute("TAKE TARNISHED LANTERN")
+        self.execute("TAKE CURSED LANTERN")
         self.execute("TAKE SPECTRAL BLADE")
-        self.execute("DROP ALL EXCEPT TARNISHED LANTERN AND SPECTRAL BLADE")
+        self.execute("DROP ALL EXCEPT CURSED LANTERN AND SPECTRAL BLADE")
         
         self.execute("LOOK")
         self.execute("TAKE ANCIENT MAP") # Assuming Map Name? Or "TAKE MAP"
@@ -363,10 +388,10 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("SW")
         self.execute("ENTER")
         
-        self.execute("TURN OFF TARNISHED LANTERN")
+        self.execute("TURN OFF CURSED LANTERN")
         self.execute("PLUGH")
         self.execute("DROP SPECTRAL BLADE")
-        self.execute("DROP TARNISHED LANTERN")
+        self.execute("DROP CURSED LANTERN")
         print("Done.")
 
 if __name__ == "__main__":

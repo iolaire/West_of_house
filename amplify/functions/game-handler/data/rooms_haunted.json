@@ -894,11 +894,11 @@
     "description_spooky": "This chamber is lit by flames that burn without fuel and give no heat. The fire is green and casts shadows that move against its light. The stench from the western tunnel is overwhelming - the smell of burning flesh and sulfur. The flames whisper in voices of the damned.",
     "exits": {
       "SOUTH": "north_temple",
-      "DOWN": "north_temple"
+      "DOWN": "north_temple",
+      "UP": "dome_room"
     },
     "items": [
-      "pedestal",
-      "torch"
+      "pedestal"
     ]
   },
   "north_temple": {

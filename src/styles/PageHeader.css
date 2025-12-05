@@ -1,0 +1,126 @@
+/**
+ * PageHeader Component Styles
+ * Feature: grimoire-frontend
+ */
+
+.page-header {
+  background: linear-gradient(to bottom, rgba(10, 5, 0, 0.95), rgba(20, 10, 5, 0.9));
+  border-bottom: 2px solid rgba(139, 69, 19, 0.8);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.8);
+  position: relative;
+  z-index: 100;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-logo-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-logo {
+  height: 50px;
+  width: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease;
+}
+
+.header-logo:hover {
+  transform: scale(1.05);
+}
+
+.header-title {
+  font-family: var(--font-heading, 'Cinzel', 'Palatino', serif);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-accent-gold, #ffd700);
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.header-nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.header-link {
+  background: none;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 4px;
+  padding: 0.5rem 1.5rem;
+  color: var(--color-accent-gold, #ffd700);
+  font-family: var(--font-heading, 'Cinzel', 'Palatino', serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+}
+
+.header-link:hover,
+.header-link:focus {
+  background: rgba(139, 69, 19, 0.3);
+  border-color: rgba(255, 215, 0, 0.6);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  outline: none;
+}
+
+.header-link:active {
+  transform: translateY(1px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .page-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .header-content {
+    gap: 1rem;
+  }
+
+  .header-logo-section {
+    gap: 0.75rem;
+  }
+
+  .header-logo {
+    height: 40px;
+  }
+
+  .header-title {
+    font-size: 1.5rem;
+  }
+
+  .header-link {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .header-logo {
+    height: 35px;
+  }
+
+  .header-title {
+    font-size: 1.25rem;
+  }
+}

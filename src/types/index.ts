@@ -129,6 +129,13 @@ export interface LoadingIndicatorProps {
   isVisible: boolean;
 }
 
+/**
+ * Props for AboutModal component
+ */
+export interface AboutModalProps {
+  onClose: () => void;
+}
+
 // ============================================================================
 // Context Types
 // ============================================================================

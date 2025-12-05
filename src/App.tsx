@@ -9,6 +9,7 @@
  */
 
 import { SessionProvider } from './contexts/SessionContext';
+import PageHeader from './components/PageHeader';
 import GrimoireContainer from './components/GrimoireContainer';
 import ErrorBoundary from './components/ErrorBoundary';
 import './styles/ErrorBoundary.css';
