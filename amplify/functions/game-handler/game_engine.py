@@ -2194,9 +2194,10 @@ class GameEngine:
             if object_id == "trap_door" and verb == "OPEN":
                 rug_moved = state.get_flag("rug_moved", False)
                 if not rug_moved:
+                    display_name = self._get_object_names(object_id)
                     return ActionResult(
                         success=False,
-                        message="You don't see any trap door here."
+                        message=f"You don't see any {display_name} here."
                     )
                 is_open = state.get_object_state("trap_door", "is_open", False)
                 if is_open:
@@ -2574,9 +2575,10 @@ class GameEngine:
             contents = state.get_object_state(container_id, 'contents', container.state.get('contents', []))
             if object_id not in contents:
                 display_name = self._get_object_names(object_id)
+                container_name = self._get_object_names(container_id)
                 return ActionResult(
                     success=False,
-                    message=f"There's no {display_name} in the {container.name}."
+                    message=f"There's no {display_name} in the {container_name}."
                 )
             
             # Get object data
@@ -2634,9 +2636,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(container_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {container_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -2672,9 +2675,10 @@ class GameEngine:
             container_in_inventory = container_id in state.inventory
             
             if not container_in_room and not container_in_inventory:
+                display_name = self._get_object_names(container_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {container_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Get container object
@@ -2727,9 +2731,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(container_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {container_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -4138,9 +4143,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -5249,18 +5255,19 @@ class GameEngine:
                 
                 if tool_id:
                     if tool_id not in state.inventory:
+                        tool_name = self._get_object_names(tool_id)
                         return ActionResult(
                             success=False,
-                            message=f"You don't have any {tool_id}."
+                            message=f"You don't have any {tool_name}."
                         )
                     
-                    tool = self.world.get_object(tool_id)
-                    if not tool.state.get('is_digging_tool', False):
+                    # Check if tool is usable
+                    tool_obj = self.world.get_object(tool_id)
+                    if not tool_obj.state.get('is_digging_tool', False):
                         return ActionResult(
                             success=False,
-                            message=f"You can't dig with the {tool_id}."
-                        )
-                
+                            message=f"You can't dig with the {tool_obj.name}."
+                        )              
                 # Check if already dug
                 if state.get_flag(f"dug_{state.current_room}", False):
                     return ActionResult(
@@ -5809,9 +5816,10 @@ class GameEngine:
             target_in_inventory = target in state.inventory
 
             if not target_in_room and not target_in_inventory:
+                target_name = self._get_object_names(target)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {target} here to blast."
+                    message=f"You don't see any {target_name} here to blast."
                 )
 
             # Get target object
@@ -7850,9 +7858,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(container_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {container_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -8054,9 +8063,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(target_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {target_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -8200,9 +8210,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(target_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {target_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -8375,22 +8386,24 @@ class GameEngine:
             
             # Check if NPC is in current room
             if npc_id not in current_room.items:
+                display_name = self._get_object_names(npc_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {npc_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Get NPC
             npc = self.world.get_object(npc_id)
+            
             
             # Check if target is an NPC or creature
             is_npc = npc.state.get('is_npc', False)
             is_creature = npc.state.get('is_creature', False)
             
             if not is_npc and not is_creature:
-                return ActionResult(
+                 return ActionResult(
                     success=False,
-                    message=f"The {npc_id} doesn't respond to your words."
+                    message=f"The {npc.name_spooky if npc.name_spooky else npc.name} doesn't respond to your words."
                 )
             
             npc_name = npc.name_spooky if npc.name_spooky else npc.name
@@ -8441,9 +8454,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(npc_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {npc_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -8478,9 +8492,10 @@ class GameEngine:
             
             # Check if creature is in current room
             if creature_id not in current_room.items:
+                display_name = self._get_object_names(creature_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {creature_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Get creature
@@ -8491,9 +8506,10 @@ class GameEngine:
             is_npc = creature.state.get('is_npc', False)
             
             if not is_creature and not is_npc:
+                display_name = self._get_object_names(creature_id)
                 return ActionResult(
                     success=False,
-                    message=f"You can't wake the {creature_id}."
+                    message=f"You can't wake the {display_name}."
                 )
             
             # Check if creature is sleeping
@@ -8553,9 +8569,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(creature_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {creature_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -8589,9 +8606,10 @@ class GameEngine:
             
             # Check if NPC is in current room
             if npc_id not in current_room.items:
+                display_name = self._get_object_names(npc_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {npc_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
             
             # Get NPC
@@ -8602,9 +8620,10 @@ class GameEngine:
             is_creature = npc.state.get('is_creature', False)
             
             if not is_npc and not is_creature:
+                display_name = self._get_object_names(npc_id)
                 return ActionResult(
                     success=False,
-                    message=f"Kissing the {npc_id} seems like a bad idea."
+                    message=f"Kissing the {display_name} seems like a bad idea."
                 )
             
             npc_name = npc.name_spooky if npc.name_spooky else npc.name
@@ -8636,9 +8655,10 @@ class GameEngine:
             )
             
         except ValueError as e:
+            display_name = self._get_object_names(npc_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {npc_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -10098,9 +10118,10 @@ class GameEngine:
             )
 
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't have the {object_id}."
+                message=f"You don't have the {display_name}."
             )
         except Exception as e:
             return ActionResult(
@@ -11008,17 +11029,18 @@ class GameEngine:
             # Check for apply effects
             apply_effect = game_object.state.get('apply_effect', None)
             if apply_effect:
-                notifications.append(f"The {object_id} affects the {target_id}!")
+                target_name = target_object.name
+                notifications.append(f"The {game_object.name} affects the {target_name}!")
 
                 # Apply different effects
                 if apply_effect == 'heal':
-                    notifications.append(f"The {target_id} looks healthier after the application.")
+                    notifications.append(f"The {target_name} looks healthier after the application.")
                 elif apply_effect == 'clean':
-                    notifications.append(f"The {target_id} becomes clean and pristine.")
+                    notifications.append(f"The {target_name} becomes clean and pristine.")
                 elif apply_effect == 'activate':
-                    notifications.append(f"The {target_id} glows with newfound energy.")
+                    notifications.append(f"The {target_name} glows with newfound energy.")
                 elif apply_effect == 'curse':
-                    notifications.append(f"The {target_id} seems darker and more menacing.")
+                    notifications.append(f"The {target_name} seems darker and more menacing.")
                 elif apply_effect == 'reveal':
                     reveals_when_applied = target_object.state.get('reveals_when_applied', [])
                     if reveals_when_applied:
@@ -11039,9 +11061,10 @@ class GameEngine:
             )
 
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't have the {object_id}."
+                message=f"You don't have the {display_name}."
             )
         except Exception as e:
             return ActionResult(
@@ -11079,9 +11102,10 @@ class GameEngine:
             object_in_inventory = object_id in state.inventory
 
             if not object_in_room and not object_in_inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
 
             # Get object data
@@ -11096,10 +11120,10 @@ class GameEngine:
                 is_surface = game_object.state.get('is_surface', False)
                 if not is_surface:
                     brush_messages = [
-                        f"You can't brush the {object_id}.",
-                        f"The {object_id} doesn't need brushing.",
-                        f"Brushing the {object_id} would have no effect.",
-                        f"The {object_id} is not something you brush."
+                        f"You can't brush the {game_object.name}.",
+                        f"The {game_object.name} doesn't need brushing.",
+                        f"Brushing the {game_object.name} would have no effect.",
+                        f"The {game_object.name} is not something you brush."
                     ]
 
                     import random
@@ -11111,23 +11135,23 @@ class GameEngine:
             if is_brushed:
                 return ActionResult(
                     success=False,
-                    message=f"The {object_id} has already been brushed clean."
+                    message=f"The {game_object.name} has already been brushed clean."
                 )
 
             # Success messages with haunted atmosphere
             if state.sanity < 30:
                 messages = [
-                    f"You brush the {object_id}. Ghostly dust motes dance in the air as you clean.",
-                    f"The {object_id} seems to resist your efforts, as if the dirt itself is alive.",
-                    f"As you brush the {object_id}, you feel ancient spirits resent the disturbance.",
+                    f"You brush the {game_object.name}. Ghostly dust motes dance in the air as you clean.",
+                    f"The {game_object.name} seems to resist your efforts, as if the dirt itself is alive.",
+                    f"As you brush the {game_object.name}, you feel ancient spirits resent the disturbance.",
                     f"You brush away centuries of grime. The air grows heavy with released memories."
                 ]
             else:
                 messages = [
-                    f"You brush the {object_id}.",
-                    f"The {object_id} becomes clean.",
-                    f"You brush the {object_id} clean.",
-                    f"The {object_id} is now brushed."
+                    f"You brush the {game_object.name}.",
+                    f"The {game_object.name} becomes clean.",
+                    f"You brush the {game_object.name} clean.",
+                    f"The {game_object.name} is now brushed."
                 ]
 
             import random
@@ -11144,14 +11168,14 @@ class GameEngine:
                         current_room.items.append(item_id)
                         try:
                             revealed_obj = self.world.get_object(item_id)
-                            notifications.append(f"Brushing the {object_id} reveals {revealed_obj.name_spooky}!")
+                            notifications.append(f"Brushing the {game_object.name} reveals {revealed_obj.name_spooky}!")
                         except ValueError:
-                            notifications.append(f"Brushing the {object_id} reveals something hidden!")
+                            notifications.append(f"Brushing the {game_object.name} reveals something hidden!")
 
             # Check for revealed writings
             reveals_writing = game_object.state.get('reveals_writing_when_brushed', None)
             if reveals_writing:
-                notifications.append(f"Brushing the {object_id} reveals ancient writing: '{reveals_writing}'")
+                notifications.append(f"Brushing the {game_object.name} reveals ancient writing: '{reveals_writing}'")
 
             return ActionResult(
                 success=True,
@@ -11161,9 +11185,10 @@ class GameEngine:
             )
 
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -11237,23 +11262,23 @@ class GameEngine:
                     if responses:
                         import random
                         response = random.choice(responses)
-                        notifications.append(f"The {item_id} {response}")
+                        notifications.append(f"The {game_object.name} {response}")
                     else:
                         # Default responses for different entity types
                         if is_npc:
                             default_responses = [
-                                f"The {item_id} nods attentively.",
-                                f"The {item_id} seems to consider your words.",
-                                f"The {item_id} gives you an inscrutable look.",
-                                f"The {item_id} appears interested in what you said."
+                                f"The {game_object.name} nods attentively.",
+                                f"The {game_object.name} seems to consider your words.",
+                                f"The {game_object.name} gives you an inscrutable look.",
+                                f"The {game_object.name} appears interested in what you said."
                             ]
                             notifications.append(random.choice(default_responses))
                         elif is_creature:
                             creature_responses = [
-                                f"The {item_id} perks up its ears.",
-                                f"The {item_id} turns its head toward you.",
-                                f"The {item_id} seems to understand your words.",
-                                f"The {item_id} makes a soft sound in response."
+                                f"The {game_object.name} perks up its ears.",
+                                f"The {game_object.name} turns its head toward you.",
+                                f"The {game_object.name} seems to understand your words.",
+                                f"The {game_object.name} makes a soft sound in response."
                             ]
                             notifications.append(random.choice(creature_responses))
 
@@ -11354,17 +11379,17 @@ class GameEngine:
                         if whisper_responses:
                             import random
                             response = random.choice(whisper_responses)
-                            notifications.append(f"The {item_id} leans closer and {response}")
+                            notifications.append(f"The {game_object.name} leans closer and {response}")
                         else:
                             default_whispers = [
-                                f"The {item_id} listens intently to your whisper.",
-                                f"The {item_id} nods knowingly at your quiet words.",
-                                f"The {item_id} seems intrigued by your whispered message.",
-                                f"The {item_id} gives you a secretive glance."
+                                f"The {game_object.name} listens intently to your whisper.",
+                                f"The {game_object.name} nods knowingly at your quiet words.",
+                                f"The {game_object.name} seems intrigued by your whispered message.",
+                                f"The {game_object.name} gives you a secretive glance."
                             ]
                             notifications.append(random.choice(default_whispers))
                     else:
-                        notifications.append(f"The {item_id} seems unaware of your quiet words.")
+                        notifications.append(f"The {game_object.name} seems unaware of your quiet words.")
 
             # Check for whisper-sensitive mechanisms
             whisper_triggers = current_room.state.get('whisper_triggers', [])
@@ -11613,9 +11638,10 @@ class GameEngine:
                 target_in_inventory = target_id in state.inventory
 
                 if not target_in_room and not target_in_inventory:
+                    target_name = self._get_object_names(target_id)
                     return ActionResult(
                         success=False,
-                        message=f"You don't see any {target_id} here."
+                        message=f"You don't see any {target_name} here."
                     )
 
             # Verify instrument exists if required
@@ -11624,9 +11650,10 @@ class GameEngine:
                 instrument_in_inventory = instrument_id in state.inventory
 
                 if not instrument_in_room and not instrument_in_inventory:
+                    instrument_name = self._get_object_names(instrument_id)
                     return ActionResult(
                         success=False,
-                        message=f"You don't have the {instrument_id}."
+                        message=f"You don't have the {instrument_name}."
                     )
 
             # Success messages with haunted atmosphere
@@ -11654,7 +11681,8 @@ class GameEngine:
                 if spell_effect == 'heal':
                     notifications.append(f"Warm healing energy flows through the room.")
                     if target_id:
-                        notifications.append(f"The {target_id} looks healthier.")
+                        target_name = self._get_object_names(target_id)
+                        notifications.append(f"The {target_name} looks healthier.")
                 elif spell_effect == 'reveal':
                     notifications.append(f"The spell reveals hidden truths!")
                     reveals = spell_data.get('reveals', [])
@@ -11668,7 +11696,8 @@ class GameEngine:
                                 notifications.append(f"You see something mysterious appear!")
                 elif spell_effect == 'damage':
                     if target_id:
-                        notifications.append(f"Magical energy strikes the {target_id}!")
+                        target_name = self._get_object_names(target_id)
+                        notifications.append(f"Magical energy strikes the {target_name}!")
                     else:
                         notifications.append("Destructive magic fills the air!")
                 elif spell_effect == 'protect':
@@ -11733,9 +11762,10 @@ class GameEngine:
             object_in_inventory = object_id in state.inventory
 
             if not object_in_room and not object_in_inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
 
             # Get object data
@@ -11747,14 +11777,14 @@ class GameEngine:
 
             if not is_enchantable:
                 enchant_messages = [
-                    f"You can't enchant the {object_id}.",
-                    f"The {object_id} resists magical enchantment.",
-                    f"The {object_id} is too mundane for enchantment.",
-                    f"Your magical efforts have no effect on the {object_id}."
+                    f"You can't enchant the {game_object.name}.",
+                    f"The {game_object.name} resists magical enchantment.",
+                    f"The {game_object.name} is too mundane for enchantment.",
+                    f"Your magical efforts have no effect on the {game_object.name}."
                 ]
 
                 if state.sanity < 30:
-                    enchant_messages.append(f"The {object_id} seems to absorb your magical energy, neutralizing it.")
+                    enchant_messages.append(f"The {game_object.name} seems to absorb your magical energy, neutralizing it.")
 
                 import random
                 return ActionResult(
@@ -11765,23 +11795,23 @@ class GameEngine:
             if is_enchanted:
                 return ActionResult(
                     success=False,
-                    message=f"The {object_id} is already enchanted."
+                    message=f"The {game_object.name} is already enchanted."
                 )
 
             # Success messages with haunted atmosphere
             if state.sanity < 30:
                 messages = [
-                    f"You enchant the {object_id}. Dark runes appear on its surface, glowing ominously.",
-                    f"The {object_id} accepts your magic willingly. Something ancient awakens within.",
-                    f"You channel your will into the {object_id}. It pulses with sinister power.",
-                    f"The {object_id} becomes enchanted. You feel its newfound malevolent awareness."
+                    f"You enchant the {game_object.name}. Dark runes appear on its surface, glowing ominously.",
+                    f"The {game_object.name} accepts your magic willingly. Something ancient awakens within.",
+                    f"You channel your will into the {game_object.name}. It pulses with sinister power.",
+                    f"The {game_object.name} becomes enchanted. You feel its newfound malevolent awareness."
                 ]
             else:
                 messages = [
-                    f"You enchant the {object_id}.",
-                    f"The {object_id} becomes magical.",
-                    f"You successfully enchant the {object_id}.",
-                    f"Magical energy infuses the {object_id}."
+                    f"You enchant the {game_object.name}.",
+                    f"The {game_object.name} becomes magical.",
+                    f"You successfully enchant the {game_object.name}.",
+                    f"Magical energy infuses the {game_object.name}."
                 ]
 
             import random
@@ -11795,7 +11825,7 @@ class GameEngine:
             # Add enchantment effects
             enchantment_effect = game_object.state.get('enchantment_effect', None)
             if enchantment_effect:
-                notifications.append(f"The {object_id} now has magical {enchantment_effect} properties!")
+                notifications.append(f"The {game_object.name} now has magical {enchantment_effect} properties!")
 
             # Apply sanity cost for magic
             notifications.append(f"Enchanting drains your mental energy.")
@@ -11808,9 +11838,10 @@ class GameEngine:
             )
 
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -11848,9 +11879,10 @@ class GameEngine:
             object_in_inventory = object_id in state.inventory
 
             if not object_in_room and not object_in_inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
 
             # Get object data
@@ -11870,23 +11902,23 @@ class GameEngine:
             if not is_enchanted:
                 return ActionResult(
                     success=False,
-                    message=f"The {object_id} is not enchanted."
+                    message=f"The {game_object.name} is not enchanted."
                 )
 
             # Success messages with haunted atmosphere
             if state.sanity < 30:
                 messages = [
-                    f"You disenchant the {object_id}. The runes fade slowly, as if reluctant to disappear.",
-                    f"The magic releases its hold on the {object_id}. It feels lighter, more normal.",
-                    f"You strip the enchantment from the {object_id}. The house seems relieved.",
-                    f"The {object_id} returns to its mundane state. The shadows seem less interested in it now."
+                    f"You disenchant the {game_object.name}. The runes fade slowly, as if reluctant to disappear.",
+                    f"The magic releases its hold on the {game_object.name}. It feels lighter, more normal.",
+                    f"You strip the enchantment from the {game_object.name}. The house seems relieved.",
+                    f"The {game_object.name} returns to its mundane state. The shadows seem less interested in it now."
                 ]
             else:
                 messages = [
-                    f"You disenchant the {object_id}.",
-                    f"The {object_id} is no longer enchanted.",
-                    f"You successfully disenchant the {object_id}.",
-                    f"The magic fades from the {object_id}."
+                    f"You disenchant the {game_object.name}.",
+                    f"The {game_object.name} is no longer enchanted.",
+                    f"You successfully disenchant the {game_object.name}.",
+                    f"The magic fades from the {game_object.name}."
                 ]
 
             import random
@@ -11896,7 +11928,7 @@ class GameEngine:
             game_object.state['enchantment'] = None
 
             notifications = []
-            notifications.append(f"The enchantment is removed from the {object_id}.")
+            notifications.append(f"The enchantment is removed from the {game_object.name}.")
 
             # Restore some sanity as magic is more controllable now
             notifications.append("You feel more in control of reality.")
@@ -11909,9 +11941,10 @@ class GameEngine:
             )
 
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -11956,9 +11989,10 @@ class GameEngine:
             object_in_inventory = object_id in state.inventory
 
             if not object_in_room and not object_in_inventory:
+                display_name = self._get_object_names(object_id)
                 return ActionResult(
                     success=False,
-                    message=f"You don't see any {object_id} here."
+                    message=f"You don't see any {display_name} here."
                 )
 
             # Get object data
@@ -11971,14 +12005,14 @@ class GameEngine:
 
             if not (is_cursed or is_haunted or has_supernatural):
                 exorcise_messages = [
-                    f"The {object_id} shows no signs of supernatural influence.",
-                    f"There's nothing to exorcise from the {object_id}.",
-                    f"The {object_id} appears completely normal.",
-                    f"Your exorcism has no effect on the {object_id}."
+                    f"The {game_object.name} shows no signs of supernatural influence.",
+                    f"There's nothing to exorcise from the {game_object.name}.",
+                    f"The {game_object.name} appears completely normal.",
+                    f"Your exorcism has no effect on the {game_object.name}."
                 ]
 
                 if state.sanity < 30:
-                    exorcise_messages.append(f"The shadows laugh at your attempt to exorcise the {object_id}.")
+                    exorcise_messages.append(f"The shadows laugh at your attempt to exorcise the {game_object.name}.")
 
                 import random
                 return ActionResult(
@@ -11989,17 +12023,17 @@ class GameEngine:
             # Success messages with haunted atmosphere
             if state.sanity < 30:
                 messages = [
-                    f"You exorcise the {object_id}. Violent energy erupts as evil is forced out!",
-                    f"The {object_id} convulses as demonic presence is expelled!",
-                    f"Holy power surges through the {object_id}, expelling the darkness within!",
-                    f"The {object_id} shudders as supernatural influence is cast out!"
+                    f"You exorcise the {game_object.name}. Violent energy erupts as evil is forced out!",
+                    f"The {game_object.name} convulses as demonic presence is expelled!",
+                    f"Holy power surges through the {game_object.name}, expelling the darkness within!",
+                    f"The {game_object.name} shudders as supernatural influence is cast out!"
                 ]
             else:
                 messages = [
-                    f"You exorcise the {object_id}.",
-                    f"The {object_id} is cleansed of supernatural influence.",
-                    f"Your exorcism successfully clears the {object_id}.",
-                    f"The {object_id} has been exorcised."
+                    f"You exorcise the {game_object.name}.",
+                    f"The {game_object.name} is cleansed of supernatural influence.",
+                    f"Your exorcism successfully clears the {game_object.name}.",
+                    f"The {game_object.name} has been exorcised."
                 ]
 
             import random
@@ -12013,9 +12047,9 @@ class GameEngine:
 
             # Check for special effects
             if is_cursed:
-                notifications.append(f"The curse on the {object_id} has been broken!")
+                notifications.append(f"The curse on the {game_object.name} has been broken!")
             if is_haunted:
-                notifications.append(f"The haunting presence in the {object_id} has been dispersed.")
+                notifications.append(f"The haunting presence in the {game_object.name} has been dispersed.")
 
             # Remove supernatural effects if any
             for key in ['ghost_effect', 'demonic_influence', 'spectral_presence']:
@@ -12033,9 +12067,10 @@ class GameEngine:
             )
 
         except ValueError as e:
+            display_name = self._get_object_names(object_id)
             return ActionResult(
                 success=False,
-                message=f"You don't see any {object_id} here."
+                message=f"You don't see any {display_name} here."
             )
         except Exception as e:
             return ActionResult(
@@ -12319,12 +12354,14 @@ class GameEngine:
                 # Suggest visible objects
                 if current_room.items and verb_lower in ['take', 'examine', 'open']:
                     visible_items = current_room.items[:3]  # Limit to 3
-                    message += f"\n\nYou can see: {', '.join(visible_items)}"
+                    visible_names = [self._get_object_names(item_id) for item_id in visible_items]
+                    message += f"\n\nYou can see: {', '.join(visible_names)}"
 
                 # Suggest inventory items for certain verbs
                 if state.inventory and verb_lower in ['drop', 'give', 'put']:
                     inv_items = state.inventory[:3]
-                    message += f"\n\nYou carry: {', '.join(inv_items)}"
+                    inv_names = [self._get_object_names(item_id) for item_id in inv_items]
+                    message += f"\n\nYou carry: {', '.join(inv_names)}"
 
             except Exception:
                 # If we can't get context, continue without it
@@ -12570,18 +12607,20 @@ class GameEngine:
         # Handle lock commands (format: "lock object with key")
         if command.verb == "LOCK" and command.object:
             if not command.target:
+                display_name = self._get_object_names(command.object)
                 return ActionResult(
                     success=False,
-                    message=f"What do you want to lock the {command.object} with?"
+                    message=f"What do you want to lock the {display_name} with?"
                 )
             return self.handle_lock(command.object, command.target, state)
         
         # Handle unlock commands (format: "unlock object with key")
         if command.verb == "UNLOCK" and command.object:
             if not command.target:
+                display_name = self._get_object_names(command.object)
                 return ActionResult(
                     success=False,
-                    message=f"What do you want to unlock the {command.object} with?"
+                    message=f"What do you want to unlock the {display_name} with?"
                 )
             return self.handle_unlock(command.object, command.target, state)
         
@@ -12600,9 +12639,10 @@ class GameEngine:
         # Handle tie commands (format: "tie object to target")
         if command.verb == "TIE" and command.object:
             if not command.target:
+                display_name = self._get_object_names(command.object)
                 return ActionResult(
                     success=False,
-                    message=f"What do you want to tie the {command.object} to?"
+                    message=f"What do you want to tie the {display_name} to?"
                 )
             return self.handle_tie(command.object, command.target, state)
         
@@ -12613,9 +12653,10 @@ class GameEngine:
         # Handle fill commands (format: "fill object from source")
         if command.verb == "FILL" and command.object:
             if not command.target:
+                display_name = self._get_object_names(command.object)
                 return ActionResult(
                     success=False,
-                    message=f"What do you want to fill the {command.object} from?"
+                    message=f"What do you want to fill the {display_name} from?"
                 )
             return self.handle_fill(command.object, command.target, state)
         
@@ -12757,18 +12798,20 @@ class GameEngine:
         # Handle throw commands (format: "throw object at target")
         if command.verb == "THROW" and command.object:
             if not command.target:
+                display_name = self._get_object_names(command.object)
                 return ActionResult(
                     success=False,
-                    message=f"What do you want to throw the {command.object} at?"
+                    message=f"What do you want to throw the {display_name} at?"
                 )
             return self.handle_throw(command.object, command.target, state)
         
         # Handle give commands (format: "give object to npc")
         if command.verb == "GIVE" and command.object:
             if not command.target:
+                display_name = self._get_object_names(command.object)
                 return ActionResult(
                     success=False,
-                    message=f"Who do you want to give the {command.object} to?"
+                    message=f"Who do you want to give the {display_name} to?"
                 )
             return self.handle_give(command.object, command.target, state)
         
