@@ -3215,6 +3215,26 @@ class GameEngine:
                 message="The cursed lock refuses to yield, its mechanism twisted by dark enchantments."
             )
     
+    def _handle_machine_switch(self, state: GameState) -> ActionResult:
+        """
+        Handle turning the machine switch to make a diamond.
+        """
+        machine = self.world.get_object("machine")
+        
+        # Check if coal is inside
+        if "coal" in machine.contents:
+            machine.contents.remove("coal")
+            machine.contents.append("diamond")
+            return ActionResult(
+                success=True,
+                message="The machine emits a high-pitched shriek and a cloud of dirty smoke. When it clears, the machine seems to have finished its work."
+            )
+            
+        return ActionResult(
+            success=False,
+            message="The machine grinds slightly but nothing happens."
+        )
+
     def handle_turn(
         self,
         object_id: str,
@@ -3254,8 +3274,9 @@ class GameEngine:
             game_object = self.world.get_object(object_id)
             
             # Check for matching interaction first
-            for interaction in game_object.interactions:
                 if interaction.verb == "TURN":
+                    if object_id == "machine_switch":
+                        return self._handle_machine_switch(state)
                     return self.handle_object_interaction("TURN", object_id, state)
             
             # Check if object is turnable

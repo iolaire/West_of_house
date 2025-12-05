@@ -270,10 +270,10 @@ class TestFullWalkthrough(unittest.TestCase):
         
         self.execute("OPEN MACHINE")
         self.execute("PUT CURSED COAL IN MACHINE")
-        self.execute("CLOSE MACHINE")
+        # Self-closing or already closed?
         self.execute("TURN MACHINE SWITCH WITH RUSTED SCREWDRIVER") # Switch
-        self.execute("OPEN MACHINE")
-        self.execute("TAKE DARK DIAMOND") # Diamond
+        # Machine still open?
+        self.execute("TAKE CURSED DIAMOND") # Diamond
         
         self.execute("NORTH") # Lower Shaft
         self.execute("EAST") # Timber Room
@@ -297,7 +297,7 @@ class TestFullWalkthrough(unittest.TestCase):
         
         self.execute("UP") # Living Room
         
-        self.execute("PUT DARK DIAMOND IN CURSED TROPHY CASE")
+        self.execute("PUT CURSED DIAMOND IN CURSED TROPHY CASE")
         self.execute("PUT JADE DEATH MASK IN CURSED TROPHY CASE")
         self.execute("PUT SOUL-BINDING BRACELET IN CURSED TROPHY CASE")
         

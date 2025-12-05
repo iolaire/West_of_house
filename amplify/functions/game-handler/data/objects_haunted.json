@@ -2266,16 +2266,6 @@
         "response_spooky": "It is far too large to carry. The object seems to writhe in your grasp."
       },
       {
-        "verb": "OPEN",
-        "response_original": "The lid opens, revealing",
-        "response_spooky": "The lid opens, revealing You hear whispers from inside."
-      },
-      {
-        "verb": "CLOSE",
-        "response_original": "The lid closes.",
-        "response_spooky": "The lid closes. It shuts with finality."
-      },
-      {
         "verb": "LAMP-ON",
         "response_original": "It's not clear how to turn it on with your bare hands.",
         "response_spooky": "It's not murky how to turn it on with your bare hands."
