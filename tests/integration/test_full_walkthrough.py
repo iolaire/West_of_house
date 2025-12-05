@@ -297,57 +297,7 @@ class TestFullWalkthrough(unittest.TestCase):
             print("\n*** SUCCESS: REACHED 350 POINTS! ***")
         else:
             print(f"\nFinished with output: {score_res.message}")
-        self.execute("SW")
-        self.execute("DOWN") # Ladder Top
         
-        self.execute("DOWN")
-        self.execute("WEST") # Timber Room
-        
-        self.execute("DROP ALL EXCEPT RUSTED SCREWDRIVER AND CURSED LANTERN")
-        self.execute("WEST") # Drafty Room
-        
-        self.execute("TAKE CURSED COAL") # From basket
-        self.execute("SOUTH") # Machine Room
-        
-        self.execute("OPEN LID")
-        self.execute("PUT CURSED COAL IN TORTURE MACHINE")
-        self.execute("CLOSE LID")
-        self.execute("TURN SWITCH WITH RUSTED SCREWDRIVER")
-        self.execute("OPEN LID")
-        self.execute("TAKE CURSED DIAMOND")
-        self.execute("DROP RUSTED SCREWDRIVER")
-        self.execute("NORTH")
-        
-        self.execute("PUT CURSED DIAMOND IN BASKET")
-        self.execute("EAST")
-        
-        self.execute("TAKE ALL")
-        self.execute("EAST")
-        self.execute("UP")
-        self.execute("UP")
-        self.execute("NORTH")
-        self.execute("EAST")
-        self.execute("SOUTH")
-        self.execute("NORTH")
-        self.execute("UP")
-        self.execute("SOUTH") # Shaft Room
-        
-        self.execute("RAISE BASKET")
-        self.execute("TAKE CURSED DIAMOND")
-        self.execute("WEST")
-        self.execute("SOUTH")
-        self.execute("EAST")
-        self.execute("SOUTH") # Hades Entrance
-        
-        self.execute("TAKE NECRONOMICON")
-        self.execute("TAKE FUNERAL BELL")
-        self.execute("SOUTH") # Land of Dead
-        
-        self.execute("TAKE SOUL CANDLES")
-        self.execute("NORTH")
-        
-        self.execute("RING FUNERAL BELL")
-        self.execute("TAKE SOUL CANDLES")
         self.execute("LIGHT CURSED MATCHES")
         self.execute("LIGHT SOUL CANDLES WITH CURSED MATCHES")
         self.execute("READ NECRONOMICON")
