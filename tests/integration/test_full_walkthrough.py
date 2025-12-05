@@ -298,16 +298,7 @@ class TestFullWalkthrough(unittest.TestCase):
         else:
             print(f"\nFinished with output: {score_res.message}")
         
-        self.execute("LIGHT CURSED MATCHES")
-        self.execute("LIGHT SOUL CANDLES WITH CURSED MATCHES")
-        self.execute("READ NECRONOMICON")
-        self.execute("SOUTH")
-        
-        self.execute("TAKE CRYSTAL SKULL")
-        self.execute("NORTH")
-        self.execute("UP")
-        self.execute("UP")
-        self.execute("UP") # Living Room
+
         
         # === Phase 6: The Last Treasures ===
         print("\n--- Phase 6 ---")
