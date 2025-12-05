@@ -113,7 +113,8 @@
         "name": "broken window",
         "type": "door",
         "state": {
-            "is_open": false
+            "is_open": false,
+            "entry_destination": "kitchen"
         },
         "interactions": [
             {

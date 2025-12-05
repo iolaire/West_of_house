@@ -261,7 +261,9 @@
   "kitchen_window": {
     "name": "broken window",
     "type": "door",
-    "state": {},
+    "state": {
+      "entry_destination": "kitchen"
+    },
     "interactions": [
       {
         "verb": "EXAMINE",

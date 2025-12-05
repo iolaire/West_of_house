@@ -648,7 +648,16 @@ class GameEngine:
             game_object = self.world.get_object(object_id)
             
             # Check if object is enterable
+            # Objects can be enterable if:
+            # 1. They have is_enterable: true
+            # 2. They are a "door" type and are open
             is_enterable = game_object.state.get('is_enterable', False)
+            
+            # Check if it's a door that's open
+            if not is_enterable and game_object.type == 'door':
+                is_open = state.get_object_state(object_id, 'is_open', game_object.state.get('is_open', False))
+                if is_open:
+                    is_enterable = True
             
             if not is_enterable:
                 display_name = self._get_object_names(object_id)
