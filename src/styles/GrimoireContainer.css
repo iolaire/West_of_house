@@ -42,7 +42,7 @@
 .text-pane {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: 0.25rem;
   height: 100%;
 }
 
@@ -50,7 +50,7 @@
 .input-area {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 0.25rem;
   margin-top: auto;
 }
 

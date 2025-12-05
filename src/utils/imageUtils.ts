@@ -48,7 +48,7 @@ export function mapRoomToImage(roomName: string): string {
   }
 
   // Return the full path to the image
-  return `/images/${filename}.png`;
+  return `/images/rooms/${filename}.png`;
 }
 
 /**
@@ -94,7 +94,7 @@ export function preloadImage(imagePath: string): Promise<void> {
  * @returns The room name or null if extraction fails
  */
 function extractRoomNameFromPath(imagePath: string): string | null {
-  const match = imagePath.match(/\/images\/(.+)\.png$/);
+  const match = imagePath.match(/\/images\/rooms\/(.+)\.png$/);
   if (match && match[1]) {
     // Convert snake_case back to Title Case for logging
     return match[1]

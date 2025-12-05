@@ -1236,8 +1236,21 @@ class GameEngine:
             # Get current room
             current_room = self.world.get_room(state.current_room)
             
+            # Map full diagonal names to abbreviations used in data
+            direction_map = {
+                "SOUTHWEST": "SW",
+                "SOUTHEAST": "SE",
+                "NORTHWEST": "NW",
+                "NORTHEAST": "NE"
+            }
+            
+            # Check original direction or abbreviated version
+            search_direction = direction
+            if direction not in current_room.exits and direction in direction_map:
+                search_direction = direction_map[direction]
+            
             # Validate direction exists in room exits
-            if direction not in current_room.exits:
+            if search_direction not in current_room.exits:
                 return ActionResult(
                     success=False,
                     message=f"You cannot go {direction.lower()} from here. The way is blocked.",
@@ -1245,7 +1258,7 @@ class GameEngine:
                 )
             
             # Get target room ID
-            target_room_id = current_room.exits[direction]
+            target_room_id = current_room.exits[search_direction]
             
             # Check if exit is conditional on flags
             if current_room.flags_required:
@@ -2149,7 +2162,7 @@ class GameEngine:
                         for key, required_value in interaction.condition.items():
                             # Get current value from GameState, falling back to WorldData
                             current_value = state.get_object_state(object_id, key, game_object.state.get(key, None))
-
+                            
                             if current_value != required_value:
                                 conditions_met = False
                                 break
@@ -2159,6 +2172,7 @@ class GameEngine:
                     break
             
             if not matching_interaction:
+                print(f"DEBUG: No matching interaction for {verb} on {object_id}")
                 # No matching interaction found
                 return ActionResult(
                     success=False,
@@ -2190,14 +2204,8 @@ class GameEngine:
                 )
                 notifications.extend(container_notifications)
             
-            # Puzzle 1: Moving rug reveals trap door
-            if object_id == "rug" and verb == "MOVE":
-                is_moved = state.get_object_state("rug", "is_moved", False)
-                if is_moved:
-                    # Rug has been moved, make trap door visible
-                    state.set_flag("rug_moved", True)
-                    state.set_object_state("trap_door", "is_visible", True)
-                    notifications.append("The trap door is now visible!")
+            # Puzzle 1: Moving rug reveals trap door - MOVED TO HANDLE_MOVE
+            # (Dead code removed)
             
             # Puzzle 2: Opening kitchen window allows entry
             if object_id == "kitchen_window" and verb == "OPEN":
@@ -7938,6 +7946,15 @@ class GameEngine:
                     success=False,
                     message=f"You don't see any {display_name} here."
                 )
+
+            # Check visibility
+            is_visible = state.get_object_state(target_id, 'is_visible', True)
+            if not is_visible:
+                display_name = self._get_object_names(target_id)
+                return ActionResult(
+                    success=False,
+                    message=f"You don't see any {display_name} here."
+                )
             
             # Get target object
             target = self.world.get_object(target_id)
@@ -7951,6 +7968,14 @@ class GameEngine:
                     success=False,
                     message=f"You can't attack the {display_name}."
                 )
+
+            # Check is_alive
+            if state.get_object_state(target_id, 'is_dead', False):
+                 display_name = self._get_object_names(target_id)
+                 return ActionResult(
+                    success=False,
+                    message=f"The {display_name} is already dead."
+                 )
             
             # Check if weapon is specified and in inventory
             weapon = None
@@ -7981,7 +8006,8 @@ class GameEngine:
                 weapon_name = weapon.name_spooky if weapon.name_spooky else weapon.name
             
             # Get creature health
-            creature_health = target.state.get('health', 10)
+            # Use state if available, else definition
+            creature_health = state.get_object_state(target_id, 'health', target.state.get('health', 10))
             creature_strength = target.state.get('strength', 5)
             creature_name = target.name_spooky if target.name_spooky else target.name
             
@@ -7990,7 +8016,8 @@ class GameEngine:
             
             # Apply damage to creature
             new_health = creature_health - damage_dealt
-            target.state['health'] = max(0, new_health)
+            state.set_object_state(target_id, 'health', max(0, new_health))
+            # target.state['health'] = max(0, new_health) # Don't update global object
             
             notifications = []
             sanity_change = -2  # Attacking is disturbing
@@ -7998,11 +8025,27 @@ class GameEngine:
             # Check if creature is dead
             if new_health <= 0:
                 # Creature is dead
-                target.state['is_alive'] = False
-                target.state['is_dead'] = True
+                state.set_object_state(target_id, 'is_alive', False)
+                state.set_object_state(target_id, 'is_dead', True)
+                state.set_object_state(target_id, 'is_visible', False) # Hide body for now
                 
-                # Remove creature from room
-                current_room.items.remove(target_id)
+                # Auto-loot contents
+                loot_msg = ""
+                if 'contents' in target.state:
+                    for item_id in target.state['contents']:
+                        state.inventory.append(item_id)
+                        item_name = self._get_object_names(item_id)
+                        loot_msg += f" The {item_name} falls from its grasp, and you instinctively catch it."
+                
+                # Remove creature from room - REVERTED (Do not modify global state)
+                # current_room.items.remove(target_id)
+                
+                return ActionResult(
+                    success=True,
+                    message=f"You strike the {creature_name} with {weapon_name}!\n\nThe {creature_name} collapses in a heap, its life force extinguished.{loot_msg}",
+                    sanity_change=sanity_change,
+                    room_changed=False
+                )
                 
                 # Check if creature drops items
                 drops_items = target.state.get('drops_items', [])
@@ -10190,23 +10233,32 @@ class GameEngine:
                 if interaction.verb == "MOVE":
                     # Check conditions
                     if interaction.condition:
-                        conditions_met = all(
-                            game_object.state.get(key) == value
-                            for key, value in interaction.condition.items()
-                        )
+                        conditions_met = True
+                        for key, value in interaction.condition.items():
+                            current_val = state.get_object_state(object_id, key, game_object.state.get(key))
+                            if current_val != value:
+                                conditions_met = False
+                                break
                         if not conditions_met:
                             continue
                     
                     # Apply state changes
                     if interaction.state_change:
                         for key, value in interaction.state_change.items():
-                            game_object.state[key] = value
+                            # game_object.state[key] = value # Don't update world object directly
+                            state.set_object_state(object_id, key, value)
                     
                     # Apply flag changes
                     if interaction.flag_change:
                         for key, value in interaction.flag_change.items():
                             state.set_flag(key, value)
                     
+                    # Puzzle 1: Moving rug reveals trap door
+                    # We check if this specific interaction set "is_moved" to True
+                    if object_id == "rug" and state.get_object_state("rug", "is_moved", False):
+                         state.set_flag("rug_moved", True)
+                         state.set_object_state("trap_door", "is_visible", True)
+
                     # Apply sanity effect
                     if interaction.sanity_effect:
                         state.sanity = max(0, min(100, state.sanity + interaction.sanity_effect))

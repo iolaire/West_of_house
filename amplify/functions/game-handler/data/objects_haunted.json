@@ -1526,7 +1526,10 @@
   "trap_door": {
     "name": "cursed trap door",
     "type": "door",
-    "state": {},
+    "state": {
+      "is_open": false,
+      "is_visible": false
+    },
     "interactions": [
       {
         "verb": "RAISE",
@@ -3443,7 +3446,9 @@
     "name": "spectral blade",
     "type": "item",
     "state": {
-      "is_taken": false
+      "is_taken": false,
+      "is_weapon": true,
+      "damage": 5
     },
     "interactions": [
       {
@@ -3809,6 +3814,9 @@
     "name": "flesh-eating ogre",
     "type": "npc",
     "state": {
+      "is_creature": true,
+      "health": 10,
+      "strength": 5,
       "contents": [
         "axe"
       ]

@@ -5,7 +5,7 @@
  * 
  * Property 13: Room Name to Image Mapping
  * For any room name returned by the backend, the grimoire should map it to a 
- * corresponding image file path in the `/images` directory
+ * corresponding image file path in the `/images/rooms` directory
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
@@ -33,7 +33,7 @@ describe('Image Utils Property Tests', () => {
   /**
    * Property 13: Room Name to Image Mapping
    * For any room name returned by the backend, the grimoire should map it to a 
-   * corresponding image file path in the `/images` directory
+   * corresponding image file path in the `/images/rooms` directory
    */
   it('Property 13: Room Name to Image Mapping - should map any room name to valid image path', () => {
     fc.assert(
@@ -45,8 +45,8 @@ describe('Image Utils Property Tests', () => {
           // Should return a string
           expect(typeof imagePath).toBe('string');
 
-          // Should start with /images/
-          expect(imagePath).toMatch(/^\/images\//);
+          // Should start with /images/rooms/
+          expect(imagePath).toMatch(/^\/images\/rooms\//);
 
           // Should end with .png
           expect(imagePath).toMatch(/\.png$/);
@@ -55,7 +55,7 @@ describe('Image Utils Property Tests', () => {
           expect(imagePath).not.toContain(' ');
 
           // Extract filename (could be empty for default image)
-          const filename = imagePath.replace('/images/', '').replace('.png', '');
+          const filename = imagePath.replace('/images/rooms/', '').replace('.png', '');
           
           // Should be lowercase
           expect(filename).toBe(filename.toLowerCase());
@@ -108,7 +108,7 @@ describe('Image Utils Property Tests', () => {
           expect(imagePath).not.toContain(specialChar);
 
           // Should still be a valid path (or default if all chars were special)
-          expect(imagePath).toMatch(/^\/images\/[a-z0-9_]+\.png$/);
+          expect(imagePath).toMatch(/^\/images\/rooms\/[a-z0-9_]+\.png$/);
         }
       ),
       { numRuns: 100 }
@@ -134,7 +134,7 @@ describe('Image Utils Property Tests', () => {
 
           // If the result is not the default image, check for underscores
           if (imagePath !== DEFAULT_ROOM_IMAGE) {
-            const filename = imagePath.replace('/images/', '').replace('.png', '');
+            const filename = imagePath.replace('/images/rooms/', '').replace('.png', '');
             // Should not have leading or trailing underscores
             expect(filename).not.toMatch(/^_/);
             expect(filename).not.toMatch(/_$/);
@@ -213,14 +213,14 @@ describe('Image Utils Property Tests', () => {
    */
   it('should map known room names correctly', () => {
     const knownMappings = [
-      { room: 'West of House', expected: '/images/west_of_house.png' },
-      { room: 'East of House', expected: '/images/east_of_house.png' },
-      { room: 'North of House', expected: '/images/north_of_house.png' },
-      { room: 'South of House', expected: '/images/south_of_house.png' },
-      { room: 'Kitchen', expected: '/images/kitchen.png' },
-      { room: 'Living Room', expected: '/images/living_room.png' },
-      { room: 'Attic', expected: '/images/attic.png' },
-      { room: 'Cellar', expected: '/images/cellar.png' },
+      { room: 'West of House', expected: '/images/rooms/west_of_house.png' },
+      { room: 'East of House', expected: '/images/rooms/east_of_house.png' },
+      { room: 'North of House', expected: '/images/rooms/north_of_house.png' },
+      { room: 'South of House', expected: '/images/rooms/south_of_house.png' },
+      { room: 'Kitchen', expected: '/images/rooms/kitchen.png' },
+      { room: 'Living Room', expected: '/images/rooms/living_room.png' },
+      { room: 'Attic', expected: '/images/rooms/attic.png' },
+      { room: 'Cellar', expected: '/images/rooms/cellar.png' },
     ];
 
     knownMappings.forEach(({ room, expected }) => {
@@ -308,10 +308,10 @@ describe('Image Utils Property Tests', () => {
           const imagePath = mapRoomToImage(longRoomName);
 
           // Should still be a valid path format
-          expect(imagePath).toMatch(/^\/images\/[a-z0-9_]+\.png$/);
+          expect(imagePath).toMatch(/^\/images\/rooms\/[a-z0-9_]+\.png$/);
 
           // Should not be empty
-          const filename = imagePath.replace('/images/', '').replace('.png', '');
+          const filename = imagePath.replace('/images/rooms/', '').replace('.png', '');
           expect(filename.length).toBeGreaterThan(0);
         }
       ),
@@ -335,7 +335,7 @@ describe('WebP Optimization Tests', () => {
       fc.property(
         fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
         (filename) => {
-          const pngPath = `/images/${filename}.png`;
+          const pngPath = `/images/rooms/${filename}.png`;
           const webpPath = getWebPPath(pngPath);
 
           // Should end with .webp
@@ -345,7 +345,7 @@ describe('WebP Optimization Tests', () => {
           expect(webpPath).not.toContain('.png');
 
           // Should preserve the directory structure
-          expect(webpPath).toContain('/images/');
+          expect(webpPath).toContain('/images/rooms/');
         }
       ),
       { numRuns: 100 }
@@ -362,7 +362,7 @@ describe('WebP Optimization Tests', () => {
       fc.property(
         fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
         (filename) => {
-          const webpPath = `/images/${filename}.webp`;
+          const webpPath = `/images/rooms/${filename}.webp`;
           const pngPath = getPNGPath(webpPath);
 
           // Should end with .png
@@ -372,7 +372,7 @@ describe('WebP Optimization Tests', () => {
           expect(pngPath).not.toContain('.webp');
 
           // Should preserve the directory structure
-          expect(pngPath).toContain('/images/');
+          expect(pngPath).toContain('/images/rooms/');
         }
       ),
       { numRuns: 100 }
@@ -389,7 +389,7 @@ describe('WebP Optimization Tests', () => {
       fc.property(
         fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
         (filename) => {
-          const originalPng = `/images/${filename}.png`;
+          const originalPng = `/images/rooms/${filename}.png`;
           
           // PNG -> WebP -> PNG
           const webp = getWebPPath(originalPng);
@@ -412,7 +412,7 @@ describe('WebP Optimization Tests', () => {
       fc.property(
         fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
         (filename) => {
-          const imagePath = `/images/${filename}.png`;
+          const imagePath = `/images/rooms/${filename}.png`;
           const sizes = getResponsiveSizes(imagePath);
 
           // Should have webp and png srcsets

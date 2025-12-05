@@ -178,7 +178,7 @@ export const SESSION_STORAGE_KEY = 'wohh_session';
 /**
  * Default fallback image for missing room images
  */
-export const DEFAULT_ROOM_IMAGE = '/images/default_haunted.png';
+export const DEFAULT_ROOM_IMAGE = '/images/rooms/west_of_house.png';
 
 /**
  * API request timeout in milliseconds

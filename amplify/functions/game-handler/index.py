@@ -114,7 +114,9 @@ def handler(event, context):
         for item_id in room.items:
             try:
                 obj = world_data.get_object(item_id)
-                if obj.state.get('is_visible', True):
+                # Check visibility using GameState, fall back to object state
+                is_visible = state.get_object_state(item_id, 'is_visible', obj.state.get('is_visible', True))
+                if is_visible:
                     objects_visible.append(obj.name_spooky or obj.name)
             except:
                 pass
