@@ -268,8 +268,11 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("WEST") # Lower Shaft
         self.execute("SOUTH") # Machine Room
         
+        self.execute("OPEN MACHINE")
         self.execute("PUT CURSED COAL IN MACHINE")
+        self.execute("CLOSE MACHINE")
         self.execute("TURN MACHINE SWITCH WITH RUSTED SCREWDRIVER") # Switch
+        self.execute("OPEN MACHINE")
         self.execute("TAKE DARK DIAMOND") # Diamond
         
         self.execute("NORTH") # Lower Shaft
@@ -281,7 +284,7 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("EAST") # Mine 2
         self.execute("SOUTH") # Mine 1
         self.execute("NORTH") # Gas Room
-        self.execute("TAKE SOUL-BINDING BRACELET") # Bracelet
+
         self.execute("UP") # Smelly Room
         self.execute("SOUTH") # Shaft Room
         
