@@ -3274,6 +3274,7 @@ class GameEngine:
             game_object = self.world.get_object(object_id)
             
             # Check for matching interaction first
+            for interaction in game_object.interactions:
                 if interaction.verb == "TURN":
                     if object_id == "machine_switch":
                         return self._handle_machine_switch(state)
