@@ -7,7 +7,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "board",
-        "response_spooky": "board It's covered in strange symbols."
+        "response_spooky": "The boards are covered in strange symbols."
       }
     ]
   },
@@ -24,7 +24,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "set of teeth",
-        "response_spooky": "set of teeth It seems to pulse with malevolent energy."
+        "response_spooky": "The set of teeth seems to pulse with malevolent energy."
       }
     ]
   },
@@ -36,7 +36,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "surrounding wall",
-        "response_spooky": "surrounding wall Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the surrounding wall unnaturally."
       }
     ]
   },
@@ -53,7 +53,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "granite wall",
-        "response_spooky": "granite wall Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the granite wall unnaturally."
       }
     ]
   },
@@ -75,7 +75,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "songbird",
-        "response_spooky": "death raven"
+        "response_spooky": "A death raven watches you with empty eyes."
       }
     ]
   },
@@ -107,7 +107,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "white house",
-        "response_spooky": "bone-white manor"
+        "response_spooky": "A bone-white manor looms before you."
       },
       {
         "verb": "ENTER",
@@ -144,7 +144,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "forest",
-        "response_spooky": "dead forest It seems to pulse with malevolent energy."
+        "response_spooky": "The dead forest seems to pulse with malevolent energy."
       }
     ]
   },
@@ -156,7 +156,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "tree",
-        "response_spooky": "dead tree Dark stains mar its surface."
+        "response_spooky": "Dark stains mar the surface of the dead tree."
       }
     ]
   },
@@ -168,7 +168,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "mountain range",
-        "response_spooky": "mountain range Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the mountain range unnaturally."
       }
     ]
   },
@@ -200,7 +200,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "water",
-        "response_spooky": "absolute darkness water"
+        "response_spooky": "The water is absolute darkness."
       }
     ]
   },
@@ -253,7 +253,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "quantity of water",
-        "response_spooky": "quantity of absolute darkness water"
+        "response_spooky": "A quantity of absolute darkness water."
       }
     ],
     "is_takeable": true
@@ -276,7 +276,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "kitchen window",
-        "response_spooky": "kitchen broken window Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the broken kitchen window unnaturally."
       },
       {
         "verb": "OPEN",
@@ -310,12 +310,12 @@
       {
         "verb": "EXAMINE",
         "response_original": "The chimney leads",
-        "response_spooky": "The crematorium chimney leads Shadows cling to it unnaturally."
+        "response_spooky": "The crematorium chimney leads down. Shadows cling to it unnaturally."
       },
       {
         "verb": "EXAMINE",
         "response_original": "chimney",
-        "response_spooky": "crematorium chimney Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the crematorium chimney unnaturally."
       }
     ]
   },
@@ -337,7 +337,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "number of ghosts",
-        "response_spooky": "number of ghosts Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the ghosts unnaturally."
       }
     ]
   },
@@ -504,7 +504,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "bat",
-        "response_spooky": "vampire bat It seems to pulse with malevolent energy."
+        "response_spooky": "The vampire bat seems to pulse with malevolent energy."
       }
     ],
     "is_takeable": true
@@ -543,7 +543,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "brass bell",
-        "response_spooky": "brass funeral bell It seems to pulse with malevolent energy."
+        "response_spooky": "The brass funeral bell seems to pulse with malevolent energy."
       }
     ],
     "is_takeable": true
@@ -610,7 +610,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "bloody axe",
-        "response_spooky": "bloody executioner's axe"
+        "response_spooky": "A bloody executioner's axe lies here."
       }
     ],
     "is_takeable": true
@@ -638,7 +638,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "bolt",
-        "response_spooky": "bolt It's covered in strange symbols."
+        "response_spooky": "The bolt is covered in strange symbols."
       }
     ],
     "is_takeable": true
@@ -651,7 +651,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "green bubble",
-        "response_spooky": "green bubble Dark stains mar its surface."
+        "response_spooky": "Dark stains mar the surface of the green bubble."
       }
     ],
     "is_takeable": true
@@ -670,7 +670,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "altar",
-        "response_spooky": "sacrificial altar It seems to pulse with malevolent energy."
+        "response_spooky": "The sacrificial altar seems to pulse with malevolent energy."
       },
       {
         "verb": "OPEN",
@@ -749,7 +749,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "black book",
-        "response_spooky": "black necronomicon It's covered in strange symbols."
+        "response_spooky": "The black necronomicon is covered in strange symbols."
       },
       {
         "verb": "READ",
@@ -813,7 +813,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "broken lantern",
-        "response_spooky": "broken cursed lantern"
+        "response_spooky": "A broken cursed lantern lies here."
       }
     ],
     "is_takeable": true
@@ -881,7 +881,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "broken timber",
-        "response_spooky": "broken timber Dark stains mar its surface."
+        "response_spooky": "Dark stains mar the surface of the broken timber."
       }
     ],
     "is_takeable": true
@@ -899,7 +899,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "chute",
-        "response_spooky": "chute It seems to pulse with malevolent energy."
+        "response_spooky": "The chute seems to pulse with malevolent energy."
       }
     ]
   },
@@ -918,7 +918,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "kitchen table",
-        "response_spooky": "kitchen bloodstained table"
+        "response_spooky": "A bloodstained kitchen table sits here."
       },
       {
         "verb": "OPEN",
@@ -959,7 +959,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "table",
-        "response_spooky": "bloodstained table"
+        "response_spooky": "A bloodstained table sits here."
       },
       {
         "verb": "OPEN",
@@ -1026,7 +1026,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "brown sack",
-        "response_spooky": "brown sack Dark stains mar its surface."
+        "response_spooky": "Dark stains mar the surface of the brown sack."
       },
       {
         "verb": "OPEN",
@@ -1066,7 +1066,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "The chests are all empty.",
-        "response_spooky": "The chests are all empty. It's covered in strange symbols."
+        "response_spooky": "The chests are all empty, but covered in strange symbols."
       },
       {
         "verb": "OPEN",
@@ -1076,7 +1076,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "group of tool chests",
-        "response_spooky": "group of tool chests It's covered in strange symbols."
+        "response_spooky": "The group of tool chests is covered in strange symbols."
       },
       {
         "verb": "OPEN",
@@ -1121,7 +1121,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "yellow button",
-        "response_spooky": "yellow button It's covered in strange symbols."
+        "response_spooky": "The yellow button is covered in strange symbols."
       }
     ]
   },
@@ -1143,7 +1143,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "brown button",
-        "response_spooky": "brown button Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the brown button unnaturally."
       }
     ]
   },
@@ -1165,7 +1165,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "red button",
-        "response_spooky": "red button It's covered in strange symbols."
+        "response_spooky": "The red button is covered in strange symbols."
       }
     ]
   },
@@ -1187,7 +1187,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "blue button",
-        "response_spooky": "blue button It seems to pulse with malevolent energy."
+        "response_spooky": "The blue button seems to pulse with malevolent energy."
       }
     ]
   },
@@ -1273,7 +1273,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "carpet",
-        "response_spooky": "bloodstained carpet"
+        "response_spooky": "A bloodstained carpet lies here."
       },
       {
         "verb": "MOVE",
@@ -1411,7 +1411,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "clove of garlic",
-        "response_spooky": "clove of garlic Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the clove of garlic unnaturally."
       }
     ],
     "is_takeable": true
@@ -1445,7 +1445,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "crystal trident",
-        "response_spooky": "crystal trident Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the crystal trident unnaturally."
       }
     ],
     "is_takeable": true
@@ -1498,7 +1498,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "cyclops",
-        "response_spooky": "one-eyed demon Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the one-eyed demon unnaturally."
       }
     ],
     "is_takeable": true
@@ -1516,7 +1516,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "dam",
-        "response_spooky": "dam It seems to pulse with malevolent energy."
+        "response_spooky": "The dam seems to pulse with malevolent energy."
       }
     ],
     "is_takeable": true
@@ -1550,7 +1550,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "trap door",
-        "response_spooky": "trap obsidian coffin lid Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the obsidian coffin lid unnaturally."
       },
       {
         "verb": "OPEN",
@@ -1584,7 +1584,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "boarded window",
-        "response_spooky": "boarded broken window Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the boarded broken window unnaturally."
       }
     ]
   },
@@ -1628,7 +1628,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "stone door",
-        "response_spooky": "stone obsidian coffin lid It's covered in strange symbols."
+        "response_spooky": "The obsidian coffin lid is covered in strange symbols."
       }
     ]
   },
@@ -1640,7 +1640,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "stone barrow",
-        "response_spooky": "stone barrow It seems to pulse with malevolent energy."
+        "response_spooky": "The stone barrow seems to pulse with malevolent energy."
       }
     ]
   },
@@ -1693,7 +1693,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "glass bottle",
-        "response_spooky": "glass vial Dark stains mar its surface."
+        "response_spooky": "Dark stains mar the surface of the glass vial."
       },
       {
         "verb": "OPEN",
@@ -1734,7 +1734,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "crack",
-        "response_spooky": "crack It seems to pulse with malevolent energy."
+        "response_spooky": "The crack seems to pulse with malevolent energy."
       }
     ]
   },
@@ -1833,7 +1833,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "grating",
-        "response_spooky": "grating It's covered in strange symbols."
+        "response_spooky": "The grating is covered in strange symbols."
       }
     ]
   },
@@ -1866,7 +1866,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "hand-held air pump",
-        "response_spooky": "hand-held air pump Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the hand-held air pump unnaturally."
       }
     ],
     "is_takeable": true
@@ -1968,7 +1968,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "nasty knife",
-        "response_spooky": "nasty ritual knife Dark stains mar its surface."
+        "response_spooky": "Dark stains mar the surface of the nasty ritual knife."
       }
     ],
     "is_takeable": true
@@ -1981,7 +1981,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "skeleton",
-        "response_spooky": "skeleton It's covered in strange symbols."
+        "response_spooky": "The skeleton is covered in strange symbols."
       }
     ],
     "is_takeable": true
@@ -2015,7 +2015,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "burned-out lantern",
-        "response_spooky": "burned-out cursed lantern"
+        "response_spooky": "A burned-out cursed lantern lies here."
       }
     ],
     "is_takeable": true
@@ -2164,7 +2164,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "large emerald",
-        "response_spooky": "large emerald It seems to pulse with malevolent energy."
+        "response_spooky": "The large emerald seems to pulse with malevolent energy."
       }
     ],
     "is_takeable": true
@@ -2220,7 +2220,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "leak",
-        "response_spooky": "leak Dark stains mar its surface."
+        "response_spooky": "Dark stains mar the surface of the leak."
       }
     ]
   },
@@ -2255,7 +2255,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "machine",
-        "response_spooky": "machine Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the machine unnaturally."
       },
       {
         "verb": "OPEN",
@@ -2345,7 +2345,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "magic boat",
-        "response_spooky": "magic boat It's covered in strange symbols."
+        "response_spooky": "The magic boat is covered in strange symbols."
       }
     ],
     "is_takeable": true,
@@ -2370,7 +2370,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "small mailbox",
-        "response_spooky": "small rusted mailbox Dark stains mar its surface."
+        "response_spooky": "Dark stains mar the surface of the small rusted mailbox."
       },
       {
         "verb": "OPEN",
@@ -2446,7 +2446,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "matchbook",
-        "response_spooky": "matchbook It's covered in strange symbols."
+        "response_spooky": "The matchbook is covered in strange symbols."
       },
       {
         "verb": "READ",
@@ -2477,7 +2477,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "mirror",
-        "response_spooky": "mirror It's covered in strange symbols."
+        "response_spooky": "The mirror is covered in strange symbols."
       }
     ],
     "is_takeable": true
@@ -2500,7 +2500,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "mirror",
-        "response_spooky": "mirror Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the mirror unnaturally."
       }
     ],
     "is_takeable": true
@@ -2552,7 +2552,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "candles",
-        "response_spooky": "candles They seem to absorb light rather than produce it."
+        "response_spooky": "The candles seem to absorb light rather than produce it."
       },
       {
         "verb": "TAKE",
@@ -2576,7 +2576,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "pair of candles",
-        "response_spooky": "pair of black candles Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the pair of black candles unnaturally."
       },
       {
         "verb": "TURN_ON",
@@ -2632,7 +2632,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "small piece of vitreous slag",
-        "response_spooky": "small piece of vitreous slag It seems to pulse with malevolent energy."
+        "response_spooky": "The small piece of vitreous slag seems to pulse with malevolent energy."
       }
     ],
     "is_takeable": true
@@ -2650,7 +2650,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "pile of bodies",
-        "response_spooky": "pile of bodies Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the pile of bodies unnaturally."
       }
     ],
     "is_takeable": true
@@ -2665,12 +2665,12 @@
       {
         "verb": "COUNT",
         "response_original": "There are 69,105 leaves here.",
-        "response_spooky": "There are 69,105 pile of bones here."
+        "response_spooky": "There are 69,105 bones in the pile here."
       },
       {
         "verb": "BURN",
         "response_original": "The leaves burn.",
-        "response_spooky": "The pile of bones burn."
+        "response_spooky": "The pile of bones burns."
       },
       {
         "verb": "CUT",
@@ -2685,12 +2685,12 @@
       {
         "verb": "TAKE",
         "response_original": "Underneath the pile of leaves is a grating. As you release the leaves,\nthe grating is once again concealed from view.",
-        "response_spooky": "Underneath the pile of pile of bones is a grating. As you release the pile of bones,\nthe grating is once again concealed from view."
+        "response_spooky": "Underneath the pile of bones is a grating. As you release the pile of bones,\nthe grating is once again concealed from view."
       },
       {
         "verb": "LOOK-UNDER",
         "response_original": "Underneath the pile of leaves is a grating. As you release the leaves,\nthe grating is once again concealed from view.",
-        "response_spooky": "Underneath the pile of pile of bones is a grating. As you release the pile of bones,\nthe grating is once again concealed from view."
+        "response_spooky": "Underneath the pile of bones is a grating. As you release the pile of bones,\nthe grating is once again concealed from view."
       },
       {
         "verb": "TAKE",
@@ -2714,7 +2714,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "On the ground is a pile of leaves.",
-        "response_spooky": "On the ground is a pile of pile of bones."
+        "response_spooky": "On the ground is a pile of bones."
       }
     ],
     "is_takeable": true
@@ -2748,7 +2748,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "punctured boat",
-        "response_spooky": "punctured boat It seems to pulse with malevolent energy."
+        "response_spooky": "The punctured boat seems to pulse with malevolent energy."
       }
     ],
     "is_takeable": true
@@ -2850,7 +2850,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "pot of gold",
-        "response_spooky": "pot of gold Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the pot of gold unnaturally."
       }
     ],
     "is_takeable": true
@@ -2865,7 +2865,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "prayer",
-        "response_spooky": "absolute darkness prayer"
+        "response_spooky": "The prayer of absolute darkness."
       },
       {
         "verb": "READ",
@@ -2885,7 +2885,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "wooden railing",
-        "response_spooky": "wooden railing It seems to pulse with malevolent energy."
+        "response_spooky": "The wooden railing seems to pulse with malevolent energy."
       }
     ]
   },
@@ -2902,7 +2902,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "rainbow",
-        "response_spooky": "spectral bridge Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the spectral bridge unnaturally."
       }
     ]
   },
@@ -2919,7 +2919,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "river",
-        "response_spooky": "river of blood"
+        "response_spooky": "A river of blood flows here."
       }
     ]
   },
@@ -2957,7 +2957,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "red buoy",
-        "response_spooky": "red buoy It's covered in strange symbols."
+        "response_spooky": "The red buoy is covered in strange symbols."
       },
       {
         "verb": "OPEN",
@@ -3044,7 +3044,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "rope",
-        "response_spooky": "hangman's rope Dark stains mar its surface."
+        "response_spooky": "Dark stains mar the surface of the hangman's rope."
       }
     ],
     "is_takeable": true
@@ -3083,7 +3083,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "rusty knife",
-        "response_spooky": "rusty ritual knife It's covered in strange symbols."
+        "response_spooky": "The rusty ritual knife is covered in strange symbols."
       }
     ],
     "is_takeable": true
@@ -3101,7 +3101,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "sand",
-        "response_spooky": "grave dirt"
+        "response_spooky": "You see grave dirt here."
       }
     ]
   },
@@ -3134,7 +3134,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "sapphire-encrusted bracelet",
-        "response_spooky": "sapphire-encrusted bracelet It seems to pulse with malevolent energy."
+        "response_spooky": "The sapphire-encrusted bracelet seems to pulse with malevolent energy."
       }
     ],
     "is_takeable": true
@@ -3168,7 +3168,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "screwdriver",
-        "response_spooky": "screwdriver Dark stains mar its surface."
+        "response_spooky": "Dark stains mar the surface of the screwdriver."
       }
     ],
     "is_takeable": true
@@ -3202,7 +3202,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "skeleton key",
-        "response_spooky": "skeleton key It's covered in strange symbols."
+        "response_spooky": "The skeleton key is covered in strange symbols."
       }
     ],
     "is_takeable": true
@@ -3236,7 +3236,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "shovel",
-        "response_spooky": "shovel It seems to pulse with malevolent energy."
+        "response_spooky": "The shovel seems to pulse with malevolent energy."
       }
     ],
     "is_takeable": true
@@ -3270,7 +3270,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "small pile of coal",
-        "response_spooky": "small pile of coal Dark stains mar its surface."
+        "response_spooky": "Dark stains mar the surface of the small pile of coal."
       }
     ],
     "is_takeable": true
@@ -3283,7 +3283,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "wooden ladder",
-        "response_spooky": "wooden ladder It seems to pulse with malevolent energy."
+        "response_spooky": "The wooden ladder seems to pulse with malevolent energy."
       }
     ]
   },
@@ -3316,7 +3316,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "beautiful jeweled scarab",
-        "response_spooky": "grotesque jeweled scarab"
+        "response_spooky": "A grotesque jeweled scarab lies here."
       }
     ],
     "is_takeable": true
@@ -3339,7 +3339,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "large bag",
-        "response_spooky": "large bag It seems to pulse with malevolent energy."
+        "response_spooky": "The large bag seems to pulse with malevolent energy."
       }
     ],
     "is_takeable": true
@@ -3373,7 +3373,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "stiletto",
-        "response_spooky": "stiletto Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the stiletto unnaturally."
       }
     ],
     "is_takeable": true
@@ -3391,7 +3391,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "switch",
-        "response_spooky": "switch Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the switch unnaturally."
       }
     ]
   },
@@ -3405,7 +3405,7 @@
       {
         "verb": "OPEN",
         "response_original": "The door cannot be opened.",
-        "response_spooky": "The obsidian coffin lid cannot be creaked open. You hear whispers from inside."
+        "response_spooky": "The obsidian coffin lid cannot be opened. You hear whispers from inside."
       },
       {
         "verb": "BURN",
@@ -3425,7 +3425,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "wooden door",
-        "response_spooky": "wooden obsidian coffin lid Dark stains mar its surface."
+        "response_spooky": "Dark stains mar the surface of the wooden obsidian coffin lid."
       },
       {
         "verb": "READ",
@@ -3519,7 +3519,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "ancient map",
-        "response_spooky": "ancient map Dark stains mar its surface."
+        "response_spooky": "Dark stains mar the surface of the ancient map."
       },
       {
         "verb": "READ",
@@ -3562,7 +3562,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "tan label",
-        "response_spooky": "tan label Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the tan label unnaturally."
       },
       {
         "verb": "READ",
@@ -3615,7 +3615,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "There is a suspicious-looking individual, holding a large bag, leaning\nagainst one wall. He is armed with a deadly stiletto.",
-        "response_spooky": "There is a suspicious-looking individual, holding a large bag, leaning\nagainst one wall. He is armed with a deadly stiletto. Shadows cling to it unnaturally."
+        "response_spooky": "There is a suspicious-looking individual, holding a large bag, leaning\nagainst one wall. He is armed with a deadly stiletto. Shadows cling to him unnaturally."
       },
       {
         "verb": "OPEN",
@@ -3656,12 +3656,12 @@
       {
         "verb": "EXAMINE",
         "response_original": "It looks pretty much like a",
-        "response_spooky": "It looks pretty much like a Shadows cling to it unnaturally."
+        "response_spooky": "It looks pretty much like a pedestal. Shadows cling to it unnaturally."
       },
       {
         "verb": "EXAMINE",
         "response_original": "pedestal",
-        "response_spooky": "pedestal Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the pedestal unnaturally."
       },
       {
         "verb": "OPEN",
@@ -3704,7 +3704,7 @@
       {
         "verb": "POUR-ON",
         "response_original": "The water evaporates before it gets close.",
-        "response_spooky": "The absolute darkness water evaporates before it gets slam shut."
+        "response_spooky": "The absolute darkness water evaporates before it hits the flame."
       },
       {
         "verb": "LAMP-OFF",
@@ -3790,7 +3790,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "tour guidebook",
-        "response_spooky": "tour guidebook It seems to pulse with malevolent energy."
+        "response_spooky": "The tour guidebook seems to pulse with malevolent energy."
       },
       {
         "verb": "READ",
@@ -3945,7 +3945,7 @@
         "state_change": {
           "is_read": true
         },
-        "response_spooky": "---> Frobozz Magic Gunk Company <---\n\n\t  All-Purpose Gunk Ancient curses fill the pages."
+        "response_spooky": "---> Frobozz Magic Gunk Company <---\n\n\t  All-Purpose Gunk. Ancient curses fill the pages."
       },
       {
         "verb": "OPEN",
@@ -4012,7 +4012,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "viscous material",
-        "response_spooky": "viscous material Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the viscous material unnaturally."
       }
     ],
     "is_takeable": true
@@ -4069,7 +4069,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "ZORK owner's manual",
-        "response_spooky": "ZORK owner's manual Dark stains mar its surface."
+        "response_spooky": "Dark stains mar the surface of the ZORK owner's manual."
       },
       {
         "verb": "READ",
@@ -4100,7 +4100,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "cliff",
-        "response_spooky": "cliff It seems to pulse with malevolent energy."
+        "response_spooky": "The cliff seems to pulse with malevolent energy."
       }
     ]
   },
@@ -4112,7 +4112,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "white cliffs",
-        "response_spooky": "bone-white cliffs"
+        "response_spooky": "The cliffs are bone-white."
       }
     ]
   },
@@ -4145,7 +4145,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "wrench",
-        "response_spooky": "wrench It seems to pulse with malevolent energy."
+        "response_spooky": "The wrench seems to pulse with malevolent energy."
       }
     ],
     "is_takeable": true
@@ -4158,7 +4158,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "control panel",
-        "response_spooky": "control panel Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the control panel unnaturally."
       }
     ]
   },
@@ -4196,7 +4196,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "bird's nest",
-        "response_spooky": "death raven's raven's nest"
+        "response_spooky": "A death raven's nest."
       },
       {
         "verb": "OPEN",
@@ -4239,7 +4239,7 @@
       {
         "verb": "MUNG",
         "response_original": "The egg is now open, but the clumsiness of your attempt has seriously\ncompromised its esthetic appeal.",
-        "response_spooky": "The raven's egg is now creak open, but the clumsiness of your attempt has seriously\ncompromised its esthetic appeal."
+        "response_spooky": "The raven's egg is now cracked open, but the clumsiness of your attempt has seriously\ncompromised its esthetic appeal."
       },
       {
         "verb": "THROW",
@@ -4268,7 +4268,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "jewel-encrusted egg",
-        "response_spooky": "jewel-encrusted raven's egg It seems to pulse with malevolent energy."
+        "response_spooky": "The jewel-encrusted raven's egg seems to pulse with malevolent energy."
       },
       {
         "verb": "OPEN",
@@ -4387,7 +4387,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "beautiful brass bauble",
-        "response_spooky": "grotesque brass bauble"
+        "response_spooky": "A grotesque brass bauble lies here."
       }
     ],
     "is_takeable": true
@@ -4426,7 +4426,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "golden clockwork canary",
-        "response_spooky": "golden clockwork mechanical raven Shadows cling to it unnaturally."
+        "response_spooky": "Shadows cling to the golden clockwork mechanical raven unnaturally."
       }
     ],
     "is_takeable": true
@@ -4465,7 +4465,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "broken clockwork canary",
-        "response_spooky": "broken clockwork mechanical raven It seems to pulse with malevolent energy."
+        "response_spooky": "The broken clockwork mechanical raven seems to pulse with malevolent energy."
       }
     ],
     "is_takeable": true
@@ -4539,7 +4539,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "match",
-        "response_spooky": "match The matchbox bears strange symbols."
+        "response_spooky": "The matchbox bears strange symbols."
       }
     ]
   },
@@ -4551,7 +4551,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "food",
-        "response_spooky": "food It looks suspiciously fresh."
+        "response_spooky": "The food looks suspiciously fresh."
       },
       {
         "verb": "EAT",
@@ -4574,7 +4574,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "stairs",
-        "response_spooky": "stairs They seem to groan under an invisible weight."
+        "response_spooky": "The stairs seem to groan under an invisible weight."
       }
     ]
   },
@@ -4586,7 +4586,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "ground",
-        "response_spooky": "ground The earth here feels unnaturally soft."
+        "response_spooky": "The ground here feels unnaturally soft."
       }
     ]
   },
@@ -4598,7 +4598,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "jewelry",
-        "response_spooky": "jewelry It seems to whisper to you."
+        "response_spooky": "The jewelry seems to whisper to you."
       },
       {
         "verb": "TAKE",
@@ -4615,7 +4615,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "silver",
-        "response_spooky": "silver It bears unholy markings."
+        "response_spooky": "The silver bears unholy markings."
       },
       {
         "verb": "TAKE",
@@ -4632,7 +4632,7 @@
       {
         "verb": "EXAMINE",
         "response_original": "gold",
-        "response_spooky": "gold It glows with a faint, sickly light."
+        "response_spooky": "The gold glows with a faint, sickly light."
       },
       {
         "verb": "TAKE",

@@ -242,6 +242,39 @@ class GameEngine:
             include_objects=True
         )
 
+        # Add contents of open/transparent containers in the room
+        current_room_obj = self.world.get_room(state.current_room)
+        # Check both items and global items
+        for item_id in list(current_room_obj.items) + list(current_room_obj.global_items):
+            try:
+                item = self.world.get_object(item_id)
+                if item.type == "container":
+                    is_open = state.get_object_state(item_id, 'is_open', item.state.get('is_open', False))
+                    is_transparent = state.get_object_state(item_id, 'is_transparent', item.state.get('is_transparent', False))
+                    
+                    if is_open or is_transparent:
+                        contents = state.get_object_state(item_id, 'contents', item.state.get('contents', []))
+                        if contents:
+                            content_names = []
+                            for content_id in contents:
+                                try:
+                                    content_obj = self.world.get_object(content_id)
+                                    # Use spooky name if available
+                                    content_name = content_obj.name_spooky if content_obj.name_spooky else content_obj.name
+                                    content_names.append(content_name)
+                                except ValueError:
+                                    continue
+                            
+                            if content_names:
+                                # Use spooky name for container if available
+                                container_name = item.name_spooky if item.name_spooky else item.name
+                                if is_open:
+                                    description += f" Inside the {container_name}, you see: {', '.join(content_names)}."
+                                else:
+                                    description += f" Through the {container_name}, you see: {', '.join(content_names)}."
+            except ValueError:
+                continue
+
         return description
 
     def handle_look(self, state: GameState) -> ActionResult:
@@ -2248,6 +2281,32 @@ class GameEngine:
                 if sanity_change < 0:
                     notifications.append("The sight disturbs you deeply...")
             
+            # Check if it's a container and list contents if open/transparent
+            if game_object.type == "container":
+                is_open = state.get_object_state(object_id, 'is_open', game_object.state.get('is_open', False))
+                is_transparent = state.get_object_state(object_id, 'is_transparent', game_object.state.get('is_transparent', False))
+                
+                if is_open or is_transparent:
+                    contents = state.get_object_state(object_id, 'contents', game_object.state.get('contents', []))
+                    if contents:
+                        content_names = []
+                        for item_id in contents:
+                            try:
+                                item = self.world.get_object(item_id)
+                                # Use spooky name if available
+                                item_name = item.name_spooky if item.name_spooky else item.name
+                                content_names.append(item_name)
+                            except ValueError:
+                                continue
+                        
+                        if content_names:
+                            if is_open:
+                                description += f" Inside, you see: {', '.join(content_names)}."
+                            else:
+                                description += f" Through the surface, you see: {', '.join(content_names)}."
+                    elif is_open:
+                        description += " It is empty."
+
             return ActionResult(
                 success=True,
                 message=description,
