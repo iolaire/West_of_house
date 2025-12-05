@@ -252,7 +252,14 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("EAST") # Shaft Room
         
         # Fetch Coal & Make Diamond
+        self.execute("NORTH") # Smelly Room
         self.execute("DOWN") # Gas Room
+        self.execute("TAKE SOUL-BINDING BRACELET") # Bracelet
+        self.execute("EAST") # Mine 1
+        self.execute("NE") # Mine 2
+        self.execute("SE") # Mine 3
+        self.execute("SW") # Mine 4
+        self.execute("DOWN") # Ladder Top
         self.execute("DOWN") # Ladder Bottom
         self.execute("SOUTH") # Dead End
         self.execute("TAKE CURSED COAL")
