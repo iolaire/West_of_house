@@ -9,7 +9,7 @@ import sys
 import os
 
 # Add src directory to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler'))
 
 import pytest
 from hypothesis import given, strategies as st, settings, assume
@@ -23,7 +23,7 @@ from world_loader import WorldData, GameObject
 def world_data():
     """Load world data once for all tests."""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     return world
 
@@ -94,7 +94,7 @@ def test_turn_changes_rotation_state(data):
     """
     # Load world data (fresh instance for each test)
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -154,7 +154,7 @@ def test_turn_wraps_rotation(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -209,7 +209,7 @@ def test_turn_multiple_times(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -264,7 +264,7 @@ def test_turn_fails_for_non_turnable_object(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -321,7 +321,7 @@ def test_turn_fails_for_absent_object(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -361,7 +361,7 @@ def test_turn_activation_at_specific_rotation(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -433,7 +433,7 @@ def test_turn_deactivation_away_from_activation_rotation(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)

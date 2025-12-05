@@ -9,7 +9,7 @@ import sys
 import os
 
 # Add src directory to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler'))
 
 import pytest
 from hypothesis import given, strategies as st, settings, assume
@@ -23,7 +23,7 @@ from world_loader import WorldData
 def world_data():
     """Load world data once for all tests."""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     return world
 
@@ -82,7 +82,7 @@ def test_look_inside_open_container_lists_contents(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -163,7 +163,7 @@ def test_look_inside_closed_container_fails(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -206,7 +206,7 @@ def test_look_inside_transparent_container_succeeds(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -250,7 +250,7 @@ def test_look_inside_non_container_fails(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -306,7 +306,7 @@ def test_look_inside_formats_contents_clearly(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)

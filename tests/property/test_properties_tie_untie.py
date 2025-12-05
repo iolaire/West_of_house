@@ -9,7 +9,7 @@ import sys
 import os
 
 # Add src directory to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler'))
 
 import pytest
 from hypothesis import given, strategies as st, settings, assume
@@ -23,7 +23,7 @@ from world_loader import WorldData, GameObject
 def world_data():
     """Load world data once for all tests."""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     return world
 
@@ -113,7 +113,7 @@ def test_tie_untie_round_trip(data):
     """
     # Load world data (fresh instance for each test)
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -208,7 +208,7 @@ def test_tie_fails_when_already_tied(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -268,7 +268,7 @@ def test_untie_fails_when_not_tied(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -328,7 +328,7 @@ def test_tie_fails_with_invalid_target(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -406,7 +406,7 @@ def test_tie_fails_without_rope_in_inventory(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -463,7 +463,7 @@ def test_tie_fails_for_non_rope_object(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -553,7 +553,7 @@ def test_untie_fails_for_non_rope_object(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -613,7 +613,7 @@ def test_tie_fails_for_absent_target(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)

@@ -9,7 +9,7 @@ import sys
 import os
 
 # Add src directory to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler'))
 
 import pytest
 from hypothesis import given, strategies as st, settings, assume
@@ -23,7 +23,7 @@ from world_loader import WorldData, GameObject
 def world_data():
     """Load world data once for all tests."""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     return world
 
@@ -118,7 +118,7 @@ def test_board_disembark_round_trip(data):
     """
     # Load world data (fresh instance for each test)
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -198,7 +198,7 @@ def test_board_disembark_specific_vehicle_round_trip(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -248,7 +248,7 @@ def test_board_fails_when_already_in_vehicle(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -311,7 +311,7 @@ def test_disembark_fails_when_not_in_vehicle(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -356,7 +356,7 @@ def test_disembark_fails_for_wrong_vehicle(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -409,7 +409,7 @@ def test_board_fails_for_non_vehicle_object(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -471,7 +471,7 @@ def test_board_fails_for_absent_vehicle(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -519,7 +519,7 @@ def test_board_state_unchanged_on_failure(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -564,7 +564,7 @@ def test_board_returns_message(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -611,7 +611,7 @@ def test_disembark_returns_message(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)

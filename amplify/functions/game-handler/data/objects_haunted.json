@@ -1284,6 +1284,9 @@
         "response_spooky": "With great effort, you drag the heavy rug aside. Its underside is soaked with old blood. Beneath it, a trap door is revealed, its surface carved with warnings in dead languages.",
         "state_change": {
           "is_moved": true
+        },
+        "flag_change": {
+          "rug_moved": true
         }
       },
       {
@@ -2022,7 +2025,9 @@
     "type": "container",
     "state": {
       "is_taken": false,
-      "contents": ["coins"]
+      "contents": [
+        "coins"
+      ]
     },
     "interactions": [
       {

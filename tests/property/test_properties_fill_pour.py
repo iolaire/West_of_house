@@ -9,7 +9,7 @@ import sys
 import os
 
 # Add src directory to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler'))
 
 import pytest
 from hypothesis import given, strategies as st, settings, assume
@@ -23,7 +23,7 @@ from world_loader import WorldData, GameObject
 def world_data():
     """Load world data once for all tests."""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     return world
 
@@ -122,7 +122,7 @@ def test_fill_pour_round_trip(data):
     """
     # Load world data (fresh instance for each test)
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -225,7 +225,7 @@ def test_fill_fails_when_already_full(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -288,7 +288,7 @@ def test_pour_fails_when_empty(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -345,7 +345,7 @@ def test_fill_fails_with_non_liquid_container(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -436,7 +436,7 @@ def test_fill_fails_with_non_liquid_source(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -509,7 +509,7 @@ def test_pour_into_another_container(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -620,7 +620,7 @@ def test_fill_fails_without_container_in_inventory(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -678,7 +678,7 @@ def test_pour_fails_without_container_in_inventory(data):
     """
     # Load world data
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)

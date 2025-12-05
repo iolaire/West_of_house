@@ -7,7 +7,7 @@ Tests correctness properties related to BURN, CUT, DIG, INFLATE, DEFLATE, WAVE, 
 import sys
 import os
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler'))
 
 import pytest
 from hypothesis import given, strategies as st, settings, assume
@@ -20,7 +20,7 @@ from world_loader import WorldData, GameObject
 def world_data():
     """Load world data once for all tests."""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     return world
 
@@ -79,7 +79,7 @@ def test_burn_destroys_flammable_objects(data):
     **Validates: Requirements 6.1**
     """
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -116,7 +116,7 @@ def test_burn_fails_for_non_flammable_objects(data):
     **Validates: Requirements 6.1**
     """
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -193,7 +193,7 @@ def test_cut_modifies_objects(data):
     **Validates: Requirements 6.2**
     """
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -225,7 +225,7 @@ def test_cut_fails_for_non_cuttable_objects(data):
     **Validates: Requirements 6.2**
     """
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -288,7 +288,7 @@ def test_dig_reveals_or_modifies(data):
     **Validates: Requirements 6.3**
     """
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -317,7 +317,7 @@ def test_dig_fails_for_non_diggable_locations(data):
     **Validates: Requirements 6.3**
     """
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -371,7 +371,7 @@ def test_inflate_deflate_round_trip(data):
     **Validates: Requirements 6.4**
     """
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -402,7 +402,7 @@ def test_inflate_fails_for_non_inflatable_objects(data):
     **Validates: Requirements 6.4**
     """
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -437,7 +437,7 @@ def test_inflate_fails_for_non_inflatable_objects(data):
 def test_wave_generates_response(data):
     """WAVE should generate a response for any object in inventory. Validates: Requirements 6.5"""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -476,7 +476,7 @@ def test_wave_generates_response(data):
 def test_rub_generates_response(data):
     """RUB should generate a response for any accessible object. Validates: Requirements 6.6"""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -507,7 +507,7 @@ def test_rub_generates_response(data):
 def test_shake_generates_response(data):
     """SHAKE should generate a response for any accessible object. Validates: Requirements 6.7"""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -538,7 +538,7 @@ def test_shake_generates_response(data):
 def test_squeeze_generates_response(data):
     """SQUEEZE should generate a response for any accessible object. Validates: Requirements 6.8"""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)

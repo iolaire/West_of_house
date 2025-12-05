@@ -9,7 +9,7 @@ import sys
 import os
 
 # Add src directory to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler'))
 
 import pytest
 from game_engine import GameEngine, ActionResult
@@ -22,7 +22,7 @@ from command_parser import CommandParser, ParsedCommand
 def world_data():
     """Load world data once for all tests."""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     return world
 
@@ -531,7 +531,7 @@ class TestObjectInteractions:
         
         # Verify open succeeded
         assert result.success is True
-        assert mailbox.state["is_open"] is True
+        assert fresh_state.get_object_state("mailbox", "is_open") is True
     
     def test_close_container(self, game_engine, world_data, fresh_state):
         """
@@ -553,7 +553,7 @@ class TestObjectInteractions:
         
         # Verify close succeeded
         assert result.success is True
-        assert mailbox.state["is_open"] is False
+        assert fresh_state.get_object_state("mailbox", "is_open") is False
     
     def test_read_readable_object(self, game_engine, world_data, fresh_state):
         """
@@ -813,7 +813,7 @@ class TestContainers:
         
         # Verify it opened
         assert result.success is True
-        assert mailbox.state['is_open'] is True
+        assert fresh_state.get_object_state('mailbox', 'is_open') is True
         assert 'open' in result.message.lower() or 'creak' in result.message.lower()
     
     def test_close_container(self, game_engine, world_data, fresh_state):
@@ -835,7 +835,7 @@ class TestContainers:
         
         # Verify it closed
         assert result.success is True
-        assert mailbox.state['is_open'] is False
+        assert fresh_state.get_object_state('mailbox', 'is_open') is False
         assert 'close' in result.message.lower() or 'shut' in result.message.lower()
     
     def test_put_object_in_container(self, game_engine, world_data, fresh_state):
@@ -862,7 +862,7 @@ class TestContainers:
         
         # Verify it was added
         assert result.success is True
-        assert 'leaflet' in mailbox.state['contents']
+        assert 'leaflet' in fresh_state.get_object_state('mailbox', 'contents', [])
         assert 'leaflet' not in fresh_state.inventory
     
     def test_take_object_from_container(self, game_engine, world_data, fresh_state):
@@ -888,7 +888,7 @@ class TestContainers:
         
         # Verify it was taken
         assert result.success is True
-        assert 'leaflet' not in mailbox.state['contents']
+        assert 'leaflet' not in fresh_state.get_object_state('mailbox', 'contents', [])
         assert 'leaflet' in fresh_state.inventory
     
     def test_container_capacity_enforcement(self, game_engine, world_data, fresh_state):
@@ -921,12 +921,12 @@ class TestContainers:
         # Put sword (size 3) in mailbox - should succeed
         result1 = game_engine.handle_put('sword', 'mailbox', fresh_state)
         assert result1.success is True
-        assert 'sword' in mailbox.state['contents']
+        assert 'sword' in fresh_state.get_object_state('mailbox', 'contents', [])
         
         # Try to put painting (size 4) - should fail (3 + 4 = 7 > 5)
         result2 = game_engine.handle_put('painting', 'mailbox', fresh_state)
         assert result2.success is False
-        assert 'painting' not in mailbox.state['contents']
+        assert 'painting' not in fresh_state.get_object_state('mailbox', 'contents', [])
         assert 'painting' in fresh_state.inventory
         assert 'full' in result2.message.lower()
     
@@ -979,7 +979,7 @@ class TestContainers:
         
         # Verify it was added
         assert result.success is True
-        assert 'skull' in trophy_case.state['contents']
+        assert 'skull' in fresh_state.get_object_state('trophy_case', 'contents', [])
     
     def test_cannot_put_in_closed_container(self, game_engine, world_data, fresh_state):
         """
@@ -1006,7 +1006,7 @@ class TestContainers:
         
         # Verify it failed
         assert result.success is False
-        assert 'leaflet' not in mailbox.state['contents']
+        assert 'leaflet' not in fresh_state.get_object_state('mailbox', 'contents', mailbox.state['contents'])
         assert 'leaflet' in fresh_state.inventory
         assert 'closed' in result.message.lower()
     
@@ -1033,7 +1033,7 @@ class TestContainers:
         
         # Verify it failed
         assert result.success is False
-        assert 'leaflet' in mailbox.state['contents']
+        assert 'leaflet' in fresh_state.get_object_state('mailbox', 'contents', mailbox.state['contents'])
         assert 'leaflet' not in fresh_state.inventory
         assert 'closed' in result.message.lower()
 
@@ -1075,9 +1075,9 @@ class TestPuzzles:
         # Step 2: Move the rug
         result2 = game_engine.handle_object_interaction('MOVE', 'rug', fresh_state)
         assert result2.success is True
-        assert rug.state['is_moved'] is True
+        assert fresh_state.get_object_state('rug', 'is_moved') is True
         assert fresh_state.get_flag('rug_moved') is True
-        assert trap_door.state['is_visible'] is True
+        assert fresh_state.get_object_state('trap_door', 'is_visible') is True
         
         # Step 3: Try to go down before opening trap door (should fail)
         result3 = game_engine.handle_movement('DOWN', fresh_state)
@@ -1087,7 +1087,7 @@ class TestPuzzles:
         # Step 4: Open the trap door
         result4 = game_engine.handle_object_interaction('OPEN', 'trap_door', fresh_state)
         assert result4.success is True
-        assert trap_door.state['is_open'] is True
+        assert fresh_state.get_object_state('trap_door', 'is_open') is True
         assert fresh_state.get_flag('trap_door_open') is True
         
         # Step 5: Now we can go down to the cellar
@@ -1121,7 +1121,7 @@ class TestPuzzles:
         # Step 2: Open the kitchen window
         result2 = game_engine.handle_object_interaction('OPEN', 'kitchen_window', fresh_state)
         assert result2.success is True
-        assert kitchen_window.state['is_open'] is True
+        assert fresh_state.get_object_state('kitchen_window', 'is_open') is True
         assert fresh_state.get_flag('kitchen_window_open') is True
         
         # Step 3: Now we can enter the kitchen
@@ -1170,14 +1170,14 @@ class TestPuzzles:
         # Move the rug once
         result1 = game_engine.handle_object_interaction('MOVE', 'rug', fresh_state)
         assert result1.success is True
-        assert rug.state['is_moved'] is True
+        assert fresh_state.get_object_state('rug', 'is_moved') is True
         
         # Try to move it again (should fail or give different message)
         result2 = game_engine.handle_object_interaction('MOVE', 'rug', fresh_state)
         # The interaction should still succeed but with a different message
         assert result2.message is not None
         # The rug should still be marked as moved
-        assert rug.state['is_moved'] is True
+        assert fresh_state.get_object_state('rug', 'is_moved') is True
     
     def test_puzzle_flag_persistence(self, game_engine, world_data, fresh_state):
         """
@@ -1228,16 +1228,16 @@ class TestPuzzles:
         # Open the window
         result1 = game_engine.handle_object_interaction('OPEN', 'kitchen_window', fresh_state)
         assert result1.success is True
-        assert kitchen_window.state['is_open'] is True
+        assert fresh_state.get_object_state('kitchen_window', 'is_open') is True
         
         # Close the window
         result2 = game_engine.handle_object_interaction('CLOSE', 'kitchen_window', fresh_state)
         assert result2.success is True
-        assert kitchen_window.state['is_open'] is False
+        assert fresh_state.get_object_state('kitchen_window', 'is_open') is False
         
         # Verify flag is cleared (or window needs to be reopened)
         # Note: The flag might persist, but the window state should be closed
-        assert kitchen_window.state['is_open'] is False
+        assert fresh_state.get_object_state('kitchen_window', 'is_open') is False
     
     def test_trap_door_can_be_closed_after_opening(self, game_engine, world_data, fresh_state):
         """
@@ -1262,9 +1262,9 @@ class TestPuzzles:
         # Open the trap door
         result1 = game_engine.handle_object_interaction('OPEN', 'trap_door', fresh_state)
         assert result1.success is True
-        assert trap_door.state['is_open'] is True
+        assert fresh_state.get_object_state('trap_door', 'is_open') is True
         
         # Close the trap door
         result2 = game_engine.handle_object_interaction('CLOSE', 'trap_door', fresh_state)
         assert result2.success is True
-        assert trap_door.state['is_open'] is False
+        assert fresh_state.get_object_state('trap_door', 'is_open') is False

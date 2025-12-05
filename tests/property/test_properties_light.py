@@ -9,7 +9,7 @@ import sys
 import os
 
 # Add src directory to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler'))
 
 import pytest
 from hypothesis import given, strategies as st, settings, assume
@@ -42,7 +42,7 @@ def test_lamp_battery_drain(initial_battery, num_turns, cursed):
     state.cursed = cursed
     
     # Load world data
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world = WorldData()
     world.load_from_json(data_dir)
     
@@ -102,7 +102,7 @@ def test_lamp_auto_shutoff(initial_battery, cursed):
     state.cursed = cursed
     
     # Load world data
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world = WorldData()
     world.load_from_json(data_dir)
     
@@ -160,7 +160,7 @@ def test_battery_never_negative(initial_battery, num_turns, cursed):
     state.cursed = cursed
     
     # Load world data
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world = WorldData()
     world.load_from_json(data_dir)
     
@@ -195,7 +195,7 @@ def test_lamp_off_no_drain(initial_battery, num_turns):
     state.lamp_battery = initial_battery
     
     # Load world data
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world = WorldData()
     world.load_from_json(data_dir)
     
@@ -230,7 +230,7 @@ def test_no_lamp_no_drain(initial_battery, num_turns):
     state.lamp_battery = initial_battery
     
     # Load world data
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world = WorldData()
     world.load_from_json(data_dir)
     

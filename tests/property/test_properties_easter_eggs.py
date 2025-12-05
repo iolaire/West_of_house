@@ -7,7 +7,7 @@ Tests XYZZY, PLUGH, HELLO, PRAY, JUMP, YELL, ECHO commands.
 import sys
 import os
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler'))
 
 import pytest
 from hypothesis import given, strategies as st, settings
@@ -20,7 +20,7 @@ from world_loader import WorldData
 def world_data():
     """Load world data once for all tests."""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     return world
 
@@ -37,7 +37,7 @@ def game_engine(world_data):
 def test_xyzzy_generates_response(data):
     """XYZZY should always generate a response. Validates: Requirements 8.1"""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -55,7 +55,7 @@ def test_xyzzy_generates_response(data):
 def test_plugh_generates_response(data):
     """PLUGH should always generate a response. Validates: Requirements 8.1"""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -73,7 +73,7 @@ def test_plugh_generates_response(data):
 def test_hello_generates_response(data):
     """HELLO should always generate a response. Validates: Requirements 8.2"""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -91,7 +91,7 @@ def test_hello_generates_response(data):
 def test_pray_generates_response(data):
     """PRAY should always generate a response. Validates: Requirements 8.4"""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -109,7 +109,7 @@ def test_pray_generates_response(data):
 def test_jump_generates_response(data):
     """JUMP should always generate a response. Validates: Requirements 8.5"""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -127,7 +127,7 @@ def test_jump_generates_response(data):
 def test_yell_generates_response(data):
     """YELL should always generate a response. Validates: Requirements 8.6"""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -146,7 +146,7 @@ def test_yell_generates_response(data):
 def test_echo_repeats_input(text):
     """ECHO should repeat the input text. Validates: Requirements 8.7"""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)
@@ -165,7 +165,7 @@ def test_echo_repeats_input(text):
 def test_profanity_handling(data):
     """Profanity should generate chiding response without penalty. Validates: Requirements 8.3"""
     world = WorldData()
-    data_dir = os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler/data')
+    data_dir = os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler/data')
     world.load_from_json(data_dir)
     
     engine = GameEngine(world)

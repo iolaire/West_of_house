@@ -77,31 +77,9 @@ if [ -n "$DEV_PIDS" ]; then
     print_success "Stopped frontend dev server"
 fi
 
-# Step 2: Copy code from src to amplify
-print_step "Copying source code to amplify directory..."
-
-# Ensure directories exist
-mkdir -p amplify/functions/game-handler/data
-
-# Copy Python files
-cp src/lambda/game_handler/*.py amplify/functions/game-handler/
-if [ $? -eq 0 ]; then
-    print_success "Copied Python files"
-else
-    print_error "Failed to copy Python files"
-    exit 1
-fi
-
-# Copy data files
-cp src/lambda/game_handler/data/*.json amplify/functions/game-handler/data/
-if [ $? -eq 0 ]; then
-    print_success "Copied data files"
-else
-    print_error "Failed to copy data files"
-    exit 1
-fi
-
-print_success "All files copied successfully"
+# Step 2: Copy code from src to amplify - SKIPPED (Code is now in amplify/functions)
+# print_step "Copying source code to amplify directory..."
+# Code is now consolidated in amplify/functions/game-handler, so no copy is needed.
 
 # Step 3: Clear game data from DynamoDB (sandbox only)
 print_step "Clearing sandbox game data from DynamoDB..."

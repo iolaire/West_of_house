@@ -1,5 +1,0 @@
-# Python dependencies for West of Haunted House Lambda function
-# These will be installed during packaging
-
-# AWS SDK (usually pre-installed in Lambda, but included for local testing)
-boto3>=1.28.0

@@ -119,8 +119,7 @@ dist/
 # Cost analysis outputs
 cost_estimate_*.json
 documents/cost-analysis/*.json
-package-lock.json
-package.json
+
 
 # Test artifacts and reports
 test-sandbox.mjs
@@ -147,10 +146,10 @@ __pycache__/
 lambda-deployment-package.zip
 
 # Analysis and fix scripts (development only)
-test_*.py
+/test_*.py
 *_comparison.py
 comprehensive_analysis.py
-*fix*.py
+
 update_container_contents.py
 .sandbox-backend.pid
 .sandbox-frontend.pid

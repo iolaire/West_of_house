@@ -9,7 +9,7 @@ from hypothesis import given, strategies as st, settings, HealthCheck
 
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src" / "lambda" / "game_handler"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "amplify" / "functions" / "game-handler"))
 
 from game_engine import GameEngine
 from state_manager import GameState
@@ -20,7 +20,7 @@ from command_parser import CommandParser
 @pytest.fixture(scope="module")
 def world_data():
     """Load world data for testing."""
-    data_dir = Path(__file__).parent.parent.parent / "src" / "lambda" / "game_handler" / "data"
+    data_dir = Path(__file__).parent.parent.parent / "amplify" / "functions" / "game-handler" / "data"
     world = WorldData()
     world.load_from_json(str(data_dir))
     return world

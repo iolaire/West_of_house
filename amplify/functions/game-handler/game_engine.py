@@ -1924,25 +1924,29 @@ class GameEngine:
             
             # Check current state before attempting action
             if verb == "OPEN":
-                if game_object.state.get('is_open', False):
+                is_open = state.get_object_state(object_id, 'is_open', game_object.state.get('is_open', False))
+                if is_open:
                     return ActionResult(
                         success=False,
                         message=f"The {object_id} is already open."
                     )
             elif verb == "CLOSE":
-                if not game_object.state.get('is_open', True):
+                is_open = state.get_object_state(object_id, 'is_open', game_object.state.get('is_open', False))
+                if not is_open:
                     return ActionResult(
                         success=False,
                         message=f"The {object_id} is already closed."
                     )
             elif verb == "LOCK":
-                if game_object.state.get('is_locked', False):
+                is_locked = state.get_object_state(object_id, 'is_locked', game_object.state.get('is_locked', False))
+                if is_locked:
                     return ActionResult(
                         success=False,
                         message=f"The {object_id} is already locked."
                     )
             elif verb == "UNLOCK":
-                if not game_object.state.get('is_locked', False):
+                is_locked = state.get_object_state(object_id, 'is_locked', game_object.state.get('is_locked', False))
+                if not is_locked:
                     return ActionResult(
                         success=False,
                         message=f"The {object_id} is already unlocked."
@@ -1957,7 +1961,8 @@ class GameEngine:
                         # Check if all conditions are met
                         conditions_met = True
                         for key, required_value in interaction.condition.items():
-                            current_value = game_object.state.get(key, None)
+                            # Get current value from GameState, falling back to WorldData
+                            current_value = state.get_object_state(object_id, key, game_object.state.get(key, None))
                             if current_value != required_value:
                                 conditions_met = False
                                 break
@@ -2000,19 +2005,17 @@ class GameEngine:
             
             # Puzzle 1: Moving rug reveals trap door
             if object_id == "rug" and verb == "MOVE":
-                if game_object.state.get("is_moved", False):
+                is_moved = state.get_object_state("rug", "is_moved", False)
+                if is_moved:
                     # Rug has been moved, make trap door visible
                     state.set_flag("rug_moved", True)
-                    try:
-                        trap_door = self.world.get_object("trap_door")
-                        trap_door.state["is_visible"] = True
-                        notifications.append("The trap door is now visible!")
-                    except ValueError:
-                        pass  # Trap door object doesn't exist
+                    state.set_object_state("trap_door", "is_visible", True)
+                    notifications.append("The trap door is now visible!")
             
             # Puzzle 2: Opening kitchen window allows entry
             if object_id == "kitchen_window" and verb == "OPEN":
-                if game_object.state.get("is_open", False):
+                is_open = state.get_object_state("kitchen_window", "is_open", False)
+                if is_open:
                     state.set_flag("kitchen_window_open", True)
                     notifications.append("You can now enter through the window.")
             
@@ -2024,7 +2027,8 @@ class GameEngine:
                         success=False,
                         message="You don't see any trap door here."
                     )
-                if game_object.state.get("is_open", False):
+                is_open = state.get_object_state("trap_door", "is_open", False)
+                if is_open:
                     state.set_flag("trap_door_open", True)
                     notifications.append("The way to the cellar is now open.")
             
@@ -2210,8 +2214,8 @@ class GameEngine:
                 )
             
             # Check if container is open (unless it's transparent)
-            is_transparent = container.state.get('is_transparent', False)
-            is_open = container.state.get('is_open', False)
+            is_transparent = state.get_object_state(container_id, 'is_transparent', container.state.get('is_transparent', False))
+            is_open = state.get_object_state(container_id, 'is_open', container.state.get('is_open', False))
             
             if not is_open and not is_transparent:
                 return ActionResult(
@@ -2225,7 +2229,7 @@ class GameEngine:
             # Check container capacity
             if container.capacity > 0:
                 # Calculate current contents size
-                contents = container.state.get('contents', [])
+                contents = state.get_object_state(container_id, 'contents', container.state.get('contents', []))
                 current_size = 0
                 for obj_id in contents:
                     try:
@@ -2270,9 +2274,11 @@ class GameEngine:
             state.remove_from_inventory(object_id)
             
             # Add to container contents
-            if 'contents' not in container.state:
-                container.state['contents'] = []
-            container.state['contents'].append(object_id)
+            contents = state.get_object_state(container_id, 'contents', container.state.get('contents', []))
+            # Create a copy to avoid modifying the default list if it came from WorldData
+            contents = list(contents)
+            contents.append(object_id)
+            state.set_object_state(container_id, 'contents', contents)
             
             # Apply sanity effects
             if sanity_change != 0:
@@ -2347,8 +2353,8 @@ class GameEngine:
                 )
             
             # Check if container is open or transparent
-            is_transparent = container.state.get('is_transparent', False)
-            is_open = container.state.get('is_open', False)
+            is_transparent = state.get_object_state(container_id, 'is_transparent', container.state.get('is_transparent', False))
+            is_open = state.get_object_state(container_id, 'is_open', container.state.get('is_open', False))
             
             if not is_open and not is_transparent:
                 return ActionResult(
@@ -2357,7 +2363,7 @@ class GameEngine:
                 )
             
             # Check if object is in container
-            contents = container.state.get('contents', [])
+            contents = state.get_object_state(container_id, 'contents', container.state.get('contents', []))
             if object_id not in contents:
                 return ActionResult(
                     success=False,
@@ -2390,9 +2396,12 @@ class GameEngine:
                     break
             
             # Remove from container
-            if 'contents' not in container.state:
-                container.state['contents'] = []
-            container.state['contents'].remove(object_id)
+            contents = state.get_object_state(container_id, 'contents', container.state.get('contents', []))
+            # Create a copy to avoid modifying the default list if it came from WorldData
+            contents = list(contents)
+            if object_id in contents:
+                contents.remove(object_id)
+            state.set_object_state(container_id, 'contents', contents)
             
             # Add to inventory
             state.add_to_inventory(object_id)
@@ -2478,7 +2487,7 @@ class GameEngine:
             
             # Build description with contents if visible
             if is_open or is_transparent:
-                contents = container.state.get('contents', [])
+                contents = state.get_object_state(container_id, 'contents', container.state.get('contents', []))
                 if contents:
                     contents_names = []
                     for obj_id in contents:

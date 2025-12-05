@@ -9,7 +9,7 @@ import os
 import pytest
 
 # Add src directory to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../src/lambda/game_handler'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../amplify/functions/game-handler'))
 
 from world_loader import WorldData
 

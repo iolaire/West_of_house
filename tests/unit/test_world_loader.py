@@ -13,7 +13,7 @@ from pathlib import Path
 
 # Add src to path for imports
 import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src/lambda/game_handler'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../amplify/functions/game-handler'))
 
 from world_loader import WorldData, Room, GameObject, Interaction
 
@@ -26,7 +26,7 @@ class TestWorldDataLoading:
         """Fixture providing path to actual game data."""
         return os.path.join(
             os.path.dirname(__file__),
-            '../../src/lambda/game_handler/data'
+            '../../amplify/functions/game-handler/data'
         )
     
     @pytest.fixture
@@ -216,7 +216,7 @@ class TestWorldDataAccess:
         """Fixture providing path to actual game data."""
         return os.path.join(
             os.path.dirname(__file__),
-            '../../src/lambda/game_handler/data'
+            '../../amplify/functions/game-handler/data'
         )
     
     @pytest.fixture
@@ -298,7 +298,7 @@ class TestWorldDataCaching:
         """Fixture providing path to actual game data."""
         return os.path.join(
             os.path.dirname(__file__),
-            '../../src/lambda/game_handler/data'
+            '../../amplify/functions/game-handler/data'
         )
     
     def test_cache_is_populated_after_first_load(self, data_dir):
