@@ -1351,6 +1351,22 @@ class GameEngine:
             sanity_change = 0
             notifications = []
             
+            # Location Scoring
+            scored_rooms = {
+                'kitchen': 10,
+                'cellar': 25,
+                'treasure_room': 25,
+                'dam_base': 10
+            }
+            if target_room_id in scored_rooms:
+                flag = f"scored_visit_{target_room_id}"
+                if not state.get_flag(flag, False):
+                    points = scored_rooms[target_room_id]
+                    state.score += points
+                    state.set_flag(flag, True)
+                    # Use lower case name for notification consistency or keep original
+                    notifications.append(f"[You gained {points} points for entering the {target_room.name}.]")
+            
             if target_room.sanity_effect != 0:
                 sanity_change = target_room.sanity_effect
                 state.sanity = max(0, min(100, state.sanity + sanity_change))
@@ -1940,10 +1956,11 @@ class GameEngine:
             # Score points for taking treasure
             if game_object.is_treasure and not game_object.state.get('is_scored_take', False):
                 game_object.state['is_scored_take'] = True
-                take_points = 5 # Standard take points
-                state.score += take_points
-                state.set_flag('total_treasure_value', state.flags.get('total_treasure_value', 0) + take_points)
-                notifications.append(f"[You gained {take_points} points.]")
+                take_points = game_object.state.get('take_value', 0)
+                if take_points > 0:
+                    state.score += take_points
+                    state.set_flag('total_treasure_value', state.flags.get('total_treasure_value', 0) + take_points)
+                    notifications.append(f"[You gained {take_points} points.]")
 
             return ActionResult(
                 success=True,
@@ -5772,16 +5789,23 @@ class GameEngine:
         
         # Check if we are at Dam Base (land)
         if state.current_room == "dam_base":
-             # Launch into river_1
              state.move_to_room("river_1")
              # Move vehicle
              if "inflated_boat" in current_room.items:
                  current_room.items.remove("inflated_boat")
                  self.world.get_room("river_1").items.append("inflated_boat")
              
+             launch_msg = "The boat launches into the Frigid River. The current takes you downstream."
+             
+             # Scoring
+             if not state.get_flag('scored_launch', False):
+                 state.score += 8
+                 state.set_flag('scored_launch', True)
+                 launch_msg += "\n[You gained 8 points.]"
+             
              return ActionResult(
                  success=True, 
-                 message="The boat launches into the Frigid River. The current takes you downstream.",
+                 message=launch_msg,
                  room_changed=True,
                  new_room="river_1"
              )
@@ -8024,17 +8048,7 @@ class GameEngine:
                     notifications=put_result.notifications
                 )
             
-            # Add treasure value to score
-            treasure_value = game_object.treasure_value
-            state.score += treasure_value
-            
-            # Mark treasure as scored
-            scored_treasures.append(object_id)
-            state.set_flag("scored_treasures", scored_treasures)
-            
-            # Create notifications
-            notifications = list(put_result.notifications)
-            notifications.append(f"You have scored {treasure_value} points!")
+            # Scoring is handled by handle_put
             
             # Check for win condition
             if state.score >= 350:
@@ -8047,11 +8061,12 @@ class GameEngine:
                 inventory_changed=True,
                 state_changes={
                     **put_result.state_changes,
-                    'score': state.score,
-                    'flags': state.flags
+                    "won_flag": state.get_flag("won_flag", False)
                 },
-                notifications=notifications
+                notifications=put_result.notifications + (["Congratulations! You have achieved victory!"] if state.get_flag("won_flag", False) else [])
             )
+            
+
             
         except ValueError as e:
             display_name = self._get_object_names(container_id)

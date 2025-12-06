@@ -439,15 +439,21 @@ class WorldData:
     
     def get_max_score(self) -> int:
         """
-        Calculate maximum possible score from all treasures.
+        Calculate maximum possible score from all treasures and locations.
         
         Returns:
-            Total treasure value of all treasure objects
+            Total score possible (Treasures + Locations)
         """
         max_score = 0
         for obj in self.objects.values():
             if obj.is_treasure:
-                max_score += obj.treasure_value + 5 # Add points for taking
+                take_value = obj.state.get('take_value', 0)
+                max_score += obj.treasure_value + take_value
+        
+        # Add location points (Zork I standard: House 10, Cellar 25, Treasure Room 25)
+        # Plus Dam Base (10) and Launch (8) -> Total 78
+        max_score += 78
+        
         return max_score
     
     @classmethod

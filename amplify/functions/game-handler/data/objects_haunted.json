@@ -349,7 +349,8 @@
     "state": {
       "is_taken": false,
       "treasure": true,
-      "value": 15
+      "value": 10,
+      "take_value": 10
     },
     "interactions": [
       {
@@ -828,7 +829,8 @@
     "state": {
       "is_taken": false,
       "treasure": true,
-      "value": 15
+      "value": 6,
+      "take_value": 4
     },
     "interactions": [
       {
@@ -1327,7 +1329,8 @@
       "is_locked": false,
       "is_taken": false,
       "treasure": true,
-      "value": 15
+      "value": 5,
+      "take_value": 10
     },
     "interactions": [
       {
@@ -1435,7 +1438,8 @@
     "state": {
       "is_taken": false,
       "treasure": true,
-      "value": 15
+      "value": 11,
+      "take_value": 4
     },
     "interactions": [
       {
@@ -1767,7 +1771,8 @@
         "sceptre"
       ],
       "treasure": true,
-      "value": 15
+      "value": 15,
+      "take_value": 10
     },
     "interactions": [
       {
@@ -1897,7 +1902,8 @@
     "state": {
       "is_taken": false,
       "treasure": true,
-      "value": 15
+      "value": 10,
+      "take_value": 10
     },
     "interactions": [
       {
@@ -1933,7 +1939,8 @@
     "state": {
       "is_taken": false,
       "treasure": true,
-      "value": 15
+      "value": 5,
+      "take_value": 5
     },
     "interactions": [
       {
@@ -2053,7 +2060,8 @@
         "coins"
       ],
       "treasure": true,
-      "value": 15
+      "value": 5,
+      "take_value": 10
     },
     "interactions": [
       {
@@ -2167,7 +2175,8 @@
     "state": {
       "is_taken": false,
       "treasure": true,
-      "value": 15
+      "value": 10,
+      "take_value": 5
     },
     "interactions": [
       {
@@ -2531,7 +2540,8 @@
     "state": {
       "is_taken": false,
       "treasure": true,
-      "value": 15
+      "value": 6,
+      "take_value": 4
     },
     "interactions": [
       {
@@ -2815,7 +2825,8 @@
     "state": {
       "is_taken": false,
       "treasure": true,
-      "value": 15
+      "value": 5,
+      "take_value": 10
     },
     "interactions": [
       {
@@ -2851,7 +2862,8 @@
     "state": {
       "is_taken": false,
       "treasure": true,
-      "value": 15
+      "value": 10,
+      "take_value": 10
     },
     "interactions": [
       {
@@ -3731,7 +3743,8 @@
       "is_taken": false,
       "is_on": true,
       "treasure": true,
-      "value": 15
+      "value": 6,
+      "take_value": 14
     },
     "interactions": [
       {
@@ -3905,7 +3918,8 @@
     "state": {
       "is_taken": false,
       "treasure": true,
-      "value": 15
+      "value": 5,
+      "take_value": 15
     },
     "interactions": [
       {
@@ -4278,7 +4292,8 @@
         "canary"
       ],
       "treasure": true,
-      "value": 5
+      "value": 5,
+      "take_value": 5
     },
     "interactions": [
       {
@@ -4409,7 +4424,8 @@
     "state": {
       "is_taken": false,
       "treasure": true,
-      "value": 15
+      "value": 1,
+      "take_value": 1
     },
     "interactions": [
       {
@@ -4445,7 +4461,8 @@
     "state": {
       "is_taken": false,
       "treasure": true,
-      "value": 15
+      "value": 4,
+      "take_value": 6
     },
     "interactions": [
       {
