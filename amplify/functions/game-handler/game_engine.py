@@ -3219,12 +3219,20 @@ class GameEngine:
         """
         Handle turning the machine switch to make a diamond.
         """
-        machine = self.world.get_object("machine")
+        # machine = self.world.get_object("machine") # Unused, we need state
+        
+        # Get dynamic contents from state
+        contents = state.get_object_state("machine", "contents", [])
         
         # Check if coal is inside
-        if "coal" in machine.contents:
-            machine.contents.remove("coal")
-            machine.contents.append("diamond")
+        if "coal" in contents:
+            # Update state: Remove coal, Add diamond
+            new_contents = list(contents) # Copy list
+            new_contents.remove("coal")
+            new_contents.append("diamond")
+            
+            state.set_object_state("machine", "contents", new_contents)
+            
             return ActionResult(
                 success=True,
                 message="The machine emits a high-pitched shriek and a cloud of dirty smoke. When it clears, the machine seems to have finished its work."
@@ -3232,7 +3240,7 @@ class GameEngine:
             
         return ActionResult(
             success=False,
-            message="The machine grinds slightly but nothing happens."
+            message=f"The machine grinds slightly but nothing happens. (Contents: {contents})"
         )
 
     def handle_turn(

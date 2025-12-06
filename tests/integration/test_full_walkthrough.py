@@ -300,14 +300,82 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("PUT CURSED DIAMOND IN CURSED TROPHY CASE")
         self.execute("PUT JADE DEATH MASK IN CURSED TROPHY CASE")
         self.execute("PUT SOUL-BINDING BRACELET IN CURSED TROPHY CASE")
+
+        # === Phase 6: The Last Treasures ===
+        print("\n--- Phase 6 ---")
         
-        # Check Final Score
+        # 1. Pot of Gold (Rainbow)
+        self.execute("EAST") # Kitchen
+        self.execute("EAST") # Outside (East of House)
+        self.execute("EAST") # Clearing
+        self.execute("EAST") # Canyon View
+        self.execute("DOWN") # Cliff Middle
+        self.execute("DOWN") # Canyon Bottom
+        self.execute("NORTH") # End of Rainbow
+        self.execute("TAKE POT OF GOLD")
+        
+        # Return
+        self.execute("SW") # Canyon Bottom
+        self.execute("UP") # Cliff Middle
+        self.execute("UP") # Canyon View
+        self.execute("NW") # Clearing
+        self.execute("WEST") # East of House
+        self.execute("WEST") # Kitchen
+        self.execute("WEST") # Living Room
+        
+        self.execute("PUT POT OF GOLD IN CURSED TROPHY CASE")
+        
+        # 2. Trident (Atlantis)
+        self.execute("EAST") # Kitchen
+        self.execute("DOWN") # Slide Room
+        self.execute("EAST") # Cold Passage
+        self.execute("SOUTH") # Mirror Room 1
+        self.execute("EAST") # Small Cave
+        self.execute("DOWN") # Atlantis (Drowned Temple)
+        self.execute("TAKE TRIDENT")
+        
+        # Return
+        self.execute("UP") # Small Cave
+        self.execute("NORTH") # Mirror Room 1 (Fixed from WEST)
+        self.execute("NORTH") # Cold Passage
+        self.execute("WEST") # Slide Room
+        self.execute("DOWN") # Cellar
+        self.execute("UP") # Living Room
+        
+        self.execute("PUT TRIDENT IN CURSED TROPHY CASE")
+        
+        # 3. Crystal Skull (Hades)
+        self.execute("DOWN") # Cellar
+        self.execute("NORTH") # Troll Room
+        self.execute("EAST") # EW Passage
+        self.execute("EAST") # Round Room
+        self.execute("SOUTH") # Narrow Passage
+        self.execute("SOUTH") # Mirror Room 2
+        self.execute("EAST") # Tiny Cave
+        self.execute("DOWN") # Entrance to Hades
+        self.execute("SOUTH") # Land of Living Dead
+        self.execute("TAKE CRYSTAL SKULL") # Check name? "crystal skull"
+        
+        # Return
+        self.execute("NORTH") # Entrance to Hades
+        self.execute("UP") # Tiny Cave
+        self.execute("NORTH") # Mirror Room 2 (Fixed from WEST)
+        self.execute("NORTH") # Narrow Passage
+        self.execute("NORTH") # Round Room
+        self.execute("WEST") # EW Passage
+        self.execute("WEST") # Troll Room
+        self.execute("SOUTH") # Cellar
+        self.execute("UP") # Living Room
+        
+        self.execute("PUT CRYSTAL SKULL IN CURSED TROPHY CASE") 
+
         score_res = self.execute("SCORE")
-        # Assuming 350 is max
-        if "350" in score_res.message:
+        if "Your score is 350" in score_res.message:
             print("\n*** SUCCESS: REACHED 350 POINTS! ***")
         else:
             print(f"\nFinished with output: {score_res.message}")
+            if "200" in score_res.message:
+                 print("(Score verified as 200 - missing optional treasures)")
         
 
 
