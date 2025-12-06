@@ -2302,10 +2302,12 @@
     "capacity": 50
   },
   "inflated_boat": {
-    "name": "inflat boat",
+    "name": "inflated boat",
     "type": "item",
     "state": {
       "is_taken": false,
+      "is_vehicle": true,
+      "requires_water": false,
       "contents": [
         "boat_label"
       ]

@@ -239,8 +239,8 @@ class WorldData:
                     state=object_dict['state'],
                     interactions=interactions,
                     is_takeable=object_dict.get('is_takeable', False),
-                    is_treasure=object_dict.get('is_treasure', False),
-                    treasure_value=object_dict.get('treasure_value', 0),
+                    is_treasure=object_dict.get('is_treasure', False) or object_dict.get('state', {}).get('treasure', False),
+                    treasure_value=object_dict.get('treasure_value', 0) or object_dict.get('state', {}).get('value', 0),
                     size=object_dict.get('size', 1),
                     capacity=object_dict.get('capacity', 0),
                     contents=object_dict.get('contents', []),
@@ -447,7 +447,7 @@ class WorldData:
         max_score = 0
         for obj in self.objects.values():
             if obj.is_treasure:
-                max_score += obj.treasure_value
+                max_score += obj.treasure_value + 5 # Add points for taking
         return max_score
     
     @classmethod

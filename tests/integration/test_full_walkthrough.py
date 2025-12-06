@@ -333,6 +333,9 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("EAST") # Small Cave
         self.execute("DOWN") # Atlantis (Drowned Temple)
         self.execute("TAKE TRIDENT")
+        self.execute("SOUTH") # Reservoir North
+        self.execute("TAKE PUMP")
+        self.execute("NORTH") # Atlantis
         
         # Return
         self.execute("UP") # Small Cave
@@ -367,7 +370,81 @@ class TestFullWalkthrough(unittest.TestCase):
         self.execute("SOUTH") # Cellar
         self.execute("UP") # Living Room
         
-        self.execute("PUT CRYSTAL SKULL IN CURSED TROPHY CASE") 
+        self.execute("PUT CRYSTAL SKULL IN CURSED TROPHY CASE")
+        
+        # === Phase 8: The River ===
+        print("\n--- Phase 8 ---")
+        
+        # Navigate to Dam Base
+        self.execute("DOWN") # Cellar
+        self.execute("NORTH") # Troll Room
+        self.execute("EAST") # EW Passage
+        self.execute("EAST") # Round Room
+        self.execute("EAST") # Loud Room
+        self.execute("UP") # Deep Canyon
+        self.execute("EAST") # Dam Room
+        self.execute("DOWN") # Dam Base
+        
+        # Prepare Boat (Carry to Reservoir)
+        self.execute("TAKE BOAT")
+        self.execute("UP") # Dam Room
+        self.execute("SOUTH") # Deep Canyon
+        self.execute("NW") # Reservoir South
+        
+        # Inflate and Board
+        self.execute("INFLATE BOAT")
+        self.execute("DROP RITUAL KNIFE", require_success=False)
+        self.execute("DROP RUSTY KNIFE", require_success=False)
+        self.execute("DROP SWORD", require_success=False)
+        self.execute("DROP AXE", require_success=False)
+        self.execute("BOARD BOAT")
+        
+        # Get Trunk
+        self.execute("NORTH") # Reservoir
+        self.execute("TAKE TRUNK")
+        self.execute("SOUTH") # Reservoir South
+        
+        # Return to Dam Base with Boat
+        self.execute("SE") # Deep Canyon
+        self.execute("EAST") # Dam Room
+        self.execute("DOWN") # Dam Base
+        
+        # Launch for River
+        self.execute("LAUNCH")
+        
+        # River Trip
+        self.execute("DOWN") # River 1->2
+        self.execute("DOWN") # River 2->3
+        self.execute("DOWN") # River 3->4
+        
+        # Buoy
+        self.execute("OPEN BUOY")
+        self.execute("TAKE EMERALD")
+        
+        # Beach
+        self.execute("EAST") # Sandy Beach
+        self.execute("TAKE SHOVEL")
+        self.execute("NE") # Sandy Cave
+        self.execute("TAKE SCARAB")
+        
+        # Return Home
+        self.execute("SW") # Sandy Beach
+        self.execute("SOUTH") # Shore
+        self.execute("SOUTH") # Aragain Falls
+        self.execute("WEST") # On Rainbow
+        self.execute("WEST") # End of Rainbow
+        self.execute("SW") # Canyon Bottom
+        self.execute("UP") # Cliff Middle
+        self.execute("UP") # Canyon View
+        self.execute("NW") # Clearing
+        self.execute("WEST") # East of House
+        self.execute("WEST") # Kitchen
+        self.execute("WEST") # Living Room
+        
+        # Place River Treasures
+        self.execute("PUT TRUNK IN CURSED TROPHY CASE")
+        self.execute("PUT EMERALD IN CURSED TROPHY CASE")
+        self.execute("PUT SCARAB IN CURSED TROPHY CASE") 
 
         score_res = self.execute("SCORE")
         if "Your score is 350" in score_res.message:

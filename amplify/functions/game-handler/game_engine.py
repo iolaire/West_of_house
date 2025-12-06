@@ -944,6 +944,24 @@ class GameEngine:
             
             # Check if vehicle requires specific conditions
             requires_water = vehicle.state.get('requires_water', False)
+            
+            # Special logic for boat puncture (Zork I Style)
+            if vehicle_id == "inflated_boat":
+                sharp_items = ["knife", "rusty_knife", "sword", "sceptre", "axe"]
+                has_sharp = any(item in state.inventory for item in sharp_items)
+                
+                if has_sharp:
+                    # Puncture logic: Swap inflated_boat to punctured_boat
+                    if vehicle_id in current_room.items:
+                        current_room.items.remove(vehicle_id)
+                        current_room.items.append("punctured_boat")
+                        
+                    return ActionResult(
+                        success=False,
+                        message="Oops! Something sharp seems to have slipped and punctured the boat.\nThe boat deflates to the sounds of hissing, sputtering, and cursing.",
+                        room_changed=False
+                    )
+
             if requires_water:
                 # Check if current room has water
                 room_has_water = current_room.state.get('has_water', False)
@@ -1307,6 +1325,15 @@ class GameEngine:
             
             # Get target room to validate it exists
             target_room = self.world.get_room(target_room_id)
+
+            # Handle Vehicle Movement
+            if state.current_vehicle:
+                # Check if vehicle needs water and target is land?
+                # For now, we assume simple movement where the vehicle follows the player
+                if state.current_vehicle in current_room.items:
+                     current_room.items.remove(state.current_vehicle)
+                     target_room.items.append(state.current_vehicle)
+                # Note: If vehicle was in inventory (e.g. magic), it stays there, but boarding usually puts it in room.
             
             # Move player to new room
             state.move_to_room(target_room_id)
@@ -1909,14 +1936,23 @@ class GameEngine:
                 state.sanity = max(0, min(100, state.sanity + sanity_change))
                 if sanity_change < 0:
                     notifications.append("Touching it fills you with dread...")
-            
+
+            # Score points for taking treasure
+            if game_object.is_treasure and not game_object.state.get('is_scored_take', False):
+                game_object.state['is_scored_take'] = True
+                take_points = 5 # Standard take points
+                state.score += take_points
+                state.set_flag('total_treasure_value', state.flags.get('total_treasure_value', 0) + take_points)
+                notifications.append(f"[You gained {take_points} points.]")
+
             return ActionResult(
                 success=True,
                 message=take_message,
                 inventory_changed=True,
                 state_changes={
                     'inventory': state.inventory,
-                    'sanity': state.sanity
+                    'sanity': state.sanity,
+                    'score': state.score
                 },
                 notifications=notifications,
                 sanity_change=sanity_change
@@ -5593,6 +5629,25 @@ class GameEngine:
         try:
             current_room = self.world.get_room(state.current_room)
             
+            # Special logic for boat
+            if object_id == "inflatable_boat":
+                if "pump" not in state.inventory:
+                     return ActionResult(success=False, message="You don't have enough lung power to inflate it yourself.")
+                
+                # Check accessibility
+                if object_id not in current_room.items and object_id not in state.inventory:
+                     display_name = self._get_object_names(object_id)
+                     return ActionResult(success=False, message=f"You don't see any {display_name} here.")
+                     
+                # Swap logic
+                if object_id in current_room.items:
+                    current_room.items.remove(object_id)
+                elif object_id in state.inventory:
+                    state.inventory.remove(object_id)
+                
+                current_room.items.append("inflated_boat")
+                return ActionResult(success=True, message="You inflate the boat. It expands into a large, seaworthy craft.")
+
             if object_id not in current_room.items and object_id not in state.inventory:
                 display_name = self._get_object_names(object_id)
                 return ActionResult(success=False, message=f"You don't see any {display_name} here.")
@@ -5638,6 +5693,17 @@ class GameEngine:
         try:
             current_room = self.world.get_room(state.current_room)
             
+            # Special logic for boat (Deflate = Turn back to pile of plastic?)
+            if object_id == "inflated_boat":
+                 if state.current_vehicle == "inflated_boat":
+                     return ActionResult(success=False, message="You can't deflate the boat while you're in it.")
+                 
+                 # Swap back to inflatable_boat
+                 if object_id in current_room.items:
+                     current_room.items.remove(object_id)
+                     current_room.items.append("inflatable_boat")
+                     return ActionResult(success=True, message="You deflate the boat, turning it back into a pile of plastic.")
+            
             if object_id not in current_room.items and object_id not in state.inventory:
                 display_name = self._get_object_names(object_id)
                 return ActionResult(success=False, message=f"You don't see any {display_name} here.")
@@ -5673,6 +5739,54 @@ class GameEngine:
             return ActionResult(success=False, message=f"The shadows reveal no {display_name} in this forsaken place.")
         except Exception:
             return ActionResult(success=False, message="The object clings to its inflated form, resisting your efforts.")
+
+    def handle_fix(self, object_id: str, state: GameState) -> ActionResult:
+        """Handle fixing/repairing an object."""
+        # Typically requires 'gunk' (viscous_material)
+        current_room = self.world.get_room(state.current_room)
+        
+        if object_id == "punctured_boat":
+            if "viscous_material" not in state.inventory and "gunk" not in state.inventory: # ID might be gunk or viscous_material
+                return ActionResult(success=False, message="You don't have anything to patch it with.")
+            
+            # Swap punctured -> inflated
+            if object_id in current_room.items:
+                current_room.items.remove(object_id)
+                current_room.items.append("inflated_boat") # Or inflatable_boat? Usually Fix -> Inflated? Or Fix -> Inflatable?
+                # Zork I: Fix -> Inflated Boat (if using gunk on Punctured Boat?)
+                # Wait, usually Puncture -> Deflates (Pile).
+                # But here we have "punctured_boat" object.
+                # Let's assume Fix restores it to "inflated_boat" (magic) or "inflatable_boat".
+                # Let's say "inflated_boat" for convenience/magic logic.
+            
+            return ActionResult(success=True, message="You patch the boat. It looks seaworthy again.")
+
+        return ActionResult(success=False, message="You can't fix that.")
+
+    def handle_launch(self, state: GameState) -> ActionResult:
+        """Handle LAUNCH command."""
+        current_room = self.world.get_room(state.current_room)
+        
+        if state.current_vehicle != "inflated_boat":
+             return ActionResult(success=False, message="You're not in the boat!")
+        
+        # Check if we are at Dam Base (land)
+        if state.current_room == "dam_base":
+             # Launch into river_1
+             state.move_to_room("river_1")
+             # Move vehicle
+             if "inflated_boat" in current_room.items:
+                 current_room.items.remove("inflated_boat")
+                 self.world.get_room("river_1").items.append("inflated_boat")
+             
+             return ActionResult(
+                 success=True, 
+                 message="The boat launches into the Frigid River. The current takes you downstream.",
+                 room_changed=True,
+                 new_room="river_1"
+             )
+        
+        return ActionResult(success=False, message="You can't launch the boat here.")
     
     def handle_wave(self, object_id: str, state: GameState) -> ActionResult:
         """Handle waving an object."""
@@ -9408,7 +9522,7 @@ class GameEngine:
 
         # Verbs that handle their own validation internally
         self_validating_verbs = {
-            'GO', 'EXIT', 'ENTER', 'BOARD', 'DISEMBARK'
+            'GO', 'EXIT', 'ENTER', 'DISEMBARK'
         }
 
         return verb not in no_validation_verbs and verb not in self_validating_verbs
@@ -12906,6 +13020,14 @@ class GameEngine:
         # Handle deflate commands
         if command.verb == "DEFLATE" and command.object:
             return self.handle_deflate(command.object, state)
+
+        # Handle launch commands
+        if command.verb == "LAUNCH":
+             return self.handle_launch(state)
+
+        # Handle fix commands
+        if command.verb == "FIX" and command.object:
+             return self.handle_fix(command.object, state)
         
         # Handle wave commands
         if command.verb == "WAVE" and command.object:
