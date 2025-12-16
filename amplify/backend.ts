@@ -41,13 +41,30 @@ const backend = defineBackend({
 const { Stack } = await import('aws-cdk-lib');
 const { Tags } = await import('aws-cdk-lib');
 
-// Get the stack to apply tags
-const stack = Stack.of(backend.data);
+// Get all stacks to apply tags comprehensively
+const dataStack = Stack.of(backend.data);
+const authStack = Stack.of(backend.auth);
+const gameHandlerStack = Stack.of(backend.gameHandler);
 
-// Apply required tags to all resources in the stack
-Tags.of(stack).add('Project', 'west-of-haunted-house');
-Tags.of(stack).add('ManagedBy', 'vedfolnir');
-Tags.of(stack).add('Environment', process.env.AMPLIFY_ENV || 'dev');
+// Define required tags
+const requiredTags = {
+  'Project': 'west-of-haunted-house',
+  'Owner': 'vedfolnir',
+  'ManagedBy': 'vedfolnir', // Keep both for compatibility
+  'Environment': process.env.AMPLIFY_ENV || 'dev'
+};
+
+// Apply tags to all stacks and their resources
+[dataStack, authStack, gameHandlerStack].forEach(stack => {
+  Object.entries(requiredTags).forEach(([key, value]) => {
+    Tags.of(stack).add(key, value);
+  });
+});
+
+// Also apply tags to the root construct to ensure CloudFormation stacks get tagged
+Object.entries(requiredTags).forEach(([key, value]) => {
+  Tags.of(backend).add(key, value);
+});
 
 /**
  * Grant Lambda function access to DynamoDB table
