@@ -38,13 +38,7 @@ const backend = defineBackend({
  * 
  * Requirements: 24.1, 24.2, 24.3, 24.4
  */
-const { Stack } = await import('aws-cdk-lib');
-const { Tags } = await import('aws-cdk-lib');
-
-// Get all stacks to apply tags comprehensively
-const dataStack = Stack.of(backend.data);
-const authStack = Stack.of(backend.auth);
-const gameHandlerStack = Stack.of(backend.gameHandler);
+import { Stack, Tags } from 'aws-cdk-lib';
 
 // Define required tags
 const requiredTags = {
@@ -54,16 +48,28 @@ const requiredTags = {
   'Environment': process.env.AMPLIFY_ENV || 'dev'
 };
 
-// Apply tags to all stacks and their resources
-[dataStack, authStack, gameHandlerStack].forEach(stack => {
-  Object.entries(requiredTags).forEach(([key, value]) => {
-    Tags.of(stack).add(key, value);
-  });
+// Apply tags to the Lambda function stack
+const lambdaStack = Stack.of(backend.gameHandler.resources.lambda);
+Object.entries(requiredTags).forEach(([key, value]) => {
+  Tags.of(lambdaStack).add(key, value);
 });
 
-// Also apply tags to the root construct to ensure CloudFormation stacks get tagged
+// Apply tags to the DynamoDB table stack
+const tableStack = Stack.of(backend.data.resources.tables["GameSession"]);
 Object.entries(requiredTags).forEach(([key, value]) => {
-  Tags.of(backend).add(key, value);
+  Tags.of(tableStack).add(key, value);
+});
+
+// Apply tags to the GraphQL API stack
+const apiStack = Stack.of(backend.data.resources.graphqlApi);
+Object.entries(requiredTags).forEach(([key, value]) => {
+  Tags.of(apiStack).add(key, value);
+});
+
+// Apply tags to the Auth stack (Identity Pool)
+const authStack = Stack.of(backend.auth.resources.userPool);
+Object.entries(requiredTags).forEach(([key, value]) => {
+  Tags.of(authStack).add(key, value);
 });
 
 /**
