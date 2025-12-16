@@ -1,4 +1,11 @@
 import { defineFunction } from '@aws-amplify/backend';
+import { execSync } from 'child_process';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+import { DockerImage, Duration } from 'aws-cdk-lib';
+import { Code, Function, Runtime, Architecture } from 'aws-cdk-lib/aws-lambda';
+
+const functionDir = path.dirname(fileURLToPath(import.meta.url));
 
 /**
  * West of Haunted House Game Handler Lambda Function
@@ -25,18 +32,84 @@ import { defineFunction } from '@aws-amplify/backend';
  * 
  * @see https://docs.amplify.aws/react/build-a-backend/functions/custom-functions/
  */
-export const gameHandler = defineFunction({
-  /**
-   * Function name identifier
-   */
-  name: 'game-handler',
+export const gameHandler = defineFunction(
+  (scope) =>
+    new Function(scope, 'game-handler', {
+      /**
+       * Handler function entry point
+       * Points to the handler function in index.py
+       */
+      handler: 'index.handler',
 
-  /**
-   * Handler function entry point
-   * Points to the handler function in index.py
-   */
-  entry: './index.py'
-});
+      /**
+       * Runtime: Python 3.12
+       * Using the latest stable Python runtime for Lambda
+       */
+      runtime: Runtime.PYTHON_3_12,
+
+      /**
+       * Architecture: ARM64 for Graviton2 processors
+       * Provides 20% better price-performance compared to x86_64
+       * 
+       * Requirements: 22.1, 22.7
+       */
+      architecture: Architecture.ARM_64,
+
+      /**
+       * Resource allocation
+       * - 128MB memory: Sufficient for text adventure logic, minimizes cost
+       * - 30 seconds timeout: Allows for command processing and DynamoDB operations
+       * 
+       * Requirements: 22.1, 22.2
+       */
+      memorySize: 128,
+      timeout: Duration.seconds(30),
+
+      /**
+       * Code bundling configuration
+       * Bundles Python code, dependencies, and game data files
+       */
+      code: Code.fromAsset(functionDir, {
+        bundling: {
+          image: DockerImage.fromRegistry('dummy'),
+          local: {
+            tryBundle(outputDir: string) {
+              // Install Python dependencies for ARM64 architecture
+              execSync(
+                `python3 -m pip install -r ${path.join(functionDir, 'requirements.txt')} -t ${outputDir} --platform manylinux2014_aarch64 --only-binary=:all:`,
+                { stdio: 'inherit' }
+              );
+
+              // Copy all Python files and data directory
+              execSync(`cp -r ${functionDir}/*.py ${outputDir}/`, { stdio: 'inherit' });
+              execSync(`cp -r ${functionDir}/data ${outputDir}/`, { stdio: 'inherit' });
+
+              return true;
+            },
+          },
+        },
+      }),
+
+      /**
+       * Environment variables
+       * 
+       * GAME_SESSIONS_TABLE_NAME: DynamoDB table name for game sessions
+       * This will be set dynamically in backend.ts after table creation
+       * 
+       * Requirements: 22.7
+       */
+      environment: {
+        // Table name will be set in backend.ts
+      },
+    }),
+  {
+    /**
+     * Resource group name for organizing related resources
+     * Groups this function with data resources
+     */
+    resourceGroupName: 'data',
+  }
+);
 
 /**
  * Bundling Notes:
