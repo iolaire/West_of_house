@@ -31,7 +31,7 @@ const backend = defineBackend({
  * Apply required resource tags to all AWS resources
  * 
  * These tags enable:
- * - Cost tracking and allocation
+ * - Cost tracking and allocation by Project and Owner
  * - Resource discovery and management
  * - Automated cleanup scripts
  * - Compliance and governance
@@ -40,36 +40,27 @@ const backend = defineBackend({
  */
 import { Stack, Tags } from 'aws-cdk-lib';
 
-// Define required tags
+// Define required tags for cost tracking and resource management
 const requiredTags = {
   'Project': 'west-of-haunted-house',
   'Owner': 'vedfolnir',
-  'ManagedBy': 'vedfolnir', // Keep both for compatibility
   'Environment': process.env.AMPLIFY_ENV || 'dev'
 };
 
-// Apply tags to the Lambda function stack
-const lambdaStack = Stack.of(backend.gameHandler.resources.lambda);
-Object.entries(requiredTags).forEach(([key, value]) => {
-  Tags.of(lambdaStack).add(key, value);
-});
+// Apply tags to all stacks in the backend
+const allStacks = [
+  Stack.of(backend.gameHandler.resources.lambda),
+  Stack.of(backend.data.resources.tables["GameSession"]),
+  Stack.of(backend.data.resources.graphqlApi),
+  Stack.of(backend.auth.resources.userPool),
+  Stack.of(backend.auth.resources.identityPool)
+];
 
-// Apply tags to the DynamoDB table stack
-const tableStack = Stack.of(backend.data.resources.tables["GameSession"]);
-Object.entries(requiredTags).forEach(([key, value]) => {
-  Tags.of(tableStack).add(key, value);
-});
-
-// Apply tags to the GraphQL API stack
-const apiStack = Stack.of(backend.data.resources.graphqlApi);
-Object.entries(requiredTags).forEach(([key, value]) => {
-  Tags.of(apiStack).add(key, value);
-});
-
-// Apply tags to the Auth stack (Identity Pool)
-const authStack = Stack.of(backend.auth.resources.userPool);
-Object.entries(requiredTags).forEach(([key, value]) => {
-  Tags.of(authStack).add(key, value);
+// Apply required tags to all stacks
+allStacks.forEach(stack => {
+  Object.entries(requiredTags).forEach(([key, value]) => {
+    Tags.of(stack).add(key, value);
+  });
 });
 
 /**

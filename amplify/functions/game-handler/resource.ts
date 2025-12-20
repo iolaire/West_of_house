@@ -165,7 +165,7 @@ export const gameHandler = defineFunction(
  * Note: Resource tags are applied at the backend level in backend.ts
  * Required tags (automatically applied):
  * - Project: west-of-haunted-house
- * - ManagedBy: vedfolnir
+ * - Owner: vedfolnir
  * - Environment: dev/staging/prod (from AMPLIFY_ENV)
  * 
  * Requirements: 24.1, 24.2, 24.3

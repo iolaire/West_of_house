@@ -79,7 +79,7 @@
 
 **Required Tags (ALL resources MUST have these):**
 - **Project**: `west-of-haunted-house` (identifies all resources for this project)
-- **ManagedBy**: `vedfolnir` (identifies the managing entity)
+- **Owner**: `vedfolnir` (identifies the managing entity)
 - **Environment**: User-defined value (e.g., `dev`, `staging`, `prod`)
 
 **Tagging Rules:**

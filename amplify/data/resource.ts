@@ -109,6 +109,6 @@ export const data = defineData({
  * Note: Resource tags are applied at the backend level in backend.ts
  * Required tags:
  * - Project: west-of-haunted-house
- * - ManagedBy: vedfolnir
+ * - Owner: vedfolnir
  * - Environment: dev/staging/prod
  */
