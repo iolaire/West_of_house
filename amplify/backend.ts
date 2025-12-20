@@ -52,8 +52,8 @@ const allStacks = [
   Stack.of(backend.gameHandler.resources.lambda),
   Stack.of(backend.data.resources.tables["GameSession"]),
   Stack.of(backend.data.resources.graphqlApi),
-  Stack.of(backend.auth.resources.userPool),
-  Stack.of(backend.auth.resources.identityPool)
+  Stack.of(backend.auth.resources.userPool)
+  // Note: Identity Pool is created automatically and inherits tags from the auth stack
 ];
 
 // Apply required tags to all stacks
